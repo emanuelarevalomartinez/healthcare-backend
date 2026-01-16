@@ -1,0 +1,32 @@
+
+services:
+  heathcare-db:
+    image: postgres:16
+    container_name: healthcare_postgres_container
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev123
+      POSTGRES_DB: healthcare_db
+    volumes:
+      - ../db:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    networks:
+      - db-network
+
+  pgadmin:
+    image: dpage/pgadmin4:8.13
+    container_name: healthcare_pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "8080:80"
+    depends_on:
+      - heathcare-db
+    networks:
+      - db-network
+
+networks:
+  db-network:
+    driver: bridge
