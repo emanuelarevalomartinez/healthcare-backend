@@ -3,6 +3,7 @@ package com.healthcare.modules.user.service;
 import com.healthcare.modules.auth.dto.RegisterUserDTO;
 import com.healthcare.modules.user.dto.UpdateUserDTO;
 import com.healthcare.modules.user.dto.UserResponseDTO;
+import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.modules.user.enums.UserRole;
 
 import java.util.List;
@@ -17,5 +18,6 @@ public interface UserService {
     UserResponseDTO findUserByUsername(String username);
     UserResponseDTO findUserByEmail(String email);
     void deleteUser(UUID id);
+    UserEntity findUserEntityById(UUID id);
 
 }

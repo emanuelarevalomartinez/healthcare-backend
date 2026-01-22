@@ -26,15 +26,31 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO createUser(RegisterUserDTO registerUserDto) {
 
-        UserEntity newUser = new UserEntity();
-        newUser.setUsername(registerUserDto.username());
-        newUser.setEmail(registerUserDto.email());
-        newUser.setPasswordHash(registerUserDto.password());
-        newUser.setRole(registerUserDto.role());
-        newUser.setActive(false);
+        try{
 
-        UserEntity saved = this.userRepository.save(newUser);
-        return UserResponseDTO.fromEntity(saved);
+            if (userRepository.findByUsername(registerUserDto.username()).isPresent()) {
+                throw new ApplicationException(ErrorMessage.USERNAME_CONFLICT, registerUserDto.username());
+            }
+
+            if (userRepository.findByEmail(registerUserDto.email()).isPresent()) {
+                throw new ApplicationException(ErrorMessage.EMAIL_CONFLICT,  registerUserDto.email());
+            }
+
+            UserEntity newUser = new UserEntity();
+            newUser.setUsername(registerUserDto.username());
+            newUser.setEmail(registerUserDto.email());
+            newUser.setPasswordHash(registerUserDto.password());
+            newUser.setRole(registerUserDto.role());
+            newUser.setActive(false);
+
+            UserEntity saved = this.userRepository.save(newUser);
+            return UserResponseDTO.fromEntity(saved);
+
+        }  catch(ApplicationException ex){
+            throw ex;
+        } catch(Exception ex) {
+            throw new ApplicationException(ex);
+        }
     }
 
     @Override
@@ -146,8 +162,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private UserEntity findUserEntityById(UUID id) {
+    @Override
+    public UserEntity findUserEntityById(UUID id) {
+
         return this.userRepository.findById(id)
-                .orElseThrow(() -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_ID, id));
+                .orElseThrow(() -> {
+                    return new ApplicationException(ErrorMessage.USER_NOT_FOUND_ID, id);
+                });
     }
 }
