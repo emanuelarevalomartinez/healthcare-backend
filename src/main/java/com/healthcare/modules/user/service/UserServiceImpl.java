@@ -7,6 +7,10 @@ import com.healthcare.modules.user.dto.UpdateUserDTO;
 import com.healthcare.modules.user.dto.UserResponseDTO;
 import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.modules.user.repository.UserRepository;
+import com.healthcare.shared.response.PageResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -88,15 +92,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponseDTO> findAllUsers() {
+    public PageResponse<UserResponseDTO> findAllUsers(int page, int size) {
 
         try{
 
-            return this.userRepository
-                    .findAll()
-                    .stream()
-                    .map(UserResponseDTO::fromEntity)
-                    .collect(Collectors.toList());
+            Pageable pageable = PageRequest.of(page, size);
+            Page<UserEntity> result = userRepository.findAllUsersPaged(pageable);
+
+            return new PageResponse<>(
+                    result.getContent()
+                            .stream()
+                            .map(UserResponseDTO::fromEntity)
+                            .toList(),
+                    result.getNumber(),
+                    result.getSize(),
+                    result.getTotalElements(),
+                    result.getTotalPages()
+            );
 
         } catch(ApplicationException ex){
             throw ex;

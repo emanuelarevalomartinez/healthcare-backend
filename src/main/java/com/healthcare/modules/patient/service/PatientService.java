@@ -7,6 +7,7 @@ import com.healthcare.modules.patient.entity.PatientEntity;
 import com.healthcare.modules.user.dto.UpdateUserDTO;
 import com.healthcare.modules.user.dto.UserResponseDTO;
 import com.healthcare.modules.user.entity.UserEntity;
+import com.healthcare.shared.response.PageResponse;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.UUID;
 public interface PatientService {
     PatientResponseDTO createPatient(CreatePatientDTO createPatientDTO);
     PatientResponseDTO updatePatient(UUID id, UpdatePatientDTO updatePatientDTO);
-    List<PatientResponseDTO> findAllPatients();
+    PageResponse<PatientResponseDTO> findAllPatients(int page, int size);
     PatientResponseDTO findPatientById(UUID id);
    /* UserResponseDTO findUserByUsername(String username);
     UserResponseDTO findUserByEmail(String email);*/

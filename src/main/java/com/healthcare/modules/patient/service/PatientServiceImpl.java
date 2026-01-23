@@ -9,6 +9,10 @@ import com.healthcare.modules.patient.entity.PatientEntity;
 import com.healthcare.modules.patient.repository.PatientRepository;
 import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.modules.user.service.UserService;
+import com.healthcare.shared.response.PageResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -122,15 +126,23 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public List<PatientResponseDTO> findAllPatients() {
+    public PageResponse<PatientResponseDTO> findAllPatients(int page, int size) {
 
         try{
 
-            return this.patientRepository
-                    .findAll()
-                    .stream()
-                    .map(PatientResponseDTO::fromEntity)
-                    .collect(Collectors.toList());
+            Pageable pageable = PageRequest.of(page, size);
+            Page<PatientEntity> result = this.patientRepository.findAllPatientsPaged(pageable);
+
+            return new PageResponse<>(
+                    result.getContent()
+                            .stream()
+                            .map(PatientResponseDTO::fromEntity)
+                            .toList(),
+                    result.getNumber(),
+                    result.getSize(),
+                    result.getTotalElements(),
+                    result.getTotalPages()
+            );
 
         } catch(ApplicationException ex){
             throw ex;

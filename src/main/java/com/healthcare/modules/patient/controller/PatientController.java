@@ -1,7 +1,9 @@
 package com.healthcare.modules.patient.controller;
 
 import com.healthcare.modules.patient.dto.UpdatePatientDTO;
+import com.healthcare.modules.user.dto.UserResponseDTO;
 import com.healthcare.shared.response.ApiResponse;
+import com.healthcare.shared.response.PageResponse;
 import com.healthcare.shared.response.ResponseHandler;
 import com.healthcare.modules.patient.dto.CreatePatientDTO;
 import com.healthcare.modules.patient.dto.PatientResponseDTO;
@@ -37,9 +39,12 @@ public class PatientController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<PatientResponseDTO>>> findAllPatients() {
+    public ResponseEntity<ApiResponse<PageResponse<PatientResponseDTO>>> findAllPatients(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
 
-        List<PatientResponseDTO> patients = patientService.findAllPatients();
+        PageResponse<PatientResponseDTO> patients = patientService.findAllPatients(page, size);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
