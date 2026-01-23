@@ -1,4 +1,4 @@
-package com.healthcare.config.response;
+package com.healthcare.shared.response;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

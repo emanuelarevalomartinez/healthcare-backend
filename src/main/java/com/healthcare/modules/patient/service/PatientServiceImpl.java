@@ -1,13 +1,19 @@
 package com.healthcare.modules.patient.service;
 
-import com.healthcare.exceptions.ApplicationException;
+import com.healthcare.shared.exceptions.ApplicationException;
+import com.healthcare.shared.exceptions.ErrorMessage;
 import com.healthcare.modules.patient.dto.CreatePatientDTO;
 import com.healthcare.modules.patient.dto.PatientResponseDTO;
+import com.healthcare.modules.patient.dto.UpdatePatientDTO;
 import com.healthcare.modules.patient.entity.PatientEntity;
 import com.healthcare.modules.patient.repository.PatientRepository;
 import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.modules.user.service.UserService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class PatientServiceImpl implements PatientService {
@@ -24,6 +30,14 @@ public class PatientServiceImpl implements PatientService {
     public PatientResponseDTO createPatient(CreatePatientDTO createPatientDTO) {
 
         try{
+
+            if (patientRepository.findByMedicalRecordNumber(createPatientDTO.medicalRecordNumber()).isPresent()) {
+                throw new ApplicationException(ErrorMessage.PATIENT_MRN_CONFLICT, createPatientDTO.medicalRecordNumber());
+            }
+
+            if (patientRepository.findByDocumentNumber(createPatientDTO.documentNumber()).isPresent()) {
+                throw new ApplicationException(ErrorMessage.PATIENT_DOCUMENT_CONFLICT,  createPatientDTO.documentNumber());
+            }
 
             UserEntity user = userService.findUserEntityById(createPatientDTO.createdById());
 
@@ -49,5 +63,122 @@ public class PatientServiceImpl implements PatientService {
             throw new ApplicationException(ex);
         }
     }
+
+    @Override
+    public PatientResponseDTO updatePatient(UUID id, UpdatePatientDTO updatePatientDTO) {
+        try {
+
+            PatientEntity findPatient = this.findPatientEntityById(id);
+
+            if (updatePatientDTO.medicalRecordNumber() != null) {
+                findPatient.setMedicalRecordNumber(updatePatientDTO.medicalRecordNumber());
+            }
+
+            if (updatePatientDTO.fullName() != null) {
+                findPatient.setFullName(updatePatientDTO.fullName());
+            }
+
+            if (updatePatientDTO.documentType() != null) {
+                findPatient.setDocumentType(updatePatientDTO.documentType());
+            }
+
+            if (updatePatientDTO.documentNumber() != null) {
+                findPatient.setDocumentNumber(updatePatientDTO.documentNumber());
+            }
+
+            if (updatePatientDTO.birthDate() != null) {
+                findPatient.setBirthDate(updatePatientDTO.birthDate());
+            }
+
+            if (updatePatientDTO.sex() != null) {
+                findPatient.setSex(updatePatientDTO.sex());
+            }
+
+            if (updatePatientDTO.phone() != null) {
+                findPatient.setPhone(updatePatientDTO.phone());
+            }
+
+            if (updatePatientDTO.email() != null) {
+                findPatient.setEmail(updatePatientDTO.email());
+            }
+
+            if (updatePatientDTO.address() != null) {
+                findPatient.setAddress(updatePatientDTO.address());
+            }
+
+            if (updatePatientDTO.notes() != null) {
+                findPatient.setNotes(updatePatientDTO.notes());
+            }
+
+            PatientEntity patientUpdated = this.patientRepository.save(findPatient);
+
+            return PatientResponseDTO.fromEntity(patientUpdated);
+
+        } catch(ApplicationException ex){
+            throw ex;
+        } catch(Exception ex){
+            throw new ApplicationException(ex);
+        }
+    }
+
+    @Override
+    public List<PatientResponseDTO> findAllPatients() {
+
+        try{
+
+            return this.patientRepository
+                    .findAll()
+                    .stream()
+                    .map(PatientResponseDTO::fromEntity)
+                    .collect(Collectors.toList());
+
+        } catch(ApplicationException ex){
+            throw ex;
+        } catch(Exception ex) {
+            throw new ApplicationException(ex);
+        }
+    }
+
+    @Override
+    public PatientResponseDTO findPatientById(UUID id) {
+        try{
+
+            PatientEntity findPatientById = this.patientRepository.findById(id)
+                    .orElseThrow( () -> new ApplicationException(ErrorMessage.PATIENT_NOT_FOUND_ID, id)
+                    );
+
+            return PatientResponseDTO.fromEntity(findPatientById);
+
+        } catch(ApplicationException ex){
+            throw ex;
+        } catch(Exception ex) {
+            throw new ApplicationException(ex);
+        }
+    }
+
+    @Override
+    public void deletePatient(UUID id) {
+
+        try{
+
+            PatientEntity user = this.findPatientEntityById(id);
+            patientRepository.deleteById(user.getId());
+
+        } catch(ApplicationException ex){
+            throw ex;
+        } catch(Exception ex) {
+            throw new ApplicationException(ex);
+        }
+    }
+
+    @Override
+    public PatientEntity findPatientEntityById(UUID id) {
+
+        return this.patientRepository.findById(id)
+                .orElseThrow(() -> {
+                    return new ApplicationException(ErrorMessage.PATIENT_NOT_FOUND_ID, id);
+                });
+    }
+
 
 }

@@ -1,6 +1,6 @@
-package com.healthcare.exceptions;
+package com.healthcare.shared.exceptions;
 
-import com.healthcare.config.response.ApiResponse;
+import com.healthcare.shared.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;

@@ -1,4 +1,4 @@
-package com.healthcare.exceptions;
+package com.healthcare.shared.exceptions;
 
 public enum ErrorMessage {
     DEFAULT_APPLICATION_ERROR,
@@ -8,7 +8,11 @@ public enum ErrorMessage {
     USER_NOT_FOUND_EMAIL( 404, "UserNotFound", "Usuario con email no encontrado: "),
     USER_NOT_FOUND_USERNAME( 404, "UserNotFound", "Usuario con username no encontrado: "),
     INVALID_CREDENTIALS(401, "AuthFailed", "Credenciales inválidas"),
-    PERSISTENCE_ERROR(400, "UserPersistenceError", "Error de integridad de datos");
+    PERSISTENCE_ERROR(400, "UserPersistenceError", "Error de integridad de datos"),
+    PATIENT_NOT_FOUND_ID( 404, "PatientNotFound", "Paciente con id no encontrado: "),
+    PATIENT_MRN_CONFLICT(409, "PatientMRNConflict", "El número de historia clínica ya está registrado: "),
+    PATIENT_DOCUMENT_CONFLICT(409, "PatientDocumentConflict", "El número de documento ya está registrado: ");
+
 
     private final String message;
     private final String type;

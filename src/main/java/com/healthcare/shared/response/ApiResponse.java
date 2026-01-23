@@ -1,4 +1,4 @@
-package com.healthcare.config.response;
+package com.healthcare.shared.response;
 
 public class ApiResponse<T> {
     private int status;

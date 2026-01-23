@@ -1,4 +1,4 @@
-package com.healthcare.exceptions;
+package com.healthcare.shared.exceptions;
 
 import java.util.Map;
 

@@ -1,7 +1,7 @@
 package com.healthcare.modules.user.controller;
 
-import com.healthcare.config.response.ApiResponse;
-import com.healthcare.config.response.ResponseHandler;
+import com.healthcare.shared.response.ApiResponse;
+import com.healthcare.shared.response.ResponseHandler;
 import com.healthcare.modules.user.dto.UpdateUserDTO;
 import com.healthcare.modules.user.dto.UserResponseDTO;
 import com.healthcare.modules.user.service.UserService;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;

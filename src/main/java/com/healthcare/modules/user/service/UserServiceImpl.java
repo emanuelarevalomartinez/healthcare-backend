@@ -1,7 +1,7 @@
 package com.healthcare.modules.user.service;
 
-import com.healthcare.exceptions.ApplicationException;
-import com.healthcare.exceptions.ErrorMessage;
+import com.healthcare.shared.exceptions.ApplicationException;
+import com.healthcare.shared.exceptions.ErrorMessage;
 import com.healthcare.modules.auth.dto.RegisterUserDTO;
 import com.healthcare.modules.user.dto.UpdateUserDTO;
 import com.healthcare.modules.user.dto.UserResponseDTO;
@@ -89,11 +89,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponseDTO> findAllUsers() {
-        return this.userRepository
-                .findAll()
-                .stream()
-                .map(UserResponseDTO::fromEntity)
-                .collect(Collectors.toList());
+
+        try{
+
+            return this.userRepository
+                    .findAll()
+                    .stream()
+                    .map(UserResponseDTO::fromEntity)
+                    .collect(Collectors.toList());
+
+        } catch(ApplicationException ex){
+            throw ex;
+        } catch(Exception ex) {
+            throw new ApplicationException(ex);
+        }
     }
 
     @Override
