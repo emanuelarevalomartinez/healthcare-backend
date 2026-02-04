@@ -10,7 +10,7 @@ services:
     volumes:
       - ../db:/var/lib/postgresql/data
     ports:
-      - "5435:5432"
+      - "5437:5432"
     networks:
       - db-network
 
@@ -21,7 +21,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin123
     ports:
-      - "8080:80"
+      - "8084:80"
     depends_on:
       - heathcare-db
     networks:

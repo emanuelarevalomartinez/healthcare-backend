@@ -1,15 +1,19 @@
-/*
 package com.healthcare.config.security;
 
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import com.healthcare.modules.user.entity.UserEntity;
+import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
+
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
@@ -23,12 +27,22 @@ public class JwtGenerator {
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
-    */
-/* =========================
-       TOKEN GENERATION
-       ========================= *//*
 
+    public String generateTokenFromUser(UserEntity user) {
 
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + SecurityConstants.JWT_EXPIRATION);
+
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .claim("role", user.getRole().name())
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+/*
     public String generateToken(Authentication authentication) {
 
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
@@ -49,22 +63,13 @@ public class JwtGenerator {
                 .signWith(getSigningKey())
                 .compact();
     }
-
-    */
-/* =========================
-       SIGNING KEY
-       ========================= *//*
+*/
 
 
     private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
-    */
-/* =========================
-       CLAIMS
-       ========================= *//*
 
 
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
@@ -82,10 +87,6 @@ public class JwtGenerator {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    */
-/* =========================
-       VALIDATION
-       ========================= *//*
 
 
     public boolean validateToken(String token) {
@@ -111,13 +112,23 @@ public class JwtGenerator {
         return false;
     }
 
-    */
-/* =========================
-       REFRESH TOKEN
-       ========================= *//*
+    public String generateAccessToken(UserEntity user) {
+
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + SecurityConstants.JWT_EXPIRATION);
+
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .claim("role", "ROLE_" + user.getRole().name())
+                .claim("type", "ACCESS")
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(getSigningKey())
+                .compact();
+    }
 
 
-    public String refreshToken(Authentication authentication) {
+/*    public String refreshToken(Authentication authentication) {
 
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
 
@@ -136,7 +147,6 @@ public class JwtGenerator {
                 .setExpiration(expiry)
                 .signWith(getSigningKey())
                 .compact();
-    }
+    }*/
 
 }
-*/

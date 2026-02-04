@@ -1,6 +1,8 @@
 package com.healthcare.modules.auth.controller;
 
 
+import com.healthcare.modules.auth.dto.AuthResponseDTO;
+import com.healthcare.modules.auth.dto.LoginUserDTO;
 import com.healthcare.shared.response.ApiResponse;
 import com.healthcare.shared.response.ResponseHandler;
 import com.healthcare.modules.auth.dto.RegisterUserDTO;
@@ -25,13 +27,31 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> register(@Valid @RequestBody RegisterUserDTO registerUserDTO) {
+    public ResponseEntity<ApiResponse<AuthResponseDTO>> register(@Valid @RequestBody RegisterUserDTO registerUserDTO) {
 
-        UserResponseDTO user = authService.register(registerUserDTO);
+        AuthResponseDTO user = authService.register(registerUserDTO);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.CREATED,
                 "Successfully created user",
+                user
+        );
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<AuthResponseDTO>> login(@Valid @RequestBody LoginUserDTO loginUserDTO) {
+
+        AuthResponseDTO user = authService.login(loginUserDTO);
+
+        String message = null;
+
+        if(user.token() == null){
+            message = "User is not active";
+        }
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.CREATED,
+                message,
                 user
         );
     }
