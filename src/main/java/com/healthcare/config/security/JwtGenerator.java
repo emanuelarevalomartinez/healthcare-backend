@@ -1,7 +1,9 @@
 package com.healthcare.config.security;
 
 import com.healthcare.modules.user.entity.UserEntity;
+import com.healthcare.shared.exceptions.ErrorMessage;
 import io.jsonwebtoken.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,30 +44,6 @@ public class JwtGenerator {
                 .compact();
     }
 
-/*
-    public String generateToken(Authentication authentication) {
-
-        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
-
-        List<String> roles = userPrincipal.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
-
-        Date now = new Date();
-        Date expiry = new Date(now.getTime() + SecurityConstants.JWT_EXPIRATION);
-
-        return Jwts.builder()
-                .setSubject(userPrincipal.getUsername())
-                .claim("roles", roles)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(getSigningKey())
-                .compact();
-    }
-*/
-
-
     private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
@@ -87,9 +65,7 @@ public class JwtGenerator {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-
-
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token, HttpServletRequest request) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
@@ -98,15 +74,19 @@ public class JwtGenerator {
             return true;
 
         } catch (ExpiredJwtException e) {
-            logger.error("JWT expirado", e);
+            request.setAttribute("JWT_ERROR", ErrorMessage.JWT_EXPIRED);
+
         } catch (UnsupportedJwtException e) {
-            logger.error("JWT no soportado", e);
+            request.setAttribute("JWT_ERROR", ErrorMessage.JWT_UNSUPPORTED);
+
         } catch (MalformedJwtException e) {
-            logger.error("JWT mal formado", e);
+            request.setAttribute("JWT_ERROR", ErrorMessage.JWT_MALFORMED);
+
         } catch (SignatureException e) {
-            logger.error("Firma JWT inválida", e);
+            request.setAttribute("JWT_ERROR", ErrorMessage.JWT_INVALID_SIGNATURE);
+
         } catch (IllegalArgumentException e) {
-            logger.error("JWT vacío o nulo", e);
+            request.setAttribute("JWT_ERROR", ErrorMessage.JWT_EMPTY);
         }
 
         return false;

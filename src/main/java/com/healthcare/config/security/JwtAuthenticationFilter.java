@@ -22,8 +22,7 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     @Autowired
     private JwtGenerator jwtGenerator;
@@ -39,8 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         String token = getJwtFromRequest(request);
-
-        if(StringUtils.hasText(token) && jwtGenerator.validateToken(token)){
+        if (StringUtils.hasText(token) && jwtGenerator.validateToken(token, request)) {
 
             String username = jwtGenerator.getUsernameFromJWT(token);
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -51,23 +49,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
 
-        System.out.println("JWT FILTER → " + request.getServletPath());
-        log.info("Mensaje");
-        log.info("JWT FILTER → {}", request.getServletPath());
-
         filterChain.doFilter(request,response);
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-        log.info("path → {}", request.getServletPath());
-        log.info("boolean → {}", path.equals("/auth/login"));
         return path.equals("/auth/login") || path.equals("/auth/register");
     }
 
 
-    private String getJwtFromRequest(HttpServletRequest request){
+    private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")){
             return bearerToken.substring(7);

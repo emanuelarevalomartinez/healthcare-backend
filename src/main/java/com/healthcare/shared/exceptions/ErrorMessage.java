@@ -11,7 +11,13 @@ public enum ErrorMessage {
     PERSISTENCE_ERROR(400, "UserPersistenceError", "Error de integridad de datos"),
     PATIENT_NOT_FOUND_ID( 404, "PatientNotFound", "Paciente con id no encontrado: "),
     PATIENT_MRN_CONFLICT(409, "PatientMRNConflict", "El número de historia clínica ya está registrado: "),
-    PATIENT_DOCUMENT_CONFLICT(409, "PatientDocumentConflict", "El número de documento ya está registrado: ");
+    PATIENT_DOCUMENT_CONFLICT(409, "PatientDocumentConflict", "El número de documento ya está registrado: "),
+    JWT_EXPIRED(401, "JWT_EXPIRED", "El token ha expirado"),
+    JWT_MALFORMED(401, "JWT_MALFORMED", "El token es inválido"),
+    JWT_UNSUPPORTED(401, "JWT_UNSUPPORTED", "El token no es soportado"),
+    JWT_INVALID_SIGNATURE(401, "JWT_INVALID_SIGNATURE", "Firma del token inválida"),
+    JWT_EMPTY(401, "JWT_EMPTY", "El token es nulo o vacío"),
+    UNAUTHORIZED(401, "UNAUTHORIZED", "Acceso no autorizado");
 
 
     private final String message;
