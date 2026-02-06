@@ -107,26 +107,26 @@ public class JwtGenerator {
                 .compact();
     }
 
-
-/*    public String refreshToken(Authentication authentication) {
-
-        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
-
-        List<String> roles = userPrincipal.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+    public String generateRefreshToken(UserEntity user) {
 
         Date now = new Date();
-        Date expiry = new Date(now.getTime() + SecurityConstants.JWT_EXPIRATION);
+        Date expiry = new Date(now.getTime() + SecurityConstants.REFRESH_EXPIRATION);
 
         return Jwts.builder()
-                .setSubject(userPrincipal.getUsername())
-                .claim("roles", roles)
+                .setSubject(user.getEmail())
+                .claim("type", "REFRESH")
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(getSigningKey())
                 .compact();
-    }*/
+    }
+
+    public boolean isRefreshToken(String token) {
+        return "REFRESH".equals(getClaimFromToken(token, c -> c.get("type")));
+    }
+
+    public boolean isAccessToken(String token) {
+        return "ACCESS".equals(getClaimFromToken(token, c -> c.get("type")));
+    }
 
 }

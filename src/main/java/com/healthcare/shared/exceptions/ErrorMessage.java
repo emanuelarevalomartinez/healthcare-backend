@@ -17,7 +17,9 @@ public enum ErrorMessage {
     JWT_UNSUPPORTED(401, "JWT_UNSUPPORTED", "El token no es soportado"),
     JWT_INVALID_SIGNATURE(401, "JWT_INVALID_SIGNATURE", "Firma del token inválida"),
     JWT_EMPTY(401, "JWT_EMPTY", "El token es nulo o vacío"),
-    UNAUTHORIZED(401, "UNAUTHORIZED", "Acceso no autorizado");
+    UNAUTHORIZED(401, "UNAUTHORIZED", "Acceso no autorizado"),
+    USER_INACTIVE( 409, "USER_INACTIVE", "El usuario no esta activado "),
+    ;
 
 
     private final String message;

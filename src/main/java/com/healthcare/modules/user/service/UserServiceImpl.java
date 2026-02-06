@@ -1,9 +1,9 @@
 package com.healthcare.modules.user.service;
 
 import com.healthcare.config.security.JwtGenerator;
-import com.healthcare.modules.auth.dto.AuthResponseDTO;
+import com.healthcare.modules.auth.dto.LoginResponseDTO;
 import com.healthcare.modules.auth.dto.LoginUserDTO;
-import com.healthcare.modules.user.enums.UserRole;
+import com.healthcare.modules.auth.dto.RegisterResponseDTO;
 import com.healthcare.shared.exceptions.ApplicationException;
 import com.healthcare.shared.exceptions.ErrorMessage;
 import com.healthcare.modules.auth.dto.RegisterUserDTO;
@@ -15,18 +15,11 @@ import com.healthcare.shared.response.PageResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -43,7 +36,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AuthResponseDTO createUser(RegisterUserDTO registerUserDto) {
+    public RegisterResponseDTO createUser(RegisterUserDTO registerUserDto) {
 
         try{
 
@@ -65,15 +58,8 @@ public class UserServiceImpl implements UserService {
 
             UserEntity saved = this.userRepository.save(newUser);
 
-            AuthResponseDTO response = new AuthResponseDTO(
-                    saved.getId(),
-                    saved.getUsername(),
-                    saved.getEmail(),
-                    saved.getRole(),
-                    saved.isActive(),
-                    saved.getCreatedAt(),
-                    saved.getUpdatedAt(),
-                    saved.getLastLogin(),
+            RegisterResponseDTO response = new RegisterResponseDTO(
+                   null,
                     null
             );
 
@@ -87,7 +73,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AuthResponseDTO loginUser(LoginUserDTO loginUserDTO) {
+    public LoginResponseDTO loginUser(LoginUserDTO loginUserDTO) {
         try {
 
             UserEntity user = this.findUserEntityByEmail(loginUserDTO.email());
@@ -103,13 +89,16 @@ public class UserServiceImpl implements UserService {
                 );
             }
 
-            String token = null;
-
-            if(user.isActive()){
-                token = jwtGenerator.generateTokenFromUser(user);
+            if (!user.isActive()) {
+                throw new ApplicationException(
+                        ErrorMessage.USER_INACTIVE,""
+                );
             }
 
-            AuthResponseDTO response = new AuthResponseDTO(
+            String accessToken = jwtGenerator.generateAccessToken(user);
+            String refreshToken = jwtGenerator.generateRefreshToken(user);
+
+            LoginResponseDTO response = new LoginResponseDTO(
                     user.getId(),
                     user.getUsername(),
                     user.getEmail(),
@@ -118,8 +107,8 @@ public class UserServiceImpl implements UserService {
                     user.getCreatedAt(),
                     user.getUpdatedAt(),
                     user.getLastLogin(),
-                    token
-
+                    accessToken,
+                    refreshToken
             );
 
             return response;

@@ -1,11 +1,9 @@
 package com.healthcare.modules.auth.service;
 
-import com.healthcare.modules.auth.dto.AuthResponseDTO;
-import com.healthcare.modules.auth.dto.LoginUserDTO;
-import com.healthcare.modules.auth.dto.RegisterUserDTO;
-import com.healthcare.modules.user.dto.UserResponseDTO;
+import com.healthcare.modules.auth.dto.*;
 
 public interface AuthService {
-    AuthResponseDTO register(RegisterUserDTO dto);
-    AuthResponseDTO login(LoginUserDTO dto);
+    RegisterResponseDTO register(RegisterUserDTO dto);
+    LoginResponseDTO login(LoginUserDTO dto);
+    RefreshTokenResponseDTO refresh(String refreshToken);
 }

@@ -5,7 +5,7 @@ import com.healthcare.modules.user.enums.UserRole;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record AuthResponseDTO(
+public record LoginResponseDTO(
         UUID id,
         String username,
         String email,
@@ -14,6 +14,7 @@ public record AuthResponseDTO(
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         LocalDateTime lastLogin,
-        String token
+        String accessToken,
+        String refreshToken
 ) {
 }
