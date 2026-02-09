@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
             }
 
             if (updateUserDTO.password() != null) {
-                findUser.setPasswordHash(updateUserDTO.password());
+                findUser.setPasswordHash(passwordEncoder.encode(updateUserDTO.password()));
             }
 
             if (updateUserDTO.role() != null) {

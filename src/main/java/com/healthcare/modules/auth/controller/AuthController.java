@@ -6,7 +6,6 @@ import com.healthcare.modules.auth.dto.*;
 import com.healthcare.shared.response.ApiResponse;
 import com.healthcare.shared.response.ResponseHandler;
 import com.healthcare.modules.auth.service.AuthService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +16,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
-    private final JwtGenerator jwtGenerator;
 
     public AuthController(AuthService authService, JwtGenerator jwtGenerator) {
         this.authService = authService;
-        this.jwtGenerator = jwtGenerator;
     }
 
     @PostMapping("/register")
@@ -54,56 +51,16 @@ public class AuthController {
         );
     }
 
-
- /*   @PostMapping("/auth/refresh")
-    public AuthResponseDTO refresh(HttpServletRequest request) {
-
-        String refreshToken = getJwtFromRequest(request);
-
-        if (!jwtGenerator.validateToken(refreshToken, request)) {
-            throw new ApplicationException(ErrorMessage.UNAUTHORIZED);
-        }
-
-        String email = jwtGenerator.getUsernameFromJWT(refreshToken);
-        UserEntity user = userService.findUserEntityByEmail(email);
-
-        return new AuthResponseDTO(
-                jwtGenerator.generateAccessToken(user),
-                jwtGenerator.generateRefreshToken(user)
-        );
-    }*/
-
- /*   @PostMapping("/refresh")
-    public RefreshTokenResponseDTO refresh(HttpServletRequest request) {
-
-        String refreshToken = getJwtFromRequest(request);
-
-        if (!jwtGenerator.validateToken(refreshToken, request)) {
-            throw new ApplicationException(ErrorMessage.UNAUTHORIZED);
-        }
-
-        String email = jwtGenerator.getUsernameFromJWT(refreshToken);
-        UserEntity user = userService.findUserEntityByEmail(email);
-
-        return new RefreshTokenResponseDTO(
-                jwtGenerator.generateAccessToken(user),
-                jwtGenerator.generateRefreshToken(user)
-        );
-    }*/
-
     @PostMapping("/refresh")
-    public ApiResponse<LoginResponseDTO> refresh(
-            @RequestHeader("Authorization") String bearerToken
+    public ApiResponse<RefreshTokenResponseDTO> refresh(
+            @Valid @RequestBody RefreshTokenRequestDTO refreshTokenRequestDTO
     ) {
-
-        String token = bearerToken.substring(7);
-
-        LoginResponseDTO response = authService.refresh(token);
+        RefreshTokenResponseDTO response = authService.refresh(refreshTokenRequestDTO.refreshToken());
 
         return new ApiResponse<>(
                 200,
-                "SUCCESS",
-                "Token refrescado correctamente",
+                "AUTH_REFRESH_SUCCESS",
+                null,
                 "AUTH",
                 response,
                 null

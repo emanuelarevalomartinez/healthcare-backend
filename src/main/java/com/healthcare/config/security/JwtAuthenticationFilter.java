@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         String token = getJwtFromRequest(request);
-        if (StringUtils.hasText(token) && jwtGenerator.validateToken(token, request)) {
+        if (StringUtils.hasText(token) && jwtGenerator.validateToken(token, request) && jwtGenerator.isAccessToken(token)) {
 
             String username = jwtGenerator.getUsernameFromJWT(token);
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -55,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-        return path.equals("/auth/login") || path.equals("/auth/register");
+        return path.startsWith("/auth/");
     }
 
 

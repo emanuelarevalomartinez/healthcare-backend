@@ -12,7 +12,7 @@ public class ApplicationException extends RuntimeException {
     private final Object error;
 
     public ApplicationException(Exception ex) {
-        ErrorMessage defaultError = ErrorMessage.DEFAULT_APPLICATION_ERROR;
+        ErrorMessage defaultError = ErrorMessage.INTERNAL_ERROR;
 
         this.statusCode = defaultError.getStatus();
         this.type = defaultError.getType();
