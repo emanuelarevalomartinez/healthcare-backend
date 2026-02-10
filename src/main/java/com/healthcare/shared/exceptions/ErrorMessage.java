@@ -27,7 +27,9 @@ public enum ErrorMessage {
 
     PATIENT_NOT_FOUND_ID(404, "PATIENT_NOT_FOUND", "Paciente con id no encontrado"),
     PATIENT_MRN_CONFLICT(409, "PATIENT_MRN_CONFLICT", "Historia clínica ya registrada"),
-    PATIENT_DOCUMENT_CONFLICT(409, "PATIENT_DOCUMENT_CONFLICT", "Documento ya registrado");
+    PATIENT_DOCUMENT_CONFLICT(409, "PATIENT_DOCUMENT_CONFLICT", "Documento ya registrado"),
+    REFRESH_TOKEN_INVALID(401, "REFRESH_TOKEN_INVALID", "Sesión inválida, por favor inicie sesión nuevamente"),
+    REFRESH_TOKEN_EXPIRED(401, "REFRESH_TOKEN_EXPIRED", "La sesión ha expirado, por favor inicie sesión nuevamente");
 
 
     private final String message;

@@ -24,8 +24,6 @@ import java.util.stream.Collectors;
 @Component
 public class JwtGenerator {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtGenerator.class);
-
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
@@ -90,6 +88,21 @@ public class JwtGenerator {
         }
 
         return false;
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getExpiration().after(new Date());
+        } catch (ExpiredJwtException ex) {
+            return false;
+        } catch (JwtException e) {
+            return false;
+        }
     }
 
     public String generateAccessToken(UserEntity user) {

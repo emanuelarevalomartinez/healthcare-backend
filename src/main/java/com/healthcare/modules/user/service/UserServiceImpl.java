@@ -3,7 +3,7 @@ package com.healthcare.modules.user.service;
 import com.healthcare.config.security.JwtGenerator;
 import com.healthcare.modules.auth.dto.LoginResponseDTO;
 import com.healthcare.modules.auth.dto.LoginUserDTO;
-import com.healthcare.modules.auth.dto.RegisterResponseDTO;
+import com.healthcare.modules.auth.service.RefreshTokenService;
 import com.healthcare.shared.exceptions.ApplicationException;
 import com.healthcare.shared.exceptions.ErrorMessage;
 import com.healthcare.modules.auth.dto.RegisterUserDTO;
@@ -27,16 +27,18 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JwtGenerator jwtGenerator;
+    private final RefreshTokenService refreshTokenService;
 
-    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, JwtGenerator jwtGenerator) {
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, JwtGenerator jwtGenerator, RefreshTokenService refreshTokenService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
 
         this.jwtGenerator = jwtGenerator;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
-    public RegisterResponseDTO createUser(RegisterUserDTO registerUserDto) {
+    public Void createUser(RegisterUserDTO registerUserDto) {
 
         try{
 
@@ -51,25 +53,18 @@ public class UserServiceImpl implements UserService {
             UserEntity newUser = new UserEntity();
             newUser.setUsername(registerUserDto.username());
             newUser.setEmail(registerUserDto.email());
-           // newUser.setPasswordHash(registerUserDto.password());
             newUser.setPasswordHash(passwordEncoder.encode(registerUserDto.password()));
             newUser.setRole(registerUserDto.role());
             newUser.setActive(false);
 
-            UserEntity saved = this.userRepository.save(newUser);
-
-            RegisterResponseDTO response = new RegisterResponseDTO(
-                   null,
-                    null
-            );
-
-            return response;
+            this.userRepository.save(newUser);
 
         }  catch(ApplicationException ex){
             throw ex;
         } catch(Exception ex) {
             throw new ApplicationException(ex);
         }
+        return null;
     }
 
     @Override
@@ -96,7 +91,7 @@ public class UserServiceImpl implements UserService {
             }
 
             String accessToken = jwtGenerator.generateAccessToken(user);
-            String refreshToken = jwtGenerator.generateRefreshToken(user);
+            String refreshToken = refreshTokenService.createAndSaveRefreshToken(user);
 
             LoginResponseDTO response = new LoginResponseDTO(
                     user.getId(),

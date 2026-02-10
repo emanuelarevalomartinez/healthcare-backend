@@ -2,7 +2,6 @@ package com.healthcare.modules.user.service;
 
 import com.healthcare.modules.auth.dto.LoginResponseDTO;
 import com.healthcare.modules.auth.dto.LoginUserDTO;
-import com.healthcare.modules.auth.dto.RegisterResponseDTO;
 import com.healthcare.modules.auth.dto.RegisterUserDTO;
 import com.healthcare.modules.user.dto.UpdateUserDTO;
 import com.healthcare.modules.user.dto.UserResponseDTO;
@@ -13,7 +12,7 @@ import java.util.UUID;
 
 public interface UserService {
 
-    RegisterResponseDTO createUser(RegisterUserDTO registerUserDTO );
+    Void createUser(RegisterUserDTO registerUserDTO );
     LoginResponseDTO loginUser(LoginUserDTO loginUserDTO);
     UserResponseDTO updateUser(UUID id, UpdateUserDTO updateUserDTO);
     PageResponse<UserResponseDTO> findAllUsers(int page, int size);

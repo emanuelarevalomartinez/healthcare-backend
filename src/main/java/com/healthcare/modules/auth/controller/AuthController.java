@@ -53,7 +53,7 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ApiResponse<RefreshTokenResponseDTO> refresh(
-            @Valid @RequestBody RefreshTokenRequestDTO refreshTokenRequestDTO
+            @Valid @RequestBody RefreshTokenDTO refreshTokenRequestDTO
     ) {
         RefreshTokenResponseDTO response = authService.refresh(refreshTokenRequestDTO.refreshToken());
 

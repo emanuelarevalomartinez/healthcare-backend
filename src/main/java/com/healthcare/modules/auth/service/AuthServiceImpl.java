@@ -1,26 +1,40 @@
 package com.healthcare.modules.auth.service;
 
 import com.healthcare.config.security.JwtGenerator;
+import com.healthcare.config.security.SecurityConstants;
 import com.healthcare.modules.auth.dto.*;
+import com.healthcare.modules.auth.entity.RefreshTokenEntity;
+import com.healthcare.modules.auth.repository.RefreshTokenRepository;
+import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.modules.user.service.UserService;
 import com.healthcare.shared.exceptions.ApplicationException;
 import com.healthcare.shared.exceptions.ErrorMessage;
+import io.jsonwebtoken.Claims;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 import com.healthcare.config.security.JwtGenerator;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 @Service
 public class AuthServiceImpl implements AuthService{
 
     private final UserService userService;
     private final JwtGenerator jwtGenerator;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenServiceImpl refreshTokenService;
 
-    public AuthServiceImpl(UserService userService, JwtGenerator jwtGenerator) {
+    public AuthServiceImpl(UserService userService, JwtGenerator jwtGenerator, RefreshTokenRepository refreshTokenRepository, RefreshTokenServiceImpl refreshTokenService) {
         this.userService = userService;
         this.jwtGenerator = jwtGenerator;
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
-    public RegisterResponseDTO register(RegisterUserDTO registerUserDTO) {
+    public Void register(RegisterUserDTO registerUserDTO) {
         return userService.createUser(registerUserDTO);
     }
 
@@ -32,23 +46,19 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public RefreshTokenResponseDTO refresh(String refreshToken) {
 
-        if (!jwtGenerator.validateToken(refreshToken, null)) {
-            throw new ApplicationException(ErrorMessage.JWT_EXPIRED, "");
+        try{
+
+            RefreshTokenResponseDTO save = this.refreshTokenService.validateAndSaveNewRefreshToken(refreshToken);
+
+            return new RefreshTokenResponseDTO(
+                    save.accessToken(),
+                    save.refreshToken()
+            );
+
+        } catch(ApplicationException ex){
+            throw ex;
+        } catch(Exception ex) {
+            throw new ApplicationException(ex);
         }
-
-        if (!jwtGenerator.isRefreshToken(refreshToken)) {
-            throw new ApplicationException(ErrorMessage.JWT_INVALID_TYPE, "");
-        }
-
-        String email = jwtGenerator.getUsernameFromJWT(refreshToken);
-
-        var user = userService.findUserEntityByEmail(email);
-
-        String newAccessToken = jwtGenerator.generateAccessToken(user);
-
-        return new RefreshTokenResponseDTO(
-                newAccessToken,
-                refreshToken
-        );
     }
 }
