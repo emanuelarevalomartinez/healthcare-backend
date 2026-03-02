@@ -23,6 +23,7 @@ public record UpdateUserDTO(
         @Size(max = 100, message = "El email no puede exceder 100 caracteres")
         String email,
 
-        UserRole role
+        UserRole role,
 
+        Boolean isActive
 ) { }

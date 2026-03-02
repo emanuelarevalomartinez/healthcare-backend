@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -95,6 +96,9 @@ public class UserServiceImpl implements UserService {
             String accessToken = jwtGenerator.generateAccessToken(user);
             String refreshToken = refreshTokenService.createAndSaveRefreshToken(user);
 
+            user.setLastLogin(LocalDateTime.now());
+            this.userRepository.save(user);
+
             LoginResponseDTO response = new LoginResponseDTO(
                     user.getId(),
                     user.getUsername(),
@@ -131,7 +135,6 @@ public class UserServiceImpl implements UserService {
             if (updateUserDTO.email() != null) {
                 findUser.setEmail(updateUserDTO.email());
             }
-            // hay que validar que el usuario coloque la password previa o eso seria un endpoint por aparte ?
 
             if (updateUserDTO.password() != null) {
                 findUser.setPasswordHash(passwordEncoder.encode(updateUserDTO.password()));
@@ -141,8 +144,11 @@ public class UserServiceImpl implements UserService {
                 findUser.setRole(updateUserDTO.role());
             }
 
-            UserEntity userUpdated = this.userRepository.save(findUser);
+            if (updateUserDTO.isActive() != null) {
+                findUser.setActive(updateUserDTO.isActive());
+            }
 
+            UserEntity userUpdated = this.userRepository.save(findUser);
             return UserResponseDTO.fromEntity(userUpdated);
 
         } catch(ApplicationException ex){
