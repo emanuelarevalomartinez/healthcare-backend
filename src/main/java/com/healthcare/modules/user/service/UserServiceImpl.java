@@ -4,6 +4,7 @@ import com.healthcare.config.security.JwtGenerator;
 import com.healthcare.modules.auth.dto.LoginResponseDTO;
 import com.healthcare.modules.auth.dto.LoginUserDTO;
 import com.healthcare.modules.auth.service.RefreshTokenService;
+import com.healthcare.modules.user.dto.UpdateUserIsActiveRequestDTO;
 import com.healthcare.modules.user.dto.UpdateUserPasswordRequestDTO;
 import com.healthcare.shared.exceptions.ApplicationException;
 import com.healthcare.shared.exceptions.ErrorMessage;
@@ -285,6 +286,21 @@ public class UserServiceImpl implements UserService {
 
             user.setPasswordHash(passwordEncoder.encode(updateUserPasswordRequestDTO.newPassword()));
             this.userRepository.save(user);
+
+        } catch (ApplicationException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new ApplicationException(ex);
+        }
+    }
+
+    @Override
+    public boolean changeUserIsActiveStatus(UUID userId, UpdateUserIsActiveRequestDTO updateUserIsActiveRequestDTO) {
+        try{
+            UserEntity user = this.findUserEntityById(userId);
+
+            user.setActive(updateUserIsActiveRequestDTO.isActive());
+            return this.userRepository.save(user).isActive();
 
         } catch (ApplicationException ex) {
             throw ex;

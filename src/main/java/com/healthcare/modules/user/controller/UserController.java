@@ -1,5 +1,6 @@
 package com.healthcare.modules.user.controller;
 
+import com.healthcare.modules.user.dto.UpdateUserIsActiveRequestDTO;
 import com.healthcare.modules.user.dto.UpdateUserPasswordRequestDTO;
 import com.healthcare.shared.response.ApiResponse;
 import com.healthcare.shared.response.PageResponse;
@@ -85,6 +86,18 @@ public class UserController {
                 HttpStatus.OK,
                 "User password update",
                 null
+        );
+    }
+
+    @PutMapping("changeIsActive/{id}")
+    public ResponseEntity<ApiResponse<Boolean>> changeUserIsActive(@PathVariable UUID id , @Valid @RequestBody UpdateUserIsActiveRequestDTO updateUserIsActiveRequestDTO) {
+
+        boolean newStatus = this.userService.changeUserIsActiveStatus(id, updateUserIsActiveRequestDTO);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                "User status changed",
+                newStatus
         );
     }
 

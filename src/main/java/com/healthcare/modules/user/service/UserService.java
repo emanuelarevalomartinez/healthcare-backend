@@ -4,6 +4,7 @@ import com.healthcare.modules.auth.dto.LoginResponseDTO;
 import com.healthcare.modules.auth.dto.LoginUserDTO;
 import com.healthcare.modules.auth.dto.RegisterUserDTO;
 import com.healthcare.modules.user.dto.UpdateUserDTO;
+import com.healthcare.modules.user.dto.UpdateUserIsActiveRequestDTO;
 import com.healthcare.modules.user.dto.UpdateUserPasswordRequestDTO;
 import com.healthcare.modules.user.dto.UserResponseDTO;
 import com.healthcare.modules.user.entity.UserEntity;
@@ -24,5 +25,6 @@ public interface UserService {
     UserEntity findUserEntityById(UUID id);
     UserEntity findUserEntityByEmail(String email);
     void changePassword(UUID userId, UpdateUserPasswordRequestDTO updateUserPasswordRequestDTO);
+    boolean changeUserIsActiveStatus(UUID userId, UpdateUserIsActiveRequestDTO updateUserIsActiveRequestDTO);
 
 }
