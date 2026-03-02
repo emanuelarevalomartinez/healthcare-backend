@@ -4,6 +4,7 @@ import com.healthcare.modules.auth.dto.LoginResponseDTO;
 import com.healthcare.modules.auth.dto.LoginUserDTO;
 import com.healthcare.modules.auth.dto.RegisterUserDTO;
 import com.healthcare.modules.user.dto.UpdateUserDTO;
+import com.healthcare.modules.user.dto.UpdateUserPasswordRequestDTO;
 import com.healthcare.modules.user.dto.UserResponseDTO;
 import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.shared.response.PageResponse;
@@ -22,5 +23,6 @@ public interface UserService {
     void deleteUser(UUID id);
     UserEntity findUserEntityById(UUID id);
     UserEntity findUserEntityByEmail(String email);
+    void changePassword(UUID userId, UpdateUserPasswordRequestDTO updateUserPasswordRequestDTO);
 
 }

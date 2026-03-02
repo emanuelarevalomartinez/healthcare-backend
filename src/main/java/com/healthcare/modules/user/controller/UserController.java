@@ -1,5 +1,6 @@
 package com.healthcare.modules.user.controller;
 
+import com.healthcare.modules.user.dto.UpdateUserPasswordRequestDTO;
 import com.healthcare.shared.response.ApiResponse;
 import com.healthcare.shared.response.PageResponse;
 import com.healthcare.shared.response.ResponseHandler;
@@ -73,6 +74,17 @@ public class UserController {
                 HttpStatus.OK,
                 "User updated successfully",
                 userUpdate
+        );
+    }
+    @PutMapping("changePassword/{id}")
+    public ResponseEntity<ApiResponse<UserResponseDTO>> changePassword(@PathVariable UUID id , @Valid @RequestBody UpdateUserPasswordRequestDTO updateUserPasswordRequestDTO) {
+
+        this.userService.changePassword(id, updateUserPasswordRequestDTO);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                "User password update",
+                null
         );
     }
 

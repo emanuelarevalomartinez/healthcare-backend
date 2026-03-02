@@ -4,6 +4,7 @@ import com.healthcare.config.security.JwtGenerator;
 import com.healthcare.modules.auth.dto.LoginResponseDTO;
 import com.healthcare.modules.auth.dto.LoginUserDTO;
 import com.healthcare.modules.auth.service.RefreshTokenService;
+import com.healthcare.modules.user.dto.UpdateUserPasswordRequestDTO;
 import com.healthcare.shared.exceptions.ApplicationException;
 import com.healthcare.shared.exceptions.ErrorMessage;
 import com.healthcare.modules.auth.dto.RegisterUserDTO;
@@ -129,6 +130,7 @@ public class UserServiceImpl implements UserService {
             if (updateUserDTO.email() != null) {
                 findUser.setEmail(updateUserDTO.email());
             }
+            // hay que validar que el usuario coloque la password previa o eso seria un endpoint por aparte ?
 
             if (updateUserDTO.password() != null) {
                 findUser.setPasswordHash(passwordEncoder.encode(updateUserDTO.password()));
@@ -257,6 +259,38 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> {
                     return new ApplicationException(ErrorMessage.USER_NOT_FOUND_EMAIL, email);
                 });
+    }
+
+    @Override
+    public void changePassword(UUID userId, UpdateUserPasswordRequestDTO updateUserPasswordRequestDTO) {
+        try{
+            UserEntity user = this.findUserEntityById(userId);
+
+            if(updateUserPasswordRequestDTO.previousPassword().isEmpty() || updateUserPasswordRequestDTO.newPassword().isEmpty()){
+                throw new ApplicationException(
+                        ErrorMessage.INVALID_PASSWORD_CHANGE_REQUEST, ""
+                );
+            }
+
+            boolean passwordMatch = passwordEncoder.matches(
+                    updateUserPasswordRequestDTO.previousPassword(),
+                    user.getPasswordHash()
+            );
+
+            if (!passwordMatch) {
+                throw new ApplicationException(
+                        ErrorMessage.INVALID_CHANGE_PASSWORD, updateUserPasswordRequestDTO.previousPassword()
+                );
+            }
+
+            user.setPasswordHash(passwordEncoder.encode(updateUserPasswordRequestDTO.newPassword()));
+            this.userRepository.save(user);
+
+        } catch (ApplicationException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new ApplicationException(ex);
+        }
     }
 
 

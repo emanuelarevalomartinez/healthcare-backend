@@ -11,6 +11,8 @@ public enum ErrorMessage {
     USER_NOT_FOUND_USERNAME(404, "USER_NOT_FOUND", "Usuario con username no encontrado"),
 
     INVALID_CREDENTIALS(401, "AUTH_FAILED", "Credenciales inválidas"),
+    INVALID_CHANGE_PASSWORD(400, "INVALID_PREVIOUS_PASSWORD", "La contraseña actual no coincide con la que intenta introducir"),
+    INVALID_PASSWORD_CHANGE_REQUEST(400, "INVALID_PASSWORD_CHANGE", "La solicitud de cambio de contraseña es inválida"),
     USER_INACTIVE(403, "USER_INACTIVE", "El usuario no está activado"),
 
     JWT_EXPIRED(401, "JWT_EXPIRED", "La sesión ha expirado"),
