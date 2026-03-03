@@ -1,7 +1,7 @@
 package com.healthcare.modules.patient.controller;
 
+import com.healthcare.modules.patient.dto.FindPatientsByArguments;
 import com.healthcare.modules.patient.dto.UpdatePatientDTO;
-import com.healthcare.modules.user.dto.UserResponseDTO;
 import com.healthcare.shared.response.ApiResponse;
 import com.healthcare.shared.response.PageResponse;
 import com.healthcare.shared.response.ResponseHandler;
@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -50,6 +49,22 @@ public class PatientController {
                 HttpStatus.OK,
                 null,
                 patients
+        );
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<PageResponse<PatientResponseDTO>>> findPatientsByArguments(
+            FindPatientsByArguments findPatientsByArguments,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+
+        PageResponse<PatientResponseDTO> patientsFiltered = patientService.findPatientsByArguments(findPatientsByArguments, page, size);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                null,
+                patientsFiltered
         );
     }
 

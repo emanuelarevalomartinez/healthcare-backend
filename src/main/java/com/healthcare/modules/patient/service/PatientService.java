@@ -1,12 +1,10 @@
 package com.healthcare.modules.patient.service;
 
 import com.healthcare.modules.patient.dto.CreatePatientDTO;
+import com.healthcare.modules.patient.dto.FindPatientsByArguments;
 import com.healthcare.modules.patient.dto.PatientResponseDTO;
 import com.healthcare.modules.patient.dto.UpdatePatientDTO;
 import com.healthcare.modules.patient.entity.PatientEntity;
-import com.healthcare.modules.user.dto.UpdateUserDTO;
-import com.healthcare.modules.user.dto.UserResponseDTO;
-import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.shared.response.PageResponse;
 import org.springframework.stereotype.Repository;
 
@@ -23,4 +21,5 @@ public interface PatientService {
     UserResponseDTO findUserByEmail(String email);*/
     void deletePatient(UUID id);
     PatientEntity findPatientEntityById(UUID id);
+    PageResponse<PatientResponseDTO> findPatientsByArguments(FindPatientsByArguments findPatientByArguments, int page, int size);
 }

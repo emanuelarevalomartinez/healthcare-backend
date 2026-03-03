@@ -17,4 +17,7 @@ public interface PatientRepository extends JpaRepository<PatientEntity, UUID> {
     @Query("SELECT p FROM PatientEntity p")
     Page<PatientEntity> findAllPatientsPaged(Pageable pageable);
 
+    @Query("SELECT p FROM PatientEntity p")
+    Page<PatientEntity> findAllPatientsByArguments(Pageable pageable);
+
 }

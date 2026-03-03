@@ -1,5 +1,6 @@
 package com.healthcare.modules.patient.service;
 
+import com.healthcare.modules.patient.dto.FindPatientsByArguments;
 import com.healthcare.shared.exceptions.ApplicationException;
 import com.healthcare.shared.exceptions.ErrorMessage;
 import com.healthcare.modules.patient.dto.CreatePatientDTO;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class PatientServiceImpl implements PatientService {
@@ -190,6 +190,11 @@ public class PatientServiceImpl implements PatientService {
                 .orElseThrow(() -> {
                     return new ApplicationException(ErrorMessage.PATIENT_NOT_FOUND_ID, id);
                 });
+    }
+
+    @Override
+    public PageResponse<PatientResponseDTO> findPatientsByArguments(FindPatientsByArguments findPatientByArguments, int page, int size) {
+        return null;
     }
 
 
