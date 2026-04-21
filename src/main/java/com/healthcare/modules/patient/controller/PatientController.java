@@ -1,7 +1,8 @@
 package com.healthcare.modules.patient.controller;
 
-import com.healthcare.modules.patient.dto.FindPatientsByArguments;
 import com.healthcare.modules.patient.dto.UpdatePatientDTO;
+import com.healthcare.modules.patient.enums.DocumentType;
+import com.healthcare.modules.patient.enums.Sex;
 import com.healthcare.shared.response.ApiResponse;
 import com.healthcare.shared.response.PageResponse;
 import com.healthcare.shared.response.ResponseHandler;
@@ -52,14 +53,16 @@ public class PatientController {
         );
     }
 
-    @GetMapping
+    @GetMapping("filter")
     public ResponseEntity<ApiResponse<PageResponse<PatientResponseDTO>>> findPatientsByArguments(
-            FindPatientsByArguments findPatientsByArguments,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Sex sex,
+            @RequestParam(required = false) DocumentType documentType,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
 
-        PageResponse<PatientResponseDTO> patientsFiltered = patientService.findPatientsByArguments(findPatientsByArguments, page, size);
+        PageResponse<PatientResponseDTO> patientsFiltered = patientService.findPatientsByArguments(search, sex, documentType, page, size);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,

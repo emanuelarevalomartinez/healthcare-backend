@@ -1,6 +1,7 @@
 package com.healthcare.modules.patient.service;
 
-import com.healthcare.modules.patient.dto.FindPatientsByArguments;
+import com.healthcare.modules.patient.enums.DocumentType;
+import com.healthcare.modules.patient.enums.Sex;
 import com.healthcare.shared.exceptions.ApplicationException;
 import com.healthcare.shared.exceptions.ErrorMessage;
 import com.healthcare.modules.patient.dto.CreatePatientDTO;
@@ -16,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -193,7 +193,8 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public PageResponse<PatientResponseDTO> findPatientsByArguments(FindPatientsByArguments findPatientByArguments, int page, int size) {
+    public PageResponse<PatientResponseDTO> findPatientsByArguments(String search, Sex sex, DocumentType documentType, int page, int size) {
+
         return null;
     }
 

@@ -46,11 +46,11 @@ public class UserServiceImpl implements UserService {
         try{
 
             if (userRepository.findByUsername(registerUserDto.username()).isPresent()) {
-                throw new ApplicationException(ErrorMessage.USERNAME_CONFLICT, registerUserDto.username());
+                throw new ApplicationException(ErrorMessage.USERNAME_CONFLICT, "");
             }
 
             if (userRepository.findByEmail(registerUserDto.email()).isPresent()) {
-                throw new ApplicationException(ErrorMessage.EMAIL_CONFLICT,  registerUserDto.email());
+                throw new ApplicationException(ErrorMessage.EMAIL_CONFLICT, "");
             }
 
             UserEntity newUser = new UserEntity();
