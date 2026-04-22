@@ -38,14 +38,8 @@ public class AuthController {
 
         LoginResponseDTO user = authService.login(loginUserDTO);
 
-       /* String message = null;
-
-        if(user.token() == null){
-            message = "User is not active";
-        }*/
-
         return ResponseHandler.generateResponse(
-                HttpStatus.CREATED,
+                HttpStatus.OK,
                 null,
                 user
         );

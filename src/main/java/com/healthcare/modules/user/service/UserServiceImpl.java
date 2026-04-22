@@ -189,7 +189,7 @@ public class UserServiceImpl implements UserService {
         try{
 
             UserEntity findUserById = this.userRepository.findById(id)
-                    .orElseThrow( () -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_ID, id)
+                    .orElseThrow( () -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_ID, "")
             );
 
             return UserResponseDTO.fromEntity(findUserById);
@@ -206,7 +206,7 @@ public class UserServiceImpl implements UserService {
         try{
 
             UserEntity findUserByUsername = this.userRepository.findByUsername(username)
-                    .orElseThrow( () -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_USERNAME, username)
+                    .orElseThrow( () -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_USERNAME, "")
                     );
 
             return UserResponseDTO.fromEntity(findUserByUsername);
@@ -223,7 +223,7 @@ public class UserServiceImpl implements UserService {
         try{
 
             UserEntity findUserByEmail = this.userRepository.findByEmail(email)
-                    .orElseThrow( () -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_EMAIL, email)
+                    .orElseThrow( () -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_EMAIL, "")
                     );
 
             return UserResponseDTO.fromEntity(findUserByEmail);
