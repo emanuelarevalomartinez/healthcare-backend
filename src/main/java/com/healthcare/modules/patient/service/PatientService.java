@@ -7,11 +7,9 @@ import com.healthcare.modules.patient.entity.PatientEntity;
 import com.healthcare.modules.patient.enums.DocumentType;
 import com.healthcare.modules.patient.enums.Sex;
 import com.healthcare.shared.response.PageResponse;
-import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
-@Repository
 public interface PatientService {
     PatientResponseDTO createPatient(CreatePatientDTO createPatientDTO);
     PatientResponseDTO updatePatient(UUID id, UpdatePatientDTO updatePatientDTO);
