@@ -12,11 +12,15 @@ import com.healthcare.modules.patient.repository.PatientRepository;
 import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.modules.user.service.UserService;
 import com.healthcare.shared.response.PageResponse;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -33,14 +37,14 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public PatientResponseDTO createPatient(CreatePatientDTO createPatientDTO) {
 
-        try{
+        try {
 
             if (patientRepository.findByMedicalRecordNumber(createPatientDTO.medicalRecordNumber()).isPresent()) {
                 throw new ApplicationException(ErrorMessage.PATIENT_MRN_CONFLICT, createPatientDTO.medicalRecordNumber());
             }
 
             if (patientRepository.findByDocumentNumber(createPatientDTO.documentNumber()).isPresent()) {
-                throw new ApplicationException(ErrorMessage.PATIENT_DOCUMENT_CONFLICT,  createPatientDTO.documentNumber());
+                throw new ApplicationException(ErrorMessage.PATIENT_DOCUMENT_CONFLICT, createPatientDTO.documentNumber());
             }
 
             UserEntity user = userService.findUserEntityById(createPatientDTO.createdById());
@@ -61,9 +65,9 @@ public class PatientServiceImpl implements PatientService {
             PatientEntity saved = this.patientRepository.save(newPatient);
             return PatientResponseDTO.fromEntity(saved);
 
-        }  catch(ApplicationException ex){
+        } catch (ApplicationException ex) {
             throw ex;
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             throw new ApplicationException(ex);
         }
     }
@@ -118,9 +122,9 @@ public class PatientServiceImpl implements PatientService {
 
             return PatientResponseDTO.fromEntity(patientUpdated);
 
-        } catch(ApplicationException ex){
+        } catch (ApplicationException ex) {
             throw ex;
-        } catch(Exception ex){
+        } catch (Exception ex) {
             throw new ApplicationException(ex);
         }
     }
@@ -128,7 +132,7 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public PageResponse<PatientResponseDTO> findAllPatients(int page, int size) {
 
-        try{
+        try {
 
             Pageable pageable = PageRequest.of(page, size);
             Page<PatientEntity> result = this.patientRepository.findAllPatientsPaged(pageable);
@@ -144,26 +148,26 @@ public class PatientServiceImpl implements PatientService {
                     result.getTotalPages()
             );
 
-        } catch(ApplicationException ex){
+        } catch (ApplicationException ex) {
             throw ex;
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             throw new ApplicationException(ex);
         }
     }
 
     @Override
     public PatientResponseDTO findPatientById(UUID id) {
-        try{
+        try {
 
             PatientEntity findPatientById = this.patientRepository.findById(id)
-                    .orElseThrow( () -> new ApplicationException(ErrorMessage.PATIENT_NOT_FOUND_ID, id)
+                    .orElseThrow(() -> new ApplicationException(ErrorMessage.PATIENT_NOT_FOUND_ID, id)
                     );
 
             return PatientResponseDTO.fromEntity(findPatientById);
 
-        } catch(ApplicationException ex){
+        } catch (ApplicationException ex) {
             throw ex;
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             throw new ApplicationException(ex);
         }
     }
@@ -171,14 +175,14 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public void deletePatient(UUID id) {
 
-        try{
+        try {
 
             PatientEntity user = this.findPatientEntityById(id);
             patientRepository.deleteById(user.getId());
 
-        } catch(ApplicationException ex){
+        } catch (ApplicationException ex) {
             throw ex;
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             throw new ApplicationException(ex);
         }
     }
@@ -195,8 +199,42 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public PageResponse<PatientResponseDTO> findPatientsByArguments(String search, Sex sex, DocumentType documentType, int page, int size) {
 
-        return null;
-    }
+        Pageable pageable = PageRequest.of(page, size);
 
+        Specification<PatientEntity> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (search != null && !search.isEmpty()) {
+                String searchPattern = "%" + search.toLowerCase() + "%";
+                predicates.add(cb.or(
+                        cb.like(cb.lower(root.get("fullName")), searchPattern),
+                        cb.like(cb.lower(root.get("documentNumber")), searchPattern),
+                        cb.like(cb.lower(root.get("medicalRecordNumber")), searchPattern)
+                ));
+            }
+
+            if (sex != null) {
+                predicates.add(cb.equal(root.get("sex"), sex));
+            }
+            if (documentType != null) {
+                predicates.add(cb.equal(root.get("documentType"), documentType));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Page<PatientEntity> patientPage = patientRepository.findAll(spec, pageable);
+
+        List<PatientResponseDTO> content = patientPage.getContent().stream()
+                .map(PatientResponseDTO::fromEntity)
+                .toList();
+
+        return new PageResponse<>(
+                content,
+                patientPage.getNumber(),
+                patientPage.getSize(),
+                patientPage.getTotalElements(),
+                patientPage.getTotalPages()
+        );
+    }
 
 }
