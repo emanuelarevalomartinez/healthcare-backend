@@ -1,5 +1,6 @@
 package com.healthcare.modules.doctor.entity;
 
+import com.healthcare.modules.user.entity.UserEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -21,6 +22,13 @@ public class DoctorEntity {
     )
     private UUID id;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "user_id",
+            nullable = false
+    )
+    private UserEntity user;
+
     @Column(name = "specialty", nullable = false, length = 100)
     private String specialty;
 
@@ -29,9 +37,6 @@ public class DoctorEntity {
 
     @Column(name = "default_consultation_duration")
     private Integer defaultConsultationDuration;
-
-    @Column(name = "is_active")
-    private Boolean isActive;
 
     public DoctorEntity() {
     }
@@ -68,11 +73,11 @@ public class DoctorEntity {
         this.defaultConsultationDuration = defaultConsultationDuration;
     }
 
-    public Boolean getActive() {
-        return isActive;
+    public UserEntity getUser() {
+        return user;
     }
 
-    public void setActive(Boolean active) {
-        isActive = active;
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 }

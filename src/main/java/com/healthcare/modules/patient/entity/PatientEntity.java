@@ -38,6 +38,14 @@ public class PatientEntity {
     )
     private UUID id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "created_by",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_patient_created_by_user")
+    )
+    private UserEntity createdBy;
+
     @Column(name = "medical_record_number", nullable = false, unique = true, length = 50)
     private String medicalRecordNumber;
 
@@ -69,14 +77,6 @@ public class PatientEntity {
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "created_by",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "fk_patient_created_by_user")
-    )
-    private UserEntity createdBy;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

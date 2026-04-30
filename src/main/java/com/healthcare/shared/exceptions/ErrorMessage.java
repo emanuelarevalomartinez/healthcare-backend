@@ -31,7 +31,10 @@ public enum ErrorMessage {
     PATIENT_MRN_CONFLICT(409, "PATIENT_MRN_CONFLICT", "Historia clínica ya registrada"),
     PATIENT_DOCUMENT_CONFLICT(409, "PATIENT_DOCUMENT_CONFLICT", "Documento ya registrado"),
     REFRESH_TOKEN_INVALID(401, "REFRESH_TOKEN_INVALID", "Sesión inválida, por favor inicie sesión nuevamente"),
-    REFRESH_TOKEN_EXPIRED(401, "REFRESH_TOKEN_EXPIRED", "La sesión ha expirado, por favor inicie sesión nuevamente");
+    REFRESH_TOKEN_EXPIRED(401, "REFRESH_TOKEN_EXPIRED", "La sesión ha expirado, por favor inicie sesión nuevamente"),
+
+    USER_NOT_DOCTOR(403, "USER_NOT_DOCTOR", "El usuario no tiene el rol de DOCTOR. Solo los usuarios con rol DOCTOR pueden ser registrados como médicos."),
+    DOCTOR_ALREADY_EXISTS_FOR_USER(409, "DOCTOR_ALREADY_EXISTS", "El usuario ya tiene un perfil de doctor registrado. No se puede crear otro.");
 
 
     private final String message;
