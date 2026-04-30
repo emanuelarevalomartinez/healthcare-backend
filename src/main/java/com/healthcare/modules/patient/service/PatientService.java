@@ -15,8 +15,6 @@ public interface PatientService {
     PatientResponseDTO updatePatient(UUID id, UpdatePatientDTO updatePatientDTO);
     PageResponse<PatientResponseDTO> findAllPatients(int page, int size);
     PatientResponseDTO findPatientById(UUID id);
-   /* UserResponseDTO findUserByUsername(String username);
-    UserResponseDTO findUserByEmail(String email);*/
     void deletePatient(UUID id);
     PatientEntity findPatientEntityById(UUID id);
     PageResponse<PatientResponseDTO> findPatientsByArguments(String search, Sex sex, DocumentType documentType, int page, int size);

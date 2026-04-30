@@ -2,14 +2,18 @@ package com.healthcare.modules.doctor.service;
 
 import com.healthcare.modules.doctor.dto.CreateDoctorDTO;
 import com.healthcare.modules.doctor.dto.DoctorResposeDTO;
+import com.healthcare.modules.doctor.dto.UpdateDoctorDTO;
 import com.healthcare.modules.doctor.entity.DoctorEntity;
 import com.healthcare.modules.doctor.repository.DoctorRepository;
+import com.healthcare.modules.user.dto.UserResponseDTO;
 import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.modules.user.enums.UserRole;
 import com.healthcare.modules.user.service.UserService;
 import com.healthcare.shared.exceptions.ApplicationException;
 import com.healthcare.shared.exceptions.ErrorMessage;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class DoctorServiceImpl implements DoctorService {
@@ -52,12 +56,66 @@ public class DoctorServiceImpl implements DoctorService {
 
              this.doctorRepository.save(newDoctor);
 
-            return DoctorResposeDTO.fromEntity(newDoctor, userEntity);
+            return DoctorResposeDTO.fromEntity(newDoctor);
 
         } catch (ApplicationException ex) {
             throw ex;
         } catch (Exception ex) {
             throw new ApplicationException(ex);
         }
+    }
+
+    @Override
+    public DoctorResposeDTO updateDoctor(UUID id, UpdateDoctorDTO updateDoctorDTO) {
+        try {
+
+            DoctorEntity findDoctor = this.findDoctorEntityById(id);
+
+            if (updateDoctorDTO.specialty() != null) {
+                findDoctor.setSpecialty(updateDoctorDTO.specialty());
+            }
+
+            if (updateDoctorDTO.licenseNumber() != null) {
+                findDoctor.setLicenseNumber(updateDoctorDTO.licenseNumber());
+            }
+
+            if (updateDoctorDTO.defaultConsultationDuration() != null) {
+                findDoctor.setDefaultConsultationDuration(updateDoctorDTO.defaultConsultationDuration());
+            }
+
+            DoctorEntity doctorUpdated = this.doctorRepository.save(findDoctor);
+            return DoctorResposeDTO.fromEntity(doctorUpdated);
+
+        } catch(ApplicationException ex){
+            throw ex;
+        } catch(Exception ex){
+            throw new ApplicationException(ex);
+        }
+    }
+
+    @Override
+    public DoctorResposeDTO findDoctorById(UUID id) {
+        try{
+
+            DoctorEntity findDoctorById = this.doctorRepository.findById(id)
+                    .orElseThrow( () -> new ApplicationException(ErrorMessage.DOCTOR_NOT_FOUND_ID, "")
+                    );
+
+            return DoctorResposeDTO.fromEntity(findDoctorById);
+
+        } catch (ApplicationException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new ApplicationException(ex);
+        }
+    }
+
+    @Override
+    public DoctorEntity findDoctorEntityById(UUID id) {
+
+        return this.doctorRepository.findById(id)
+                .orElseThrow(() -> {
+                    return new ApplicationException(ErrorMessage.DOCTOR_NOT_FOUND_ID, id);
+                });
     }
 }

@@ -1,7 +1,6 @@
 package com.healthcare.modules.doctor.dto;
 
 import com.healthcare.modules.doctor.entity.DoctorEntity;
-import com.healthcare.modules.user.entity.UserEntity;
 
 import java.util.UUID;
 
@@ -12,7 +11,7 @@ public record DoctorResposeDTO(
         Integer defaultConsultationDuration
 
 ) {
-    public static DoctorResposeDTO fromEntity(DoctorEntity doctor, UserEntity userEntity) {
+    public static DoctorResposeDTO fromEntity(DoctorEntity doctor) {
 
         return new DoctorResposeDTO(
                 doctor.getId(),

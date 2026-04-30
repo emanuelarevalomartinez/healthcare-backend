@@ -10,6 +10,8 @@ public enum ErrorMessage {
     USER_NOT_FOUND_EMAIL(404, "USER_NOT_FOUND", "Usuario con email no encontrado"),
     USER_NOT_FOUND_USERNAME(404, "USER_NOT_FOUND", "Usuario con username no encontrado"),
 
+    DOCTOR_NOT_FOUND_ID(404, "DOCTOR_NOT_FOUND", "Doctor con id no encontrado"),
+
     INVALID_CREDENTIALS(401, "AUTH_FAILED", "Credenciales inválidas"),
     INVALID_CHANGE_PASSWORD(400, "INVALID_PREVIOUS_PASSWORD", "La contraseña actual no coincide con la que intenta introducir"),
     INVALID_PASSWORD_CHANGE_REQUEST(400, "INVALID_PASSWORD_CHANGE", "La solicitud de cambio de contraseña es inválida"),
