@@ -2,15 +2,14 @@ package com.healthcare.modules.user.service;
 
 import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.modules.user.repository.UserRepository;
+import com.healthcare.shared.providers.CustomUserDetails;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,13 +37,11 @@ public class UserDetailsServiceImpl implements UserDetailsService{
                 new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
         );
 
-        return new User(
+        return new CustomUserDetails(
+                user.getId(),
                 user.getEmail(),
                 user.getPasswordHash(),
                 user.isActive(),
-                true,
-                true,
-                true,
                 authorities
         );
     }

@@ -11,6 +11,10 @@ import com.healthcare.modules.user.enums.UserRole;
 import com.healthcare.modules.user.service.UserService;
 import com.healthcare.shared.exceptions.ApplicationException;
 import com.healthcare.shared.exceptions.ErrorMessage;
+import com.healthcare.shared.response.PageResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -94,6 +98,31 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    public PageResponse<DoctorResposeDTO> findAllDoctors(int page, int size) {
+        try{
+
+            Pageable pageable = PageRequest.of(page, size);
+            Page<DoctorEntity> result = doctorRepository.findAllDoctorsPaged(pageable);
+
+            return new PageResponse<>(
+                    result.getContent()
+                            .stream()
+                            .map(DoctorResposeDTO::fromEntity)
+                            .toList(),
+                    result.getNumber(),
+                    result.getSize(),
+                    result.getTotalElements(),
+                    result.getTotalPages()
+            );
+
+        } catch(ApplicationException ex){
+            throw ex;
+        } catch(Exception ex) {
+            throw new ApplicationException(ex);
+        }
+    }
+
+    @Override
     public DoctorResposeDTO findDoctorById(UUID id) {
         try{
 
@@ -117,5 +146,18 @@ public class DoctorServiceImpl implements DoctorService {
                 .orElseThrow(() -> {
                     return new ApplicationException(ErrorMessage.DOCTOR_NOT_FOUND_ID, id);
                 });
+    }
+
+    @Override
+    public void deleteDoctor(UUID id) {
+        try {
+            DoctorEntity doctor = this.findDoctorEntityById(id);
+            doctorRepository.deleteById(doctor.getId());
+
+        } catch (ApplicationException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new ApplicationException(ex);
+        }
     }
 }

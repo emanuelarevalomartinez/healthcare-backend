@@ -1,4 +1,5 @@
 
 
 // TODO
-// implementar todo el flujo del CRUD de los medicos
+//
+// corregir el hecho de que el paciente se crea con un id que el cliente debe propircionar y eso sin embanrgo debe propircionarlo el sistema

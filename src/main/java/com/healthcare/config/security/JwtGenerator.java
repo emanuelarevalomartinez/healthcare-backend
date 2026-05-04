@@ -18,6 +18,7 @@ import javax.crypto.SecretKey;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -112,12 +113,18 @@ public class JwtGenerator {
 
         return Jwts.builder()
                 .setSubject(user.getEmail())
+                .claim("userId", user.getId())
                 .claim("role", "ROLE_" + user.getRole().name())
                 .claim("type", "ACCESS")
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(getSigningKey())
                 .compact();
+    }
+
+    public UUID getUserIdFromJWT(String token) {
+        String userId = getClaimFromToken(token, claims -> claims.get("userId", String.class));
+        return UUID.fromString(userId);
     }
 
     public String generateRefreshToken(UserEntity user) {

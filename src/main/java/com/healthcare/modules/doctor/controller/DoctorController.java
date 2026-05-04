@@ -5,7 +5,9 @@ import com.healthcare.modules.doctor.dto.CreateDoctorDTO;
 import com.healthcare.modules.doctor.dto.DoctorResposeDTO;
 import com.healthcare.modules.doctor.dto.UpdateDoctorDTO;
 import com.healthcare.modules.doctor.service.DoctorService;
+import com.healthcare.modules.user.dto.UserResponseDTO;
 import com.healthcare.shared.response.ApiResponse;
+import com.healthcare.shared.response.PageResponse;
 import com.healthcare.shared.response.ResponseHandler;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -48,6 +50,21 @@ public class DoctorController {
         );
     }
 
+    @GetMapping
+    public ResponseEntity<ApiResponse<PageResponse<DoctorResposeDTO>>> findAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+
+        PageResponse<DoctorResposeDTO> doctors = doctorService.findAllDoctors(page, size);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                null,
+                doctors
+        );
+    }
+
     @PutMapping("{id}")
     public ResponseEntity<ApiResponse<DoctorResposeDTO>> updateUser(@PathVariable UUID id , @Valid @RequestBody UpdateDoctorDTO updateDoctorDTO) {
 
@@ -57,6 +74,18 @@ public class DoctorController {
                 HttpStatus.OK,
                 "Doctor updated successfully",
                 doctorUpdate
+        );
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<ApiResponse<Boolean>> deleteUserById(@PathVariable UUID id) {
+
+        this.doctorService.deleteDoctor(id);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                "Successfully delete doctor",
+                null
         );
     }
 
