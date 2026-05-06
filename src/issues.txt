@@ -3,3 +3,7 @@
 // TODO
 //
 // corregir el hecho de que el paciente se crea con un id que el cliente debe propircionar y eso sin embanrgo debe propircionarlo el sistema
+
+// crear metodo en el update de appointment para solo dejar actualizar segun el estado que posea el usuario y confirmed y attended no deberian venir del backend si no implementarlos en el backend
+
+// a�adir un endpoint de actualizar todos los campos de el appoitment sin tener en cuenta el hecho de el estado

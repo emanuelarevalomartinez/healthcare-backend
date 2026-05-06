@@ -11,6 +11,9 @@ public enum ErrorMessage {
     USER_NOT_FOUND_USERNAME(404, "USER_NOT_FOUND", "Usuario con username no encontrado"),
 
     DOCTOR_NOT_FOUND_ID(404, "DOCTOR_NOT_FOUND", "Doctor con id no encontrado"),
+    APPOINTMENT_NOT_FOUND_ID(404, "APPOINTMENT_NOT_FOUND_ID", "Cita con id no encontrado"),
+    APPOINTMENT_FINAL_STATUS(404,"APPOINTMENT_NOT_FOUND_ID", "Las citas en estado terminal no se pueden modificar."),
+    APPOINTMENT_INVALID_STATUS_TRANSITION(404, "APPOINTMENT_INVALID_STATUS_TRANSITION","Transición de estado de cita no válida"),
 
     INVALID_CREDENTIALS(401, "AUTH_FAILED", "Credenciales inválidas"),
     INVALID_CHANGE_PASSWORD(400, "INVALID_PREVIOUS_PASSWORD", "La contraseña actual no coincide con la que intenta introducir"),

@@ -51,7 +51,7 @@ public class DoctorController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<DoctorResposeDTO>>> findAllUsers(
+    public ResponseEntity<ApiResponse<PageResponse<DoctorResposeDTO>>> findAllDoctors(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
@@ -66,7 +66,7 @@ public class DoctorController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse<DoctorResposeDTO>> updateUser(@PathVariable UUID id , @Valid @RequestBody UpdateDoctorDTO updateDoctorDTO) {
+    public ResponseEntity<ApiResponse<DoctorResposeDTO>> updateDoctor(@PathVariable UUID id , @Valid @RequestBody UpdateDoctorDTO updateDoctorDTO) {
 
         DoctorResposeDTO doctorUpdate = this.doctorService.updateDoctor(id, updateDoctorDTO);
 
@@ -78,7 +78,7 @@ public class DoctorController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<ApiResponse<Boolean>> deleteUserById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Boolean>> deleteDoctorById(@PathVariable UUID id) {
 
         this.doctorService.deleteDoctor(id);
 
