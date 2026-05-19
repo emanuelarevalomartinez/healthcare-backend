@@ -7,3 +7,5 @@
 // crear metodo en el update de appointment para solo dejar actualizar segun el estado que posea el usuario y confirmed y attended no deberian venir del backend si no implementarlos en el backend
 
 // a�adir un endpoint de actualizar todos los campos de el appoitment sin tener en cuenta el hecho de el estado
+
+// el modulo e reminder realmente n ose crea mediante endpoint si no de forma interna automatica dentro de la api
