@@ -1,7 +1,117 @@
 package com.healthcare.modules.consultation.service;
 
+import com.healthcare.modules.appointment.entity.AppointmentEntity;
+import com.healthcare.modules.appointment.service.AppointmentService;
+import com.healthcare.modules.consultation.dto.ConsultationResponseDTO;
+import com.healthcare.modules.consultation.dto.CreateConsultationDTO;
+import com.healthcare.modules.consultation.dto.UpdateConsultationDTO;
+import com.healthcare.modules.consultation.entity.ConsultationEntity;
+import com.healthcare.modules.consultation.repository.ConsultationRepository;
+import com.healthcare.modules.doctor.dto.DoctorResponseDTO;
+import com.healthcare.modules.doctor.entity.DoctorEntity;
+import com.healthcare.modules.doctor.service.DoctorService;
+import com.healthcare.shared.exceptions.ApplicationException;
+import com.healthcare.shared.exceptions.ErrorMessage;
+import com.healthcare.shared.response.PageResponse;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 @Service
-public class ConsultationServiceImpl implements ConsultationService{
+public class ConsultationServiceImpl implements ConsultationService {
+
+    private final DoctorService doctorService;
+    private final AppointmentService appointmentService;
+    private final ConsultationRepository consultationRepository;
+
+    public ConsultationServiceImpl(DoctorService doctorService, AppointmentService appointmentService, ConsultationRepository consultationRepository) {
+        this.doctorService = doctorService;
+        this.appointmentService = appointmentService;
+        this.consultationRepository = consultationRepository;
+    }
+
+    @Override
+    public ConsultationResponseDTO createConsultation(CreateConsultationDTO createConsultationDTO) {
+        try {
+
+            if (consultationRepository.existsByAppointmentId(createConsultationDTO.appointmentId())) {
+                throw new ApplicationException(ErrorMessage.CONSULTATION_ALREADY_EXISTS_FOR_APPOINTMENT, "");
+            }
+
+            DoctorEntity doctorEntity = this.doctorService.findDoctorEntityById(createConsultationDTO.createdByDoctor());
+            AppointmentEntity appointmentEntity = this.appointmentService.findAppointmentEntityById(createConsultationDTO.appointmentId());
+
+            ConsultationEntity newConsultation = new ConsultationEntity();
+            newConsultation.setAppointment(appointmentEntity);
+            newConsultation.setSymptoms(createConsultationDTO.symptoms());
+            newConsultation.setDiagnosis(createConsultationDTO.diagnosis());
+            newConsultation.setTreatment(createConsultationDTO.treatment());
+            newConsultation.setPrescription(createConsultationDTO.prescription());
+            newConsultation.setObservations(createConsultationDTO.observations());
+            newConsultation.setConsultationDate(createConsultationDTO.consultationDate());
+            newConsultation.setNextReview(createConsultationDTO.nextReview());
+            newConsultation.setCreatedByDoctor(doctorEntity);
+            newConsultation.setRegistrationDate(LocalDateTime.now());
+
+            this.consultationRepository.save(newConsultation);
+
+            return ConsultationResponseDTO.fromEntity(newConsultation);
+
+        } catch (ApplicationException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new ApplicationException(ex);
+        }
+    }
+
+    @Override
+    public ConsultationResponseDTO updateConsultation(UUID id, UpdateConsultationDTO updateConsultationDTO) {
+        // TODO implementar esto
+        return null;
+    }
+
+    @Override
+    public PageResponse<ConsultationResponseDTO> findAllConsultations(int page, int size) {
+        // TODO implementar esto tambien
+        return null;
+    }
+
+    @Override
+    public ConsultationResponseDTO findConsultationById(UUID id) {
+        try{
+
+            ConsultationEntity findConsultationById = this.consultationRepository.findById(id)
+                    .orElseThrow( () -> new ApplicationException(ErrorMessage.CONSULTATION_NOT_FOUND_ID, "")
+                    );
+
+            return ConsultationResponseDTO.fromEntity(findConsultationById);
+
+        } catch (ApplicationException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new ApplicationException(ex);
+        }
+    }
+
+    @Override
+    public ConsultationEntity findConsultationEntityById(UUID id) {
+        return this.consultationRepository.findById(id)
+                .orElseThrow(() -> {
+                    return new ApplicationException(ErrorMessage.CONSULTATION_NOT_FOUND_ID, id);
+                });
+    }
+
+    @Override
+    public void deleteConsultation(UUID id) {
+        try {
+            ConsultationEntity consultation = this.findConsultationEntityById(id);
+            consultationRepository.deleteById(consultation.getId());
+
+        } catch (ApplicationException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new ApplicationException(ex);
+        }
+    }
 }

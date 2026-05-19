@@ -2,10 +2,9 @@ package com.healthcare.modules.doctor.controller;
 
 
 import com.healthcare.modules.doctor.dto.CreateDoctorDTO;
-import com.healthcare.modules.doctor.dto.DoctorResposeDTO;
+import com.healthcare.modules.doctor.dto.DoctorResponseDTO;
 import com.healthcare.modules.doctor.dto.UpdateDoctorDTO;
 import com.healthcare.modules.doctor.service.DoctorService;
-import com.healthcare.modules.user.dto.UserResponseDTO;
 import com.healthcare.shared.response.ApiResponse;
 import com.healthcare.shared.response.PageResponse;
 import com.healthcare.shared.response.ResponseHandler;
@@ -27,9 +26,9 @@ public class DoctorController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<DoctorResposeDTO>> createPatient(@Valid @RequestBody CreateDoctorDTO createDoctorDTO) {
+    public ResponseEntity<ApiResponse<DoctorResponseDTO>> createPatient(@Valid @RequestBody CreateDoctorDTO createDoctorDTO) {
 
-        DoctorResposeDTO doctor = doctorService.createDoctor(createDoctorDTO);
+        DoctorResponseDTO doctor = doctorService.createDoctor(createDoctorDTO);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.CREATED,
@@ -39,9 +38,9 @@ public class DoctorController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ApiResponse<DoctorResposeDTO>> findDoctorById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<DoctorResponseDTO>> findDoctorById(@PathVariable UUID id) {
 
-        DoctorResposeDTO doctor = this.doctorService.findDoctorById(id);
+        DoctorResponseDTO doctor = this.doctorService.findDoctorById(id);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
@@ -51,12 +50,12 @@ public class DoctorController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<DoctorResposeDTO>>> findAllDoctors(
+    public ResponseEntity<ApiResponse<PageResponse<DoctorResponseDTO>>> findAllDoctors(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
 
-        PageResponse<DoctorResposeDTO> doctors = doctorService.findAllDoctors(page, size);
+        PageResponse<DoctorResponseDTO> doctors = doctorService.findAllDoctors(page, size);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
@@ -66,9 +65,9 @@ public class DoctorController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse<DoctorResposeDTO>> updateDoctor(@PathVariable UUID id , @Valid @RequestBody UpdateDoctorDTO updateDoctorDTO) {
+    public ResponseEntity<ApiResponse<DoctorResponseDTO>> updateDoctor(@PathVariable UUID id , @Valid @RequestBody UpdateDoctorDTO updateDoctorDTO) {
 
-        DoctorResposeDTO doctorUpdate = this.doctorService.updateDoctor(id, updateDoctorDTO);
+        DoctorResponseDTO doctorUpdate = this.doctorService.updateDoctor(id, updateDoctorDTO);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,

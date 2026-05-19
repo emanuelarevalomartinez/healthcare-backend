@@ -9,4 +9,6 @@ import java.util.UUID;
 @Repository
 public interface ConsultationRepository extends JpaRepository<ConsultationEntity, UUID> {
 
+    boolean existsByAppointmentId(UUID appointmentId);
+
 }

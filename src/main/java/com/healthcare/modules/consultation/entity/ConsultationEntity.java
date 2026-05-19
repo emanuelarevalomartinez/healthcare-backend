@@ -55,10 +55,10 @@ public class ConsultationEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
-            name = "created_by",
+            name = "created_by_doctor",
             nullable = false
     )
-    private DoctorEntity createdBy;
+    private DoctorEntity createdByDoctor;
 
     @Column(name = "registration_date", nullable = false, updatable = false)
     private LocalDateTime registrationDate;
@@ -138,12 +138,12 @@ public class ConsultationEntity {
         this.nextReview = nextReview;
     }
 
-    public DoctorEntity getCreatedBy() {
-        return createdBy;
+    public DoctorEntity getCreatedByDoctor() {
+        return createdByDoctor;
     }
 
-    public void setCreatedBy(DoctorEntity createdBy) {
-        this.createdBy = createdBy;
+    public void setCreatedByDoctor(DoctorEntity createdByDoctor) {
+        this.createdByDoctor = createdByDoctor;
     }
 
     public LocalDateTime getRegistrationDate() {

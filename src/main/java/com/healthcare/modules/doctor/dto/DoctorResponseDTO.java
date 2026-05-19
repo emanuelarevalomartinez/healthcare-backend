@@ -4,16 +4,16 @@ import com.healthcare.modules.doctor.entity.DoctorEntity;
 
 import java.util.UUID;
 
-public record DoctorResposeDTO(
+public record DoctorResponseDTO(
         UUID id,
         String specialty,
         String licenseNumber,
         Integer defaultConsultationDuration
 
 ) {
-    public static DoctorResposeDTO fromEntity(DoctorEntity doctor) {
+    public static DoctorResponseDTO fromEntity(DoctorEntity doctor) {
 
-        return new DoctorResposeDTO(
+        return new DoctorResponseDTO(
                 doctor.getId(),
                 doctor.getSpecialty(),
                 doctor.getLicenseNumber(),

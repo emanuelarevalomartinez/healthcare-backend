@@ -1,11 +1,10 @@
 package com.healthcare.modules.doctor.service;
 
 import com.healthcare.modules.doctor.dto.CreateDoctorDTO;
-import com.healthcare.modules.doctor.dto.DoctorResposeDTO;
+import com.healthcare.modules.doctor.dto.DoctorResponseDTO;
 import com.healthcare.modules.doctor.dto.UpdateDoctorDTO;
 import com.healthcare.modules.doctor.entity.DoctorEntity;
 import com.healthcare.modules.doctor.repository.DoctorRepository;
-import com.healthcare.modules.user.dto.UserResponseDTO;
 import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.modules.user.enums.UserRole;
 import com.healthcare.modules.user.service.UserService;
@@ -31,7 +30,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public DoctorResposeDTO createDoctor(CreateDoctorDTO createDoctorDTO) {
+    public DoctorResponseDTO createDoctor(CreateDoctorDTO createDoctorDTO) {
         try {
 
             if (doctorRepository.existsByUserId(createDoctorDTO.userId())) {
@@ -60,7 +59,7 @@ public class DoctorServiceImpl implements DoctorService {
 
              this.doctorRepository.save(newDoctor);
 
-            return DoctorResposeDTO.fromEntity(newDoctor);
+            return DoctorResponseDTO.fromEntity(newDoctor);
 
         } catch (ApplicationException ex) {
             throw ex;
@@ -70,7 +69,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public DoctorResposeDTO updateDoctor(UUID id, UpdateDoctorDTO updateDoctorDTO) {
+    public DoctorResponseDTO updateDoctor(UUID id, UpdateDoctorDTO updateDoctorDTO) {
         try {
 
             DoctorEntity findDoctor = this.findDoctorEntityById(id);
@@ -88,7 +87,7 @@ public class DoctorServiceImpl implements DoctorService {
             }
 
             DoctorEntity doctorUpdated = this.doctorRepository.save(findDoctor);
-            return DoctorResposeDTO.fromEntity(doctorUpdated);
+            return DoctorResponseDTO.fromEntity(doctorUpdated);
 
         } catch(ApplicationException ex){
             throw ex;
@@ -98,7 +97,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public PageResponse<DoctorResposeDTO> findAllDoctors(int page, int size) {
+    public PageResponse<DoctorResponseDTO> findAllDoctors(int page, int size) {
         try{
 
             Pageable pageable = PageRequest.of(page, size);
@@ -107,7 +106,7 @@ public class DoctorServiceImpl implements DoctorService {
             return new PageResponse<>(
                     result.getContent()
                             .stream()
-                            .map(DoctorResposeDTO::fromEntity)
+                            .map(DoctorResponseDTO::fromEntity)
                             .toList(),
                     result.getNumber(),
                     result.getSize(),
@@ -123,14 +122,14 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public DoctorResposeDTO findDoctorById(UUID id) {
+    public DoctorResponseDTO findDoctorById(UUID id) {
         try{
 
             DoctorEntity findDoctorById = this.doctorRepository.findById(id)
                     .orElseThrow( () -> new ApplicationException(ErrorMessage.DOCTOR_NOT_FOUND_ID, "")
                     );
 
-            return DoctorResposeDTO.fromEntity(findDoctorById);
+            return DoctorResponseDTO.fromEntity(findDoctorById);
 
         } catch (ApplicationException ex) {
             throw ex;

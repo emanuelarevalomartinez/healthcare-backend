@@ -12,6 +12,8 @@ public enum ErrorMessage {
 
     DOCTOR_NOT_FOUND_ID(404, "DOCTOR_NOT_FOUND", "Doctor con id no encontrado"),
     APPOINTMENT_NOT_FOUND_ID(404, "APPOINTMENT_NOT_FOUND_ID", "Cita con id no encontrado"),
+    CONSULTATION_NOT_FOUND_ID(404, "CONSULTATION_NOT_FOUND_ID", "Consulta con id no encontrado"),
+
     APPOINTMENT_FINAL_STATUS(404,"APPOINTMENT_NOT_FOUND_ID", "Las citas en estado terminal no se pueden modificar."),
     APPOINTMENT_INVALID_STATUS_TRANSITION(404, "APPOINTMENT_INVALID_STATUS_TRANSITION","Transición de estado de cita no válida"),
 
@@ -27,6 +29,8 @@ public enum ErrorMessage {
     JWT_EMPTY(401, "JWT_MISSING", "No se proporcionó token"),
     JWT_INVALID_TYPE(401, "JWT_INVALID_TYPE", "Tipo de token inválido"),
     JWT_ACCESS_REQUIRED(401, "JWT_ACCESS_REQUIRED", "Se requiere un access token"),
+
+    CONSULTATION_ALREADY_EXISTS_FOR_APPOINTMENT(409, "CONSULTATION_ALREADY_EXISTS", "Ya existe una consulta para esta cita"),
 
     UNAUTHORIZED(401, "UNAUTHORIZED", "Acceso no autorizado"),
 
