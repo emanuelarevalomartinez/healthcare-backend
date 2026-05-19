@@ -26,7 +26,7 @@ public class DoctorController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<DoctorResponseDTO>> createPatient(@Valid @RequestBody CreateDoctorDTO createDoctorDTO) {
+    public ResponseEntity<ApiResponse<DoctorResponseDTO>> createDoctor(@Valid @RequestBody CreateDoctorDTO createDoctorDTO) {
 
         DoctorResponseDTO doctor = doctorService.createDoctor(createDoctorDTO);
 

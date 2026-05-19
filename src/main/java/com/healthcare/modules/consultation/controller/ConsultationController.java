@@ -3,8 +3,10 @@ package com.healthcare.modules.consultation.controller;
 
 import com.healthcare.modules.consultation.dto.ConsultationResponseDTO;
 import com.healthcare.modules.consultation.dto.CreateConsultationDTO;
+import com.healthcare.modules.consultation.dto.UpdateConsultationDTO;
 import com.healthcare.modules.consultation.service.ConsultationService;
 import com.healthcare.shared.response.ApiResponse;
+import com.healthcare.shared.response.PageResponse;
 import com.healthcare.shared.response.ResponseHandler;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -24,7 +26,7 @@ public class ConsultationController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ConsultationResponseDTO>> createPatient(@Valid @RequestBody CreateConsultationDTO createConsultationDTO) {
+    public ResponseEntity<ApiResponse<ConsultationResponseDTO>> createConsultation(@Valid @RequestBody CreateConsultationDTO createConsultationDTO) {
 
         ConsultationResponseDTO consultation = consultationService.createConsultation(createConsultationDTO);
 
@@ -47,32 +49,32 @@ public class ConsultationController {
         );
     }
 
- /*   @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<DoctorResponseDTO>>> findAllDoctors(
+    @GetMapping
+    public ResponseEntity<ApiResponse<PageResponse<ConsultationResponseDTO>>> findAllConsultations(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
 
-        PageResponse<DoctorResponseDTO> doctors = doctorService.findAllDoctors(page, size);
+        PageResponse<ConsultationResponseDTO> consultations = consultationService.findAllConsultations(page, size);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
                 null,
-                doctors
+                consultations
         );
-    }*/
+    }
 
- /*   @PutMapping("{id}")
-    public ResponseEntity<ApiResponse<DoctorResponseDTO>> updateDoctor(@PathVariable UUID id , @Valid @RequestBody UpdateDoctorDTO updateDoctorDTO) {
+    @PutMapping("{id}")
+    public ResponseEntity<ApiResponse<ConsultationResponseDTO>> updateConsultation(@PathVariable UUID id , @Valid @RequestBody UpdateConsultationDTO updateConsultationDTO) {
 
-        DoctorResponseDTO doctorUpdate = this.doctorService.updateDoctor(id, updateDoctorDTO);
+        ConsultationResponseDTO consultationUpdate = this.consultationService.updateConsultation(id, updateConsultationDTO);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
-                "Doctor updated successfully",
-                doctorUpdate
+                "Consultation updated successfully",
+                consultationUpdate
         );
-    }*/
+    }
 
     @DeleteMapping("{id}")
     public ResponseEntity<ApiResponse<Boolean>> deleteConsultationById(@PathVariable UUID id) {

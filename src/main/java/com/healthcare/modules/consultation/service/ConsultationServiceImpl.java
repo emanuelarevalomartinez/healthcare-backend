@@ -13,6 +13,9 @@ import com.healthcare.modules.doctor.service.DoctorService;
 import com.healthcare.shared.exceptions.ApplicationException;
 import com.healthcare.shared.exceptions.ErrorMessage;
 import com.healthcare.shared.response.PageResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -67,14 +70,66 @@ public class ConsultationServiceImpl implements ConsultationService {
 
     @Override
     public ConsultationResponseDTO updateConsultation(UUID id, UpdateConsultationDTO updateConsultationDTO) {
-        // TODO implementar esto
-        return null;
+        try {
+
+            ConsultationEntity findConsultation = this.findConsultationEntityById(id);
+
+            if (updateConsultationDTO.symptoms() != null) {
+                findConsultation.setSymptoms(updateConsultationDTO.symptoms());
+            }
+            if (updateConsultationDTO.diagnosis() != null) {
+                findConsultation.setDiagnosis(updateConsultationDTO.diagnosis());
+            }
+            if (updateConsultationDTO.treatment() != null) {
+                findConsultation.setTreatment(updateConsultationDTO.treatment());
+            }
+            if (updateConsultationDTO.prescription() != null) {
+                findConsultation.setPrescription(updateConsultationDTO.prescription());
+            }
+            if (updateConsultationDTO.observations() != null) {
+                findConsultation.setObservations(updateConsultationDTO.observations());
+            }
+            if (updateConsultationDTO.consultationDate() != null) {
+                findConsultation.setConsultationDate(updateConsultationDTO.consultationDate());
+            }
+            if (updateConsultationDTO.nextReview() != null) {
+                findConsultation.setNextReview(updateConsultationDTO.nextReview());
+            }
+
+            ConsultationEntity consultationUpdated = this.consultationRepository.save(findConsultation);
+
+            return ConsultationResponseDTO.fromEntity(consultationUpdated);
+
+        } catch(ApplicationException ex){
+            throw ex;
+        } catch(Exception ex){
+            throw new ApplicationException(ex);
+        }
     }
 
     @Override
     public PageResponse<ConsultationResponseDTO> findAllConsultations(int page, int size) {
-        // TODO implementar esto tambien
-        return null;
+        try{
+
+            Pageable pageable = PageRequest.of(page, size);
+            Page<ConsultationEntity> result = consultationRepository.findAllConsultationsPaged(pageable);
+
+            return new PageResponse<>(
+                    result.getContent()
+                            .stream()
+                            .map(ConsultationResponseDTO::fromEntity)
+                            .toList(),
+                    result.getNumber(),
+                    result.getSize(),
+                    result.getTotalElements(),
+                    result.getTotalPages()
+            );
+
+        } catch(ApplicationException ex){
+            throw ex;
+        } catch(Exception ex) {
+            throw new ApplicationException(ex);
+        }
     }
 
     @Override
