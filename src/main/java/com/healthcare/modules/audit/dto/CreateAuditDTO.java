@@ -23,9 +23,13 @@ public record CreateAuditDTO(
         @Size(max = 100, message = "El ID del registro no puede exceder 100 caracteres")
         String recordId,
 
+        @NotNull(message = "El valor antiguo es obligatorio")
+        @NotBlank(message = "El valor antiguo no puede estar vacío")
         @Size(max = 5000, message = "El valor antiguo no puede exceder 5000 caracteres")
         String oldValue,
 
+        @NotNull(message = "El valor nuevo es obligatorio")
+        @NotBlank(message = "El valor nuevo no puede estar vacío")
         @Size(max = 5000, message = "El valor nuevo no puede exceder 5000 caracteres")
         String newValue
 
