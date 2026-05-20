@@ -61,17 +61,17 @@ public class AuditEntity {
     @Column(name = "action", nullable = false, length = 50)
     private AuditAction action;
 
-    @Column(name = "affected_table", length = 200)
+    @Column(name = "affected_table", nullable = false, length = 200)
     private String affectedTable;
 
-    @Column(name = "record_id", length = 100)
+    @Column(name = "record_id", nullable = false, length = 100)
     private String recordId;
 
     @Column(name = "old_value", columnDefinition = "JSONB")
     @JdbcTypeCode(SqlTypes.JSON)
     private String oldValue;
 
-    @Column(name = "new_value", columnDefinition = "JSONB")
+    @Column(name = "new_value", nullable = false, columnDefinition = "JSONB")
     @JdbcTypeCode(SqlTypes.JSON)
     private String newValue;
 
@@ -79,7 +79,6 @@ public class AuditEntity {
     @Column(name = "timestamp", nullable = false, updatable = false)
     private LocalDateTime timestamp;
 
-    // Constructors
     public AuditEntity() {
     }
 

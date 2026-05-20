@@ -14,6 +14,7 @@ public enum ErrorMessage {
     APPOINTMENT_NOT_FOUND_ID(404, "APPOINTMENT_NOT_FOUND_ID", "Cita con id no encontrado"),
     CONSULTATION_NOT_FOUND_ID(404, "CONSULTATION_NOT_FOUND_ID", "Consulta con id no encontrado"),
     REMINDER_NOT_FOUND_ID(404, "REMINDER_NOT_FOUND_ID", "Recordatorio con id no encontrado"),
+    AUDIT_NOT_FOUND_ID(404, "AUDIT_NOT_FOUND_ID", "Auditoria con id no encontrado"),
 
     APPOINTMENT_FINAL_STATUS(404,"APPOINTMENT_NOT_FOUND_ID", "Las citas en estado terminal no se pueden modificar."),
     APPOINTMENT_INVALID_STATUS_TRANSITION(404, "APPOINTMENT_INVALID_STATUS_TRANSITION","Transición de estado de cita no válida"),

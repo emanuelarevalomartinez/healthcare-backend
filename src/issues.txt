@@ -9,3 +9,5 @@
 // a�adir un endpoint de actualizar todos los campos de el appoitment sin tener en cuenta el hecho de el estado
 
 // el modulo e reminder realmente n ose crea mediante endpoint si no de forma interna automatica dentro de la api
+
+// ver si la tabla de auditoria es actualizable o no
