@@ -21,7 +21,6 @@ import java.util.UUID;
                 @Index(name = "idx_audit_timestamp", columnList = "timestamp"),
                 @Index(name = "idx_audit_affected_table", columnList = "affected_table"),
                 @Index(name = "idx_audit_record_id", columnList = "record_id"),
-                @Index(name = "idx_audit_ip_address", columnList = "ip_address"),
                 // Composite indexes for frequent queries
                 @Index(name = "idx_audit_timestamp_user", columnList = "timestamp, user_id"),
                 @Index(name = "idx_audit_timestamp_action", columnList = "timestamp, action"),
@@ -33,8 +32,6 @@ import java.util.UUID;
                 // Indexes for specific entity auditing
                 @Index(name = "idx_audit_patient_audit", columnList = "affected_table, record_id, action"),
                 @Index(name = "idx_audit_appointment_audit", columnList = "affected_table, record_id, action"),
-                // Index for IP searches
-                @Index(name = "idx_audit_ip_timestamp", columnList = "ip_address, timestamp")
         }
 )
 public class AuditEntity {
