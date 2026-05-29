@@ -48,9 +48,6 @@ public record CreatePatientDTO(
         String address,
 
         @Size(max = 1000, message = "Las observaciones no pueden exceder 1000 caracteres")
-        String notes,
-
-        @NotNull(message = "El usuario creador es obligatorio")
-        UUID createdById
+        String notes
 
 ) { }

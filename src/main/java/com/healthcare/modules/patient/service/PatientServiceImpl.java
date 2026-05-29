@@ -11,12 +11,15 @@ import com.healthcare.modules.patient.entity.PatientEntity;
 import com.healthcare.modules.patient.repository.PatientRepository;
 import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.modules.user.service.UserService;
+import com.healthcare.shared.providers.CustomUserDetails;
 import com.healthcare.shared.response.PageResponse;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -47,7 +50,11 @@ public class PatientServiceImpl implements PatientService {
                 throw new ApplicationException(ErrorMessage.PATIENT_DOCUMENT_CONFLICT, createPatientDTO.documentNumber());
             }
 
-            UserEntity user = userService.findUserEntityById(createPatientDTO.createdById());
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomUserDetails userAuthenticatedDetails = (CustomUserDetails) authentication.getPrincipal();
+            UUID userId = userAuthenticatedDetails.getId();
+
+            UserEntity user = this.userService.findUserEntityById(userId);
 
             PatientEntity newPatient = new PatientEntity();
             newPatient.setMedicalRecordNumber(createPatientDTO.medicalRecordNumber());
