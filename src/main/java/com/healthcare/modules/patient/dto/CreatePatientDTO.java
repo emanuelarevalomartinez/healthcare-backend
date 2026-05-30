@@ -39,6 +39,7 @@ public record CreatePatientDTO(
         )
         String phone,
 
+        @NotBlank(message = "El email es obligatorio")
         @Email(message = "El email debe ser válido")
         @Size(max = 100, message = "El email no puede exceder 100 caracteres")
         String email,

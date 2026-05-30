@@ -69,7 +69,7 @@ public class PatientEntity {
     @Column(name = "phone", nullable = false, length = 30)
     private String phone;
 
-    @Column(name = "email", length = 100)
+    @Column(name = "email", nullable = false, length = 100)
     private String email;
 
     @Column(name = "address", nullable = false, length = 255)
