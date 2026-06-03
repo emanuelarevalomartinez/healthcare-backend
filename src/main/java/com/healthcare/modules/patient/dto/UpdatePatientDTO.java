@@ -3,6 +3,7 @@ package com.healthcare.modules.patient.dto;
 import com.healthcare.modules.patient.enums.DocumentType;
 import com.healthcare.modules.patient.enums.Sex;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
@@ -20,11 +21,12 @@ public record UpdatePatientDTO(
         @Size(max = 50, message = "The document number must not exceed 50 characters")
         String documentNumber,
 
+        @Past(message = "La fecha de nacimiento debe ser una fecha pasada")
         LocalDate birthDate,
 
         Sex sex,
 
-        @Size(max = 20, message = "The phone number must not exceed 20 characters")
+        @Size(max = 30, message = "The phone number must not exceed 30 characters")
         String phone,
 
         @Email(message = "The email must be valid")
@@ -34,7 +36,7 @@ public record UpdatePatientDTO(
         @Size(max = 255, message = "The address must not exceed 255 characters")
         String address,
 
-        @Size(max = 500, message = "Notes must not exceed 500 characters")
+        @Size(max = 1000, message = "Notes must not exceed 1000 characters")
         String notes
 
 ) {
