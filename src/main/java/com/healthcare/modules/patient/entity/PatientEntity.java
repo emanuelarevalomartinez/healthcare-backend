@@ -42,6 +42,7 @@ public class PatientEntity {
     @JoinColumn(
             name = "created_by",
             nullable = false,
+            updatable = false,
             foreignKey = @ForeignKey(name = "fk_patient_created_by_user")
     )
     private UserEntity createdBy;
