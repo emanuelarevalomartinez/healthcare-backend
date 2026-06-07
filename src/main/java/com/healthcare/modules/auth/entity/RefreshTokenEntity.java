@@ -2,6 +2,8 @@ package com.healthcare.modules.auth.entity;
 
 import com.healthcare.modules.user.entity.UserEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -19,6 +21,8 @@ public class RefreshTokenEntity {
     private String tokenHash;
 
     @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private UserEntity user;
 
     @Column(nullable = false)

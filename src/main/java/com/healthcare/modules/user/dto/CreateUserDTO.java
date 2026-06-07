@@ -27,7 +27,10 @@ public record CreateUserDTO(
         String email,
 
         @NotNull(message = "El rol es obligatorio")
-        UserRole role
+        UserRole role,
+
+        @NotNull(message = "El estado activo es obligatorio")
+        Boolean isActive
 
 ) {
 }

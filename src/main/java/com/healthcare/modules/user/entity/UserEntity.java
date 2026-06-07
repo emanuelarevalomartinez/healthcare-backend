@@ -43,7 +43,7 @@ public class UserEntity {
     private UserRole role;
 
     @Column(name = "active", nullable = false)
-    private Boolean active = true;
+    private Boolean active = false;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

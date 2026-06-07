@@ -11,7 +11,7 @@ public record UserResponseDTO(
         String username,
         String email,
         UserRole role,
-        Boolean active,
+        Boolean isActive,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         LocalDateTime lastLogin

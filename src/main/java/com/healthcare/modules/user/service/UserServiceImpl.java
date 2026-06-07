@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService {
             newUser.setEmail(createUserDTO.email());
             newUser.setPasswordHash(passwordEncoder.encode(createUserDTO.password()));
             newUser.setRole(createUserDTO.role());
-            newUser.setActive(true);
+            newUser.setActive(createUserDTO.isActive());
 
             UserEntity userSaved = this.userRepository.save(newUser);
             return UserResponseDTO.fromEntity(userSaved);
