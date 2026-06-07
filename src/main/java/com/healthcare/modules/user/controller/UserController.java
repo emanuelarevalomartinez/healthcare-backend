@@ -1,12 +1,9 @@
 package com.healthcare.modules.user.controller;
 
-import com.healthcare.modules.user.dto.UpdateUserIsActiveRequestDTO;
-import com.healthcare.modules.user.dto.UpdateUserPasswordRequestDTO;
+import com.healthcare.modules.user.dto.*;
 import com.healthcare.shared.response.ApiResponse;
 import com.healthcare.shared.response.PageResponse;
 import com.healthcare.shared.response.ResponseHandler;
-import com.healthcare.modules.user.dto.UpdateUserDTO;
-import com.healthcare.modules.user.dto.UserResponseDTO;
 import com.healthcare.modules.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -24,6 +21,18 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<UserResponseDTO>> createPatient(@Valid @RequestBody CreateUserDTO createUserDTO) {
+
+        UserResponseDTO user = userService.createUser(createUserDTO);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.CREATED,
+                "Successfully created user",
+                user
+        );
     }
 
 
@@ -67,7 +76,7 @@ public class UserController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> updateUser(@PathVariable UUID id , @Valid @RequestBody UpdateUserDTO updateUserDTO) {
+    public ResponseEntity<ApiResponse<UserResponseDTO>> updateUser(@PathVariable UUID id, @Valid @RequestBody UpdateUserDTO updateUserDTO) {
 
         UserResponseDTO userUpdate = this.userService.updateUser(id, updateUserDTO);
 
@@ -77,8 +86,9 @@ public class UserController {
                 userUpdate
         );
     }
+
     @PutMapping("changePassword/{id}")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> changePassword(@PathVariable UUID id , @Valid @RequestBody UpdateUserPasswordRequestDTO updateUserPasswordRequestDTO) {
+    public ResponseEntity<ApiResponse<UserResponseDTO>> changePassword(@PathVariable UUID id, @Valid @RequestBody UpdateUserPasswordRequestDTO updateUserPasswordRequestDTO) {
 
         this.userService.changePassword(id, updateUserPasswordRequestDTO);
 
@@ -90,7 +100,7 @@ public class UserController {
     }
 
     @PutMapping("changeIsActive/{id}")
-    public ResponseEntity<ApiResponse<Boolean>> changeUserIsActive(@PathVariable UUID id , @Valid @RequestBody UpdateUserIsActiveRequestDTO updateUserIsActiveRequestDTO) {
+    public ResponseEntity<ApiResponse<Boolean>> changeUserIsActive(@PathVariable UUID id, @Valid @RequestBody UpdateUserIsActiveRequestDTO updateUserIsActiveRequestDTO) {
 
         boolean newStatus = this.userService.changeUserIsActiveStatus(id, updateUserIsActiveRequestDTO);
 

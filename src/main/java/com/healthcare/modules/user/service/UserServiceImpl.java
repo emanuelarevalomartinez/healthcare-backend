@@ -4,13 +4,10 @@ import com.healthcare.config.security.JwtGenerator;
 import com.healthcare.modules.auth.dto.LoginResponseDTO;
 import com.healthcare.modules.auth.dto.LoginUserDTO;
 import com.healthcare.modules.auth.service.RefreshTokenService;
-import com.healthcare.modules.user.dto.UpdateUserIsActiveRequestDTO;
-import com.healthcare.modules.user.dto.UpdateUserPasswordRequestDTO;
+import com.healthcare.modules.user.dto.*;
 import com.healthcare.shared.exceptions.ApplicationException;
 import com.healthcare.shared.exceptions.ErrorMessage;
 import com.healthcare.modules.auth.dto.RegisterUserDTO;
-import com.healthcare.modules.user.dto.UpdateUserDTO;
-import com.healthcare.modules.user.dto.UserResponseDTO;
 import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.modules.user.repository.UserRepository;
 import com.healthcare.shared.response.PageResponse;
@@ -41,9 +38,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Void createUser(RegisterUserDTO registerUserDto) {
+    public Void registerUser(RegisterUserDTO registerUserDto) {
 
-        try{
+        try {
 
             if (userRepository.findByUsername(registerUserDto.username()).isPresent()) {
                 throw new ApplicationException(ErrorMessage.USERNAME_CONFLICT, "");
@@ -62,9 +59,9 @@ public class UserServiceImpl implements UserService {
 
             this.userRepository.save(newUser);
 
-        }  catch(ApplicationException ex){
+        } catch (ApplicationException ex) {
             throw ex;
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             throw new ApplicationException(ex);
         }
         return null;
@@ -89,7 +86,7 @@ public class UserServiceImpl implements UserService {
 
             if (!user.isActive()) {
                 throw new ApplicationException(
-                        ErrorMessage.USER_INACTIVE,""
+                        ErrorMessage.USER_INACTIVE, ""
                 );
             }
 
@@ -114,9 +111,38 @@ public class UserServiceImpl implements UserService {
 
             return response;
 
-        } catch(ApplicationException ex){
+        } catch (ApplicationException ex) {
             throw ex;
-        } catch(Exception ex) {
+        } catch (Exception ex) {
+            throw new ApplicationException(ex);
+        }
+    }
+
+    @Override
+    public UserResponseDTO createUser(CreateUserDTO createUserDTO) {
+        try {
+
+            if (userRepository.findByUsername(createUserDTO.username()).isPresent()) {
+                throw new ApplicationException(ErrorMessage.USERNAME_CONFLICT, "");
+            }
+
+            if (userRepository.findByEmail(createUserDTO.email()).isPresent()) {
+                throw new ApplicationException(ErrorMessage.EMAIL_CONFLICT, "");
+            }
+
+            UserEntity newUser = new UserEntity();
+            newUser.setUsername(createUserDTO.username());
+            newUser.setEmail(createUserDTO.email());
+            newUser.setPasswordHash(passwordEncoder.encode(createUserDTO.password()));
+            newUser.setRole(createUserDTO.role());
+            newUser.setActive(true);
+
+            UserEntity userSaved = this.userRepository.save(newUser);
+            return UserResponseDTO.fromEntity(userSaved);
+
+        } catch (ApplicationException ex) {
+            throw ex;
+        } catch (Exception ex) {
             throw new ApplicationException(ex);
         }
     }
@@ -151,17 +177,17 @@ public class UserServiceImpl implements UserService {
             UserEntity userUpdated = this.userRepository.save(findUser);
             return UserResponseDTO.fromEntity(userUpdated);
 
-        } catch(ApplicationException ex){
-                throw ex;
-            } catch(Exception ex){
-                throw new ApplicationException(ex);
-            }
+        } catch (ApplicationException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new ApplicationException(ex);
+        }
     }
 
     @Override
     public PageResponse<UserResponseDTO> findAllUsers(int page, int size) {
 
-        try{
+        try {
 
             Pageable pageable = PageRequest.of(page, size);
             Page<UserEntity> result = userRepository.findAllUsersPaged(pageable);
@@ -177,20 +203,20 @@ public class UserServiceImpl implements UserService {
                     result.getTotalPages()
             );
 
-        } catch(ApplicationException ex){
+        } catch (ApplicationException ex) {
             throw ex;
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             throw new ApplicationException(ex);
         }
     }
 
     @Override
     public UserResponseDTO findUserById(UUID id) {
-        try{
+        try {
 
             UserEntity findUserById = this.userRepository.findById(id)
-                    .orElseThrow( () -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_ID, "")
-            );
+                    .orElseThrow(() -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_ID, "")
+                    );
 
             return UserResponseDTO.fromEntity(findUserById);
 
@@ -203,10 +229,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO findUserByUsername(String username) {
-        try{
+        try {
 
             UserEntity findUserByUsername = this.userRepository.findByUsername(username)
-                    .orElseThrow( () -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_USERNAME, "")
+                    .orElseThrow(() -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_USERNAME, "")
                     );
 
             return UserResponseDTO.fromEntity(findUserByUsername);
@@ -220,10 +246,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO findUserByEmail(String email) {
-        try{
+        try {
 
             UserEntity findUserByEmail = this.userRepository.findByEmail(email)
-                    .orElseThrow( () -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_EMAIL, "")
+                    .orElseThrow(() -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_EMAIL, "")
                     );
 
             return UserResponseDTO.fromEntity(findUserByEmail);
@@ -270,10 +296,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePassword(UUID userId, UpdateUserPasswordRequestDTO updateUserPasswordRequestDTO) {
-        try{
+        try {
             UserEntity user = this.findUserEntityById(userId);
 
-            if(updateUserPasswordRequestDTO.previousPassword().isEmpty() || updateUserPasswordRequestDTO.newPassword().isEmpty()){
+            if (updateUserPasswordRequestDTO.previousPassword().isEmpty() || updateUserPasswordRequestDTO.newPassword().isEmpty()) {
                 throw new ApplicationException(
                         ErrorMessage.INVALID_PASSWORD_CHANGE_REQUEST, ""
                 );
@@ -302,7 +328,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean changeUserIsActiveStatus(UUID userId, UpdateUserIsActiveRequestDTO updateUserIsActiveRequestDTO) {
-        try{
+        try {
             UserEntity user = this.findUserEntityById(userId);
 
             user.setActive(updateUserIsActiveRequestDTO.isActive());
