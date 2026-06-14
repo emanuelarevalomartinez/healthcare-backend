@@ -45,12 +45,6 @@ public class DoctorServiceImpl implements DoctorService {
                 );
             }
 
-            if (!userEntity.isActive()) {
-                throw new ApplicationException(
-                        ErrorMessage.USER_INACTIVE, ""
-                );
-            }
-
             DoctorEntity newDoctor = new DoctorEntity();
             newDoctor.setUser(userEntity);
             newDoctor.setSpecialty(createDoctorDTO.specialty());

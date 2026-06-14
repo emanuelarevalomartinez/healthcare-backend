@@ -25,7 +25,8 @@ public class DoctorEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "user_id",
-            nullable = false
+            nullable = false,
+            unique = true
     )
     private UserEntity user;
 

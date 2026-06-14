@@ -1,5 +1,6 @@
 package com.healthcare.modules.user.dto;
 
+import com.healthcare.modules.doctor.dto.DoctorResponseDTO;
 import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.modules.user.enums.UserRole;
 
@@ -12,6 +13,7 @@ public record UserResponseDTO(
         String email,
         UserRole role,
         Boolean isActive,
+        DoctorResponseDTO doctor,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         LocalDateTime lastLogin
@@ -25,6 +27,9 @@ public record UserResponseDTO(
                 user.getEmail(),
                 user.getRole(),
                 user.isActive(),
+                user.getDoctor() != null
+                        ? DoctorResponseDTO.fromEntity(user.getDoctor())
+                        : null,
                 user.getCreatedAt(),
                 user.getUpdatedAt(),
                 user.getLastLogin()

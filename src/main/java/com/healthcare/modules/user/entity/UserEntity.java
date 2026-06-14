@@ -1,5 +1,6 @@
 package com.healthcare.modules.user.entity;
 
+import com.healthcare.modules.doctor.entity.DoctorEntity;
 import com.healthcare.modules.user.enums.UserRole;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -55,6 +56,12 @@ public class UserEntity {
 
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
+
+    @OneToOne(
+            mappedBy = "user",
+            fetch = FetchType.LAZY
+    )
+    private DoctorEntity doctor;
 
     public UserEntity() {
     }
@@ -156,6 +163,18 @@ public class UserEntity {
 
     public boolean isReceptionist() {
         return UserRole.RECEPTIONIST.equals(this.role);
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public DoctorEntity getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(DoctorEntity doctor) {
+        this.doctor = doctor;
     }
 
     public void activate() {
