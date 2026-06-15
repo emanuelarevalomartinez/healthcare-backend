@@ -33,100 +33,72 @@ public class ReminderServiceImpl implements ReminderService {
 
     @Override
     public ReminderResponseDTO createReminder(CreateReminderDTO createReminderDTO) {
-        try {
 
-            UserEntity userEntity = this.userService.findUserEntityById(createReminderDTO.userId());
+        UserEntity userEntity = this.userService.findUserEntityById(createReminderDTO.userId());
 
-            ReminderEntity newReminder = new ReminderEntity();
-            newReminder.setUser(userEntity);
-            newReminder.setType(createReminderDTO.type());
-            newReminder.setMessage(createReminderDTO.message());
-            newReminder.setReminderDate(createReminderDTO.reminderDate());
-            newReminder.setRead(false);
-            newReminder.setCreationDate(LocalDateTime.now());
+        ReminderEntity newReminder = new ReminderEntity();
+        newReminder.setUser(userEntity);
+        newReminder.setType(createReminderDTO.type());
+        newReminder.setMessage(createReminderDTO.message());
+        newReminder.setReminderDate(createReminderDTO.reminderDate());
+        newReminder.setRead(false);
+        newReminder.setCreationDate(LocalDateTime.now());
 
-            this.reminderRepository.save(newReminder);
-            return ReminderResponseDTO.fromEntity(newReminder);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        this.reminderRepository.save(newReminder);
+        return ReminderResponseDTO.fromEntity(newReminder);
     }
 
     @Override
     public ReminderResponseDTO updateReminder(UUID id, UpdateReminderDTO updateReminderDTO) {
-        try {
 
-            ReminderEntity findReminder = this.findReminderEntityById(id);
+        ReminderEntity findReminder = this.findReminderEntityById(id);
 
-            if (updateReminderDTO.message() != null) {
-                findReminder.setMessage(updateReminderDTO.message());
-            }
-
-            if (updateReminderDTO.type() != null) {
-                findReminder.setType(updateReminderDTO.type());
-            }
-
-            if (updateReminderDTO.reminderDate() != null) {
-                findReminder.setReminderDate(updateReminderDTO.reminderDate());
-            }
-
-            if (updateReminderDTO.isRead() != null) {
-                findReminder.setRead(updateReminderDTO.isRead());
-            }
-
-            ReminderEntity reminderUpdated = this.reminderRepository.save(findReminder);
-            return ReminderResponseDTO.fromEntity(reminderUpdated);
-
-        } catch(ApplicationException ex){
-            throw ex;
-        } catch(Exception ex){
-            throw new ApplicationException(ex);
+        if (updateReminderDTO.message() != null) {
+            findReminder.setMessage(updateReminderDTO.message());
         }
+
+        if (updateReminderDTO.type() != null) {
+            findReminder.setType(updateReminderDTO.type());
+        }
+
+        if (updateReminderDTO.reminderDate() != null) {
+            findReminder.setReminderDate(updateReminderDTO.reminderDate());
+        }
+
+        if (updateReminderDTO.isRead() != null) {
+            findReminder.setRead(updateReminderDTO.isRead());
+        }
+
+        ReminderEntity reminderUpdated = this.reminderRepository.save(findReminder);
+        return ReminderResponseDTO.fromEntity(reminderUpdated);
     }
 
     @Override
     public PageResponse<ReminderResponseDTO> findAllReminders(int page, int size) {
-        try{
 
-            Pageable pageable = PageRequest.of(page, size);
-            Page<ReminderEntity> result = reminderRepository.findAllRemindersPaged(pageable);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ReminderEntity> result = reminderRepository.findAllRemindersPaged(pageable);
 
-            return new PageResponse<>(
-                    result.getContent()
-                            .stream()
-                            .map(ReminderResponseDTO::fromEntity)
-                            .toList(),
-                    result.getNumber(),
-                    result.getSize(),
-                    result.getTotalElements(),
-                    result.getTotalPages()
-            );
-
-        } catch(ApplicationException ex){
-            throw ex;
-        } catch(Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        return new PageResponse<>(
+                result.getContent()
+                        .stream()
+                        .map(ReminderResponseDTO::fromEntity)
+                        .toList(),
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages()
+        );
     }
 
     @Override
     public ReminderResponseDTO findReminderById(UUID id) {
-        try{
 
-            ReminderEntity findReminderById = this.reminderRepository.findById(id)
-                    .orElseThrow( () -> new ApplicationException(ErrorMessage.REMINDER_NOT_FOUND_ID, "")
-                    );
+        ReminderEntity findReminderById = this.reminderRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(ErrorMessage.REMINDER_NOT_FOUND_ID, "")
+                );
 
-            return ReminderResponseDTO.fromEntity(findReminderById);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        return ReminderResponseDTO.fromEntity(findReminderById);
     }
 
     @Override
@@ -139,14 +111,7 @@ public class ReminderServiceImpl implements ReminderService {
 
     @Override
     public void deleteReminder(UUID id) {
-        try {
-            ReminderEntity reminder = this.findReminderEntityById(id);
-            reminderRepository.deleteById(reminder.getId());
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        ReminderEntity reminder = this.findReminderEntityById(id);
+        reminderRepository.deleteById(reminder.getId());
     }
 }

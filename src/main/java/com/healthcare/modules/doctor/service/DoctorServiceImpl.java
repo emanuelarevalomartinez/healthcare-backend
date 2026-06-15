@@ -31,105 +31,77 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public DoctorResponseDTO createDoctor(CreateDoctorDTO createDoctorDTO) {
-        try {
 
-            if (doctorRepository.existsByUserId(createDoctorDTO.userId())) {
-                throw new ApplicationException(ErrorMessage.DOCTOR_ALREADY_EXISTS_FOR_USER, "");
-            }
-
-            UserEntity userEntity = this.userService.findUserEntityById(createDoctorDTO.userId());
-
-            if(!userEntity.getRole().equals(UserRole.DOCTOR)){
-                throw new ApplicationException(
-                        ErrorMessage.USER_NOT_DOCTOR, ""
-                );
-            }
-
-            DoctorEntity newDoctor = new DoctorEntity();
-            newDoctor.setUser(userEntity);
-            newDoctor.setSpecialty(createDoctorDTO.specialty());
-            newDoctor.setLicenseNumber(createDoctorDTO.licenseNumber());
-            newDoctor.setDefaultConsultationDuration(createDoctorDTO.defaultConsultationDuration());
-
-             this.doctorRepository.save(newDoctor);
-
-            return DoctorResponseDTO.fromEntity(newDoctor);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
+        if (doctorRepository.existsByUserId(createDoctorDTO.userId())) {
+            throw new ApplicationException(ErrorMessage.DOCTOR_ALREADY_EXISTS_FOR_USER, "");
         }
+
+        UserEntity userEntity = this.userService.findUserEntityById(createDoctorDTO.userId());
+
+        if (!userEntity.getRole().equals(UserRole.DOCTOR)) {
+            throw new ApplicationException(
+                    ErrorMessage.USER_NOT_DOCTOR, ""
+            );
+        }
+
+        DoctorEntity newDoctor = new DoctorEntity();
+        newDoctor.setUser(userEntity);
+        newDoctor.setSpecialty(createDoctorDTO.specialty());
+        newDoctor.setLicenseNumber(createDoctorDTO.licenseNumber());
+        newDoctor.setDefaultConsultationDuration(createDoctorDTO.defaultConsultationDuration());
+
+        this.doctorRepository.save(newDoctor);
+
+        return DoctorResponseDTO.fromEntity(newDoctor);
     }
 
     @Override
     public DoctorResponseDTO updateDoctor(UUID id, UpdateDoctorDTO updateDoctorDTO) {
-        try {
 
-            DoctorEntity findDoctor = this.findDoctorEntityById(id);
+        DoctorEntity findDoctor = this.findDoctorEntityById(id);
 
-            if (updateDoctorDTO.specialty() != null) {
-                findDoctor.setSpecialty(updateDoctorDTO.specialty());
-            }
-
-            if (updateDoctorDTO.licenseNumber() != null) {
-                findDoctor.setLicenseNumber(updateDoctorDTO.licenseNumber());
-            }
-
-            if (updateDoctorDTO.defaultConsultationDuration() != null) {
-                findDoctor.setDefaultConsultationDuration(updateDoctorDTO.defaultConsultationDuration());
-            }
-
-            DoctorEntity doctorUpdated = this.doctorRepository.save(findDoctor);
-            return DoctorResponseDTO.fromEntity(doctorUpdated);
-
-        } catch(ApplicationException ex){
-            throw ex;
-        } catch(Exception ex){
-            throw new ApplicationException(ex);
+        if (updateDoctorDTO.specialty() != null) {
+            findDoctor.setSpecialty(updateDoctorDTO.specialty());
         }
+
+        if (updateDoctorDTO.licenseNumber() != null) {
+            findDoctor.setLicenseNumber(updateDoctorDTO.licenseNumber());
+        }
+
+        if (updateDoctorDTO.defaultConsultationDuration() != null) {
+            findDoctor.setDefaultConsultationDuration(updateDoctorDTO.defaultConsultationDuration());
+        }
+
+        DoctorEntity doctorUpdated = this.doctorRepository.save(findDoctor);
+        return DoctorResponseDTO.fromEntity(doctorUpdated);
     }
 
     @Override
     public PageResponse<DoctorResponseDTO> findAllDoctors(int page, int size) {
-        try{
 
-            Pageable pageable = PageRequest.of(page, size);
-            Page<DoctorEntity> result = doctorRepository.findAllDoctorsPaged(pageable);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<DoctorEntity> result = doctorRepository.findAllDoctorsPaged(pageable);
 
-            return new PageResponse<>(
-                    result.getContent()
-                            .stream()
-                            .map(DoctorResponseDTO::fromEntity)
-                            .toList(),
-                    result.getNumber(),
-                    result.getSize(),
-                    result.getTotalElements(),
-                    result.getTotalPages()
-            );
-
-        } catch(ApplicationException ex){
-            throw ex;
-        } catch(Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        return new PageResponse<>(
+                result.getContent()
+                        .stream()
+                        .map(DoctorResponseDTO::fromEntity)
+                        .toList(),
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages()
+        );
     }
 
     @Override
     public DoctorResponseDTO findDoctorById(UUID id) {
-        try{
 
-            DoctorEntity findDoctorById = this.doctorRepository.findById(id)
-                    .orElseThrow( () -> new ApplicationException(ErrorMessage.DOCTOR_NOT_FOUND_ID, "")
-                    );
+        DoctorEntity findDoctorById = this.doctorRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(ErrorMessage.DOCTOR_NOT_FOUND_ID, "")
+                );
 
-            return DoctorResponseDTO.fromEntity(findDoctorById);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        return DoctorResponseDTO.fromEntity(findDoctorById);
     }
 
     @Override
@@ -143,14 +115,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public void deleteDoctor(UUID id) {
-        try {
-            DoctorEntity doctor = this.findDoctorEntityById(id);
-            doctorRepository.deleteById(doctor.getId());
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        DoctorEntity doctor = this.findDoctorEntityById(id);
+        doctorRepository.deleteById(doctor.getId());
     }
 }

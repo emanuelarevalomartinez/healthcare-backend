@@ -33,47 +33,40 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public RefreshTokenResponseDTO validateAndSaveNewRefreshToken(String refreshToken) {
-      try{
-          if (!jwtGenerator.validateToken(refreshToken)) {
-              throw new ApplicationException(ErrorMessage.JWT_EXPIRED, "");
-          }
+        if (!jwtGenerator.validateToken(refreshToken)) {
+            throw new ApplicationException(ErrorMessage.JWT_EXPIRED, "");
+        }
 
-          if (!jwtGenerator.isRefreshToken(refreshToken)) {
-              throw new ApplicationException(ErrorMessage.JWT_INVALID_TYPE, "");
-          }
+        if (!jwtGenerator.isRefreshToken(refreshToken)) {
+            throw new ApplicationException(ErrorMessage.JWT_INVALID_TYPE, "");
+        }
 
-          String tokenHash = hashToken(refreshToken);
+        String tokenHash = hashToken(refreshToken);
 
-          RefreshTokenEntity storedToken = refreshTokenRepository
-                  .findByTokenHashAndRevokedFalse(tokenHash)
-                  .orElseThrow(() ->
-                          new ApplicationException(ErrorMessage.REFRESH_TOKEN_INVALID, "")
-                  );
+        RefreshTokenEntity storedToken = refreshTokenRepository
+                .findByTokenHashAndRevokedFalse(tokenHash)
+                .orElseThrow(() ->
+                        new ApplicationException(ErrorMessage.REFRESH_TOKEN_INVALID, "")
+                );
 
-          storedToken.setRevoked(true);
-          refreshTokenRepository.save(storedToken);
+        storedToken.setRevoked(true);
+        refreshTokenRepository.save(storedToken);
 
-          UserEntity user = storedToken.getUser();
+        UserEntity user = storedToken.getUser();
 
-          storedToken.setRevoked(true);
-          refreshTokenRepository.save(storedToken);
+        storedToken.setRevoked(true);
+        refreshTokenRepository.save(storedToken);
 
-          String newAccessToken = jwtGenerator.generateAccessToken(user);
-          String newRefreshToken = this.saveRefreshToken(user);
+        String newAccessToken = jwtGenerator.generateAccessToken(user);
+        String newRefreshToken = this.saveRefreshToken(user);
 
-          return new RefreshTokenResponseDTO(
-                  newAccessToken,
-                  newRefreshToken
-          );
-
-      } catch(ApplicationException ex){
-          throw ex;
-      } catch(Exception ex) {
-          throw new ApplicationException(ex);
-      }
+        return new RefreshTokenResponseDTO(
+                newAccessToken,
+                newRefreshToken
+        );
     }
 
-    private String saveRefreshToken(UserEntity user){
+    private String saveRefreshToken(UserEntity user) {
 
         String refreshToken = jwtGenerator.generateRefreshToken(user);
 

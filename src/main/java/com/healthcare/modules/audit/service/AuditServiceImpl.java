@@ -31,93 +31,65 @@ public class AuditServiceImpl implements AuditService {
 
     @Override
     public AuditResponseDTO createAudit(CreateAuditDTO createAuditDTO) {
-        try {
 
-            UserEntity userEntity = this.userService.findUserEntityById(createAuditDTO.userId());
+        UserEntity userEntity = this.userService.findUserEntityById(createAuditDTO.userId());
 
-            AuditEntity newAudit = new AuditEntity();
-            newAudit.setUser(userEntity);
-            newAudit.setAction(createAuditDTO.action());
-            newAudit.setAffectedTable(createAuditDTO.affectedTable());
-            newAudit.setRecordId(createAuditDTO.recordId());
-            newAudit.setOldValue(createAuditDTO.oldValue());
-            newAudit.setNewValue(createAuditDTO.newValue());
-            newAudit.setTimestamp(LocalDateTime.now());
+        AuditEntity newAudit = new AuditEntity();
+        newAudit.setUser(userEntity);
+        newAudit.setAction(createAuditDTO.action());
+        newAudit.setAffectedTable(createAuditDTO.affectedTable());
+        newAudit.setRecordId(createAuditDTO.recordId());
+        newAudit.setOldValue(createAuditDTO.oldValue());
+        newAudit.setNewValue(createAuditDTO.newValue());
+        newAudit.setTimestamp(LocalDateTime.now());
 
-            this.auditRepository.save(newAudit);
-            return AuditResponseDTO.fromEntity(newAudit);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        this.auditRepository.save(newAudit);
+        return AuditResponseDTO.fromEntity(newAudit);
     }
 
     @Override
     public AuditResponseDTO updateAudit(UUID id, UpdateAuditDTO updateAuditDTO) {
-        try {
 
-            AuditEntity findAudit = this.findAuditEntityById(id);
+        AuditEntity findAudit = this.findAuditEntityById(id);
 
-            if (updateAuditDTO.oldValue() != null) {
-                findAudit.setOldValue(updateAuditDTO.oldValue());
-            }
-
-            if (updateAuditDTO.newValue() != null) {
-                findAudit.setNewValue(updateAuditDTO.newValue());
-            }
-
-            AuditEntity auditUpdated = this.auditRepository.save(findAudit);
-            return AuditResponseDTO.fromEntity(auditUpdated);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
+        if (updateAuditDTO.oldValue() != null) {
+            findAudit.setOldValue(updateAuditDTO.oldValue());
         }
+
+        if (updateAuditDTO.newValue() != null) {
+            findAudit.setNewValue(updateAuditDTO.newValue());
+        }
+
+        AuditEntity auditUpdated = this.auditRepository.save(findAudit);
+        return AuditResponseDTO.fromEntity(auditUpdated);
     }
 
     @Override
     public PageResponse<AuditResponseDTO> findAllAudits(int page, int size) {
-        try {
 
-            Pageable pageable = PageRequest.of(page, size);
-            Page<AuditEntity> result = auditRepository.findAllAuditsPaged(pageable);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AuditEntity> result = auditRepository.findAllAuditsPaged(pageable);
 
-            return new PageResponse<>(
-                    result.getContent()
-                            .stream()
-                            .map(AuditResponseDTO::fromEntity)
-                            .toList(),
-                    result.getNumber(),
-                    result.getSize(),
-                    result.getTotalElements(),
-                    result.getTotalPages()
-            );
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        return new PageResponse<>(
+                result.getContent()
+                        .stream()
+                        .map(AuditResponseDTO::fromEntity)
+                        .toList(),
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages()
+        );
     }
 
     @Override
     public AuditResponseDTO findAuditById(UUID id) {
-        try {
 
-            AuditEntity findAuditById = this.auditRepository.findById(id)
-                    .orElseThrow(() -> new ApplicationException(ErrorMessage.AUDIT_NOT_FOUND_ID, "")
-                    );
+        AuditEntity findAuditById = this.auditRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(ErrorMessage.AUDIT_NOT_FOUND_ID, "")
+                );
 
-            return AuditResponseDTO.fromEntity(findAuditById);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        return AuditResponseDTO.fromEntity(findAuditById);
     }
 
     @Override
@@ -130,14 +102,7 @@ public class AuditServiceImpl implements AuditService {
 
     @Override
     public void deleteAudit(UUID id) {
-        try {
-            AuditEntity audit = this.findAuditEntityById(id);
-            auditRepository.deleteById(audit.getId());
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        AuditEntity audit = this.findAuditEntityById(id);
+        auditRepository.deleteById(audit.getId());
     }
 }

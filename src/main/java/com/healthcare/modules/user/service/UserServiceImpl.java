@@ -39,242 +39,174 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Void registerUser(RegisterUserDTO registerUserDto) {
+    public void registerUser(RegisterUserDTO registerUserDto) {
 
-        try {
-
-            if (userRepository.findByUsername(registerUserDto.username()).isPresent()) {
-                throw new ApplicationException(ErrorMessage.USERNAME_CONFLICT, "");
-            }
-
-            if (userRepository.findByEmail(registerUserDto.email()).isPresent()) {
-                throw new ApplicationException(ErrorMessage.EMAIL_CONFLICT, "");
-            }
-
-            UserEntity newUser = new UserEntity();
-            newUser.setUsername(registerUserDto.username());
-            newUser.setEmail(registerUserDto.email());
-            newUser.setPasswordHash(passwordEncoder.encode(registerUserDto.password()));
-            newUser.setRole(registerUserDto.role());
-            newUser.setActive(false);
-
-            this.userRepository.save(newUser);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
+        if (userRepository.findByUsername(registerUserDto.username()).isPresent()) {
+            throw new ApplicationException(ErrorMessage.USERNAME_CONFLICT, "");
         }
-        return null;
+
+        if (userRepository.findByEmail(registerUserDto.email()).isPresent()) {
+            throw new ApplicationException(ErrorMessage.EMAIL_CONFLICT, "");
+        }
+
+        UserEntity newUser = new UserEntity();
+        newUser.setUsername(registerUserDto.username());
+        newUser.setEmail(registerUserDto.email());
+        newUser.setPasswordHash(passwordEncoder.encode(registerUserDto.password()));
+        newUser.setRole(registerUserDto.role());
+        newUser.setActive(false);
+
+        this.userRepository.save(newUser);
     }
 
     @Override
     public LoginResponseDTO loginUser(LoginUserDTO loginUserDTO) {
-        try {
 
-            UserEntity user = this.findUserEntityByEmail(loginUserDTO.email());
+        UserEntity user = this.findUserEntityByEmail(loginUserDTO.email());
 
-            boolean passwordMatch = passwordEncoder.matches(
-                    loginUserDTO.password(),
-                    user.getPasswordHash()
+        boolean passwordMatch = passwordEncoder.matches(
+                loginUserDTO.password(),
+                user.getPasswordHash()
+        );
+
+        if (!passwordMatch) {
+            throw new ApplicationException(
+                    ErrorMessage.INVALID_CREDENTIALS, ""
             );
-
-            if (!passwordMatch) {
-                throw new ApplicationException(
-                        ErrorMessage.INVALID_CREDENTIALS, ""
-                );
-            }
-
-            if (!user.isActive()) {
-                throw new ApplicationException(
-                        ErrorMessage.USER_INACTIVE, ""
-                );
-            }
-
-            String accessToken = jwtGenerator.generateAccessToken(user);
-            String refreshToken = refreshTokenService.createAndSaveRefreshToken(user);
-
-            user.setLastLogin(LocalDateTime.now());
-            this.userRepository.save(user);
-
-            LoginResponseDTO response = new LoginResponseDTO(
-                    user.getId(),
-                    user.getUsername(),
-                    user.getEmail(),
-                    user.getRole(),
-                    user.isActive(),
-                    user.getCreatedAt(),
-                    user.getUpdatedAt(),
-                    user.getLastLogin(),
-                    accessToken,
-                    refreshToken
-            );
-
-            return response;
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
         }
+
+        if (!user.isActive()) {
+            throw new ApplicationException(
+                    ErrorMessage.USER_INACTIVE, ""
+            );
+        }
+
+        String accessToken = jwtGenerator.generateAccessToken(user);
+        String refreshToken = refreshTokenService.createAndSaveRefreshToken(user);
+
+        user.setLastLogin(LocalDateTime.now());
+        this.userRepository.save(user);
+
+        LoginResponseDTO response = new LoginResponseDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole(),
+                user.isActive(),
+                user.getCreatedAt(),
+                user.getUpdatedAt(),
+                user.getLastLogin(),
+                accessToken,
+                refreshToken
+        );
+
+        return response;
     }
 
     @Override
     public UserResponseDTO createUser(CreateUserDTO createUserDTO) {
-        try {
 
-            if (userRepository.findByUsername(createUserDTO.username()).isPresent()) {
-                throw new ApplicationException(ErrorMessage.USERNAME_CONFLICT, "");
-            }
-
-            if (userRepository.findByEmail(createUserDTO.email()).isPresent()) {
-                throw new ApplicationException(ErrorMessage.EMAIL_CONFLICT, "");
-            }
-
-            UserEntity newUser = new UserEntity();
-            newUser.setUsername(createUserDTO.username());
-            newUser.setEmail(createUserDTO.email());
-            newUser.setPasswordHash(passwordEncoder.encode(createUserDTO.password()));
-            newUser.setRole(createUserDTO.role());
-            newUser.setActive(createUserDTO.isActive());
-
-            UserEntity userSaved = this.userRepository.save(newUser);
-            return UserResponseDTO.fromEntity(userSaved);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
+        if (userRepository.findByUsername(createUserDTO.username()).isPresent()) {
+            throw new ApplicationException(ErrorMessage.USERNAME_CONFLICT, "");
         }
+
+        if (userRepository.findByEmail(createUserDTO.email()).isPresent()) {
+            throw new ApplicationException(ErrorMessage.EMAIL_CONFLICT, "");
+        }
+
+        UserEntity newUser = new UserEntity();
+        newUser.setUsername(createUserDTO.username());
+        newUser.setEmail(createUserDTO.email());
+        newUser.setPasswordHash(passwordEncoder.encode(createUserDTO.password()));
+        newUser.setRole(createUserDTO.role());
+        newUser.setActive(createUserDTO.isActive());
+
+        UserEntity userSaved = this.userRepository.save(newUser);
+        return UserResponseDTO.fromEntity(userSaved);
     }
 
     @Override
     public UserResponseDTO updateUser(UUID id, UpdateUserDTO updateUserDTO) {
 
-        try {
+        UserEntity findUser = this.findUserEntityById(id);
 
-            UserEntity findUser = this.findUserEntityById(id);
-
-            if (updateUserDTO.username() != null) {
-                findUser.setUsername(updateUserDTO.username());
-            }
-
-            if (updateUserDTO.email() != null) {
-                findUser.setEmail(updateUserDTO.email());
-            }
-
-            if (updateUserDTO.password() != null) {
-                findUser.setPasswordHash(passwordEncoder.encode(updateUserDTO.password()));
-            }
-
-            if (updateUserDTO.role() != null) {
-                findUser.setRole(updateUserDTO.role());
-            }
-
-            if (updateUserDTO.isActive() != null) {
-                findUser.setActive(updateUserDTO.isActive());
-            }
-
-            UserEntity userUpdated = this.userRepository.save(findUser);
-            return UserResponseDTO.fromEntity(userUpdated);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
+        if (updateUserDTO.username() != null) {
+            findUser.setUsername(updateUserDTO.username());
         }
+
+        if (updateUserDTO.email() != null) {
+            findUser.setEmail(updateUserDTO.email());
+        }
+
+        if (updateUserDTO.password() != null) {
+            findUser.setPasswordHash(passwordEncoder.encode(updateUserDTO.password()));
+        }
+
+        if (updateUserDTO.role() != null) {
+            findUser.setRole(updateUserDTO.role());
+        }
+
+        if (updateUserDTO.isActive() != null) {
+            findUser.setActive(updateUserDTO.isActive());
+        }
+
+        UserEntity userUpdated = this.userRepository.save(findUser);
+        return UserResponseDTO.fromEntity(userUpdated);
     }
 
     @Override
     public PageResponse<UserResponseDTO> findAllUsers(int page, int size) {
 
-        try {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("username").ascending());
+        Page<UserEntity> result = userRepository.findAllUsersPaged(pageable);
 
-            Pageable pageable = PageRequest.of(page, size, Sort.by("username").ascending());
-            Page<UserEntity> result = userRepository.findAllUsersPaged(pageable);
-
-            return new PageResponse<>(
-                    result.getContent()
-                            .stream()
-                            .map(UserResponseDTO::fromEntity)
-                            .toList(),
-                    result.getNumber(),
-                    result.getSize(),
-                    result.getTotalElements(),
-                    result.getTotalPages()
-            );
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        return new PageResponse<>(
+                result.getContent()
+                        .stream()
+                        .map(UserResponseDTO::fromEntity)
+                        .toList(),
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages()
+        );
     }
 
     @Override
     public UserResponseDTO findUserById(UUID id) {
-        try {
 
-            UserEntity findUserById = this.userRepository.findById(id)
-                    .orElseThrow(() -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_ID, "")
-                    );
+        UserEntity findUserById = this.userRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_ID, "")
+                );
 
-            return UserResponseDTO.fromEntity(findUserById);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        return UserResponseDTO.fromEntity(findUserById);
     }
 
     @Override
     public UserResponseDTO findUserByUsername(String username) {
-        try {
 
-            UserEntity findUserByUsername = this.userRepository.findByUsername(username)
-                    .orElseThrow(() -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_USERNAME, "")
-                    );
+        UserEntity findUserByUsername = this.userRepository.findByUsername(username)
+                .orElseThrow(() -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_USERNAME, "")
+                );
 
-            return UserResponseDTO.fromEntity(findUserByUsername);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        return UserResponseDTO.fromEntity(findUserByUsername);
     }
 
     @Override
     public UserResponseDTO findUserByEmail(String email) {
-        try {
 
-            UserEntity findUserByEmail = this.userRepository.findByEmail(email)
-                    .orElseThrow(() -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_EMAIL, "")
-                    );
+        UserEntity findUserByEmail = this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_EMAIL, "")
+                );
 
-            return UserResponseDTO.fromEntity(findUserByEmail);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        return UserResponseDTO.fromEntity(findUserByEmail);
     }
 
 
     @Override
     public void deleteUser(UUID id) {
-
-        try {
-            UserEntity user = this.findUserEntityById(id);
-            userRepository.deleteById(user.getId());
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        UserEntity user = this.findUserEntityById(id);
+        userRepository.deleteById(user.getId());
     }
 
     @Override
@@ -297,50 +229,35 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePassword(UUID userId, UpdateUserPasswordRequestDTO updateUserPasswordRequestDTO) {
-        try {
-            UserEntity user = this.findUserEntityById(userId);
+        UserEntity user = this.findUserEntityById(userId);
 
-            if (updateUserPasswordRequestDTO.previousPassword().isEmpty() || updateUserPasswordRequestDTO.newPassword().isEmpty()) {
-                throw new ApplicationException(
-                        ErrorMessage.INVALID_PASSWORD_CHANGE_REQUEST, ""
-                );
-            }
-
-            boolean passwordMatch = passwordEncoder.matches(
-                    updateUserPasswordRequestDTO.previousPassword(),
-                    user.getPasswordHash()
+        if (updateUserPasswordRequestDTO.previousPassword().isEmpty() || updateUserPasswordRequestDTO.newPassword().isEmpty()) {
+            throw new ApplicationException(
+                    ErrorMessage.INVALID_PASSWORD_CHANGE_REQUEST, ""
             );
-
-            if (!passwordMatch) {
-                throw new ApplicationException(
-                        ErrorMessage.INVALID_CHANGE_PASSWORD, updateUserPasswordRequestDTO.previousPassword()
-                );
-            }
-
-            user.setPasswordHash(passwordEncoder.encode(updateUserPasswordRequestDTO.newPassword()));
-            this.userRepository.save(user);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
         }
+
+        boolean passwordMatch = passwordEncoder.matches(
+                updateUserPasswordRequestDTO.previousPassword(),
+                user.getPasswordHash()
+        );
+
+        if (!passwordMatch) {
+            throw new ApplicationException(
+                    ErrorMessage.INVALID_CHANGE_PASSWORD, updateUserPasswordRequestDTO.previousPassword()
+            );
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(updateUserPasswordRequestDTO.newPassword()));
+        this.userRepository.save(user);
     }
 
     @Override
     public boolean changeUserIsActiveStatus(UUID userId, UpdateUserIsActiveRequestDTO updateUserIsActiveRequestDTO) {
-        try {
-            UserEntity user = this.findUserEntityById(userId);
+        UserEntity user = this.findUserEntityById(userId);
 
-            user.setActive(updateUserIsActiveRequestDTO.isActive());
-            return this.userRepository.save(user).isActive();
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        user.setActive(updateUserIsActiveRequestDTO.isActive());
+        return this.userRepository.save(user).isActive();
     }
-
 
 }

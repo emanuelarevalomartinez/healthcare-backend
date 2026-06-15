@@ -73,100 +73,78 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     public AppointmentResponseDTO updateAppointment(UUID id, UpdateAppointmentDTO dto) {
-        try {
-            AppointmentEntity appointment = this.findAppointmentEntityById(id);
+        AppointmentEntity appointment = this.findAppointmentEntityById(id);
 
-            AppointmentStatus currentStatus = appointment.getStatus();
-            AppointmentStatus newStatus = dto.status();
+        AppointmentStatus currentStatus = appointment.getStatus();
+        AppointmentStatus newStatus = dto.status();
 
-            validateStatusTransition(currentStatus, newStatus);
+        validateStatusTransition(currentStatus, newStatus);
 
-            switch (currentStatus) {
+        switch (currentStatus) {
 
-                case SCHEDULED -> {
-                    if (dto.appointmentDateTime() != null) {
-                        appointment.setAppointmentDateTime(dto.appointmentDateTime());
-                    }
-
-                    if (dto.durationMinutes() != null) {
-                        appointment.setDurationMinutes(dto.durationMinutes());
-                    }
-
-                    if (dto.consultationReason() != null) {
-                        appointment.setConsultationReason(dto.consultationReason());
-                    }
-
-                    if (dto.notes() != null) {
-                        appointment.setNotes(dto.notes());
-                    }
+            case SCHEDULED -> {
+                if (dto.appointmentDateTime() != null) {
+                    appointment.setAppointmentDateTime(dto.appointmentDateTime());
                 }
 
-                case CONFIRMED, ATTENDED -> {
-                    if (dto.notes() != null) {
-                        appointment.setNotes(dto.notes());
-                    }
+                if (dto.durationMinutes() != null) {
+                    appointment.setDurationMinutes(dto.durationMinutes());
                 }
 
-                case CANCELLED, NO_SHOW -> {
-                    throw new ApplicationException(ErrorMessage.APPOINTMENT_FINAL_STATUS, "");
+                if (dto.consultationReason() != null) {
+                    appointment.setConsultationReason(dto.consultationReason());
+                }
+
+                if (dto.notes() != null) {
+                    appointment.setNotes(dto.notes());
                 }
             }
 
-            if (newStatus != null) {
-                appointment.setStatus(newStatus);
-
-                if (newStatus == AppointmentStatus.CONFIRMED) {
-                    appointment.setConfirmedAt(LocalDateTime.now());
-                }
-
-                if (newStatus == AppointmentStatus.ATTENDED) {
-                    appointment.setAttendedAt(LocalDateTime.now());
-                }
-
-                if (newStatus == AppointmentStatus.CANCELLED) {
-                    appointment.setCancellationReason(dto.cancellationReason());
+            case CONFIRMED, ATTENDED -> {
+                if (dto.notes() != null) {
+                    appointment.setNotes(dto.notes());
                 }
             }
 
-            AppointmentEntity updated = appointmentRepository.save(appointment);
-            return AppointmentResponseDTO.fromEntity(updated);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
+            case CANCELLED, NO_SHOW -> {
+                throw new ApplicationException(ErrorMessage.APPOINTMENT_FINAL_STATUS, "");
+            }
         }
+
+        if (newStatus != null) {
+            appointment.setStatus(newStatus);
+
+            if (newStatus == AppointmentStatus.CONFIRMED) {
+                appointment.setConfirmedAt(LocalDateTime.now());
+            }
+
+            if (newStatus == AppointmentStatus.ATTENDED) {
+                appointment.setAttendedAt(LocalDateTime.now());
+            }
+
+            if (newStatus == AppointmentStatus.CANCELLED) {
+                appointment.setCancellationReason(dto.cancellationReason());
+            }
+        }
+
+        AppointmentEntity updated = appointmentRepository.save(appointment);
+        return AppointmentResponseDTO.fromEntity(updated);
     }
 
     @Override
     public PageResponse<AppointmentResponseDTO> findAllAppointments(int page, int size) {
-        try {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> result = appointmentRepository.findAllAppointmentsPaged(pageable);
 
-            Pageable pageable = PageRequest.of(page, size);
-            Page<AppointmentEntity> result = appointmentRepository.findAllAppointmentsPaged(pageable);
-
-            return new PageResponse<>(result.getContent().stream().map(AppointmentResponseDTO::fromEntity).toList(), result.getNumber(), result.getSize(), result.getTotalElements(), result.getTotalPages());
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        return new PageResponse<>(result.getContent().stream().map(AppointmentResponseDTO::fromEntity).toList(), result.getNumber(), result.getSize(), result.getTotalElements(), result.getTotalPages());
     }
 
     @Override
     public AppointmentResponseDTO findAppointmentById(UUID id) {
-        try {
+        AppointmentEntity findAppointmentById = this.appointmentRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorMessage.APPOINTMENT_NOT_FOUND_ID, ""));
 
-            AppointmentEntity findAppointmentById = this.appointmentRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorMessage.APPOINTMENT_NOT_FOUND_ID, ""));
+        return AppointmentResponseDTO.fromEntity(findAppointmentById);
 
-            return AppointmentResponseDTO.fromEntity(findAppointmentById);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
     }
 
     @Override
@@ -178,15 +156,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public void deleteAppointment(UUID id) {
-        try {
-            AppointmentEntity appointmentEntity = this.findAppointmentEntityById(id);
-            appointmentRepository.deleteById(appointmentEntity.getId());
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        AppointmentEntity appointmentEntity = this.findAppointmentEntityById(id);
+        appointmentRepository.deleteById(appointmentEntity.getId());
     }
 
     private void validateStatusTransition(AppointmentStatus current, AppointmentStatus next) {

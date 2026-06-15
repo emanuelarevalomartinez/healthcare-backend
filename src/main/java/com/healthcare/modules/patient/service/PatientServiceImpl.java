@@ -40,158 +40,120 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public PatientResponseDTO createPatient(CreatePatientDTO createPatientDTO) {
 
-        try {
-
-            if (patientRepository.findByMedicalRecordNumber(createPatientDTO.medicalRecordNumber()).isPresent()) {
-                throw new ApplicationException(ErrorMessage.PATIENT_MRN_CONFLICT, createPatientDTO.medicalRecordNumber());
-            }
-
-            if (patientRepository.findByDocumentNumber(createPatientDTO.documentNumber()).isPresent()) {
-                throw new ApplicationException(ErrorMessage.PATIENT_DOCUMENT_CONFLICT, createPatientDTO.documentNumber());
-            }
-
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            CustomUserDetails userAuthenticatedDetails = (CustomUserDetails) authentication.getPrincipal();
-            UUID userId = userAuthenticatedDetails.getId();
-
-            UserEntity user = this.userService.findUserEntityById(userId);
-
-            PatientEntity newPatient = new PatientEntity();
-            newPatient.setMedicalRecordNumber(createPatientDTO.medicalRecordNumber());
-            newPatient.setFullName(createPatientDTO.fullName());
-            newPatient.setDocumentType(createPatientDTO.documentType());
-            newPatient.setDocumentNumber(createPatientDTO.documentNumber());
-            newPatient.setBirthDate(createPatientDTO.birthDate());
-            newPatient.setSex(createPatientDTO.sex());
-            newPatient.setPhone(createPatientDTO.phone());
-            newPatient.setEmail(createPatientDTO.email());
-            newPatient.setAddress(createPatientDTO.address());
-            newPatient.setNotes(createPatientDTO.notes());
-            newPatient.setCreatedBy(user);
-
-            PatientEntity saved = this.patientRepository.save(newPatient);
-            return PatientResponseDTO.fromEntity(saved);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
+        if (patientRepository.findByMedicalRecordNumber(createPatientDTO.medicalRecordNumber()).isPresent()) {
+            throw new ApplicationException(ErrorMessage.PATIENT_MRN_CONFLICT, createPatientDTO.medicalRecordNumber());
         }
+
+        if (patientRepository.findByDocumentNumber(createPatientDTO.documentNumber()).isPresent()) {
+            throw new ApplicationException(ErrorMessage.PATIENT_DOCUMENT_CONFLICT, createPatientDTO.documentNumber());
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userAuthenticatedDetails = (CustomUserDetails) authentication.getPrincipal();
+        UUID userId = userAuthenticatedDetails.getId();
+
+        UserEntity user = this.userService.findUserEntityById(userId);
+
+        PatientEntity newPatient = new PatientEntity();
+        newPatient.setMedicalRecordNumber(createPatientDTO.medicalRecordNumber());
+        newPatient.setFullName(createPatientDTO.fullName());
+        newPatient.setDocumentType(createPatientDTO.documentType());
+        newPatient.setDocumentNumber(createPatientDTO.documentNumber());
+        newPatient.setBirthDate(createPatientDTO.birthDate());
+        newPatient.setSex(createPatientDTO.sex());
+        newPatient.setPhone(createPatientDTO.phone());
+        newPatient.setEmail(createPatientDTO.email());
+        newPatient.setAddress(createPatientDTO.address());
+        newPatient.setNotes(createPatientDTO.notes());
+        newPatient.setCreatedBy(user);
+
+        PatientEntity saved = this.patientRepository.save(newPatient);
+        return PatientResponseDTO.fromEntity(saved);
     }
 
     @Override
     public PatientResponseDTO updatePatient(UUID id, UpdatePatientDTO updatePatientDTO) {
-        try {
 
-            PatientEntity findPatient = this.findPatientEntityById(id);
+        PatientEntity findPatient = this.findPatientEntityById(id);
 
-            if (updatePatientDTO.medicalRecordNumber() != null) {
-                findPatient.setMedicalRecordNumber(updatePatientDTO.medicalRecordNumber());
-            }
-
-            if (updatePatientDTO.fullName() != null) {
-                findPatient.setFullName(updatePatientDTO.fullName());
-            }
-
-            if (updatePatientDTO.documentType() != null) {
-                findPatient.setDocumentType(updatePatientDTO.documentType());
-            }
-
-            if (updatePatientDTO.documentNumber() != null) {
-                findPatient.setDocumentNumber(updatePatientDTO.documentNumber());
-            }
-
-            if (updatePatientDTO.birthDate() != null) {
-                findPatient.setBirthDate(updatePatientDTO.birthDate());
-            }
-
-            if (updatePatientDTO.sex() != null) {
-                findPatient.setSex(updatePatientDTO.sex());
-            }
-
-            if (updatePatientDTO.phone() != null) {
-                findPatient.setPhone(updatePatientDTO.phone());
-            }
-
-            if (updatePatientDTO.email() != null) {
-                findPatient.setEmail(updatePatientDTO.email());
-            }
-
-            if (updatePatientDTO.address() != null) {
-                findPatient.setAddress(updatePatientDTO.address());
-            }
-
-            if (updatePatientDTO.notes() != null) {
-                findPatient.setNotes(updatePatientDTO.notes());
-            }
-
-            PatientEntity patientUpdated = this.patientRepository.save(findPatient);
-
-            return PatientResponseDTO.fromEntity(patientUpdated);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
+        if (updatePatientDTO.medicalRecordNumber() != null) {
+            findPatient.setMedicalRecordNumber(updatePatientDTO.medicalRecordNumber());
         }
+
+        if (updatePatientDTO.fullName() != null) {
+            findPatient.setFullName(updatePatientDTO.fullName());
+        }
+
+        if (updatePatientDTO.documentType() != null) {
+            findPatient.setDocumentType(updatePatientDTO.documentType());
+        }
+
+        if (updatePatientDTO.documentNumber() != null) {
+            findPatient.setDocumentNumber(updatePatientDTO.documentNumber());
+        }
+
+        if (updatePatientDTO.birthDate() != null) {
+            findPatient.setBirthDate(updatePatientDTO.birthDate());
+        }
+
+        if (updatePatientDTO.sex() != null) {
+            findPatient.setSex(updatePatientDTO.sex());
+        }
+
+        if (updatePatientDTO.phone() != null) {
+            findPatient.setPhone(updatePatientDTO.phone());
+        }
+
+        if (updatePatientDTO.email() != null) {
+            findPatient.setEmail(updatePatientDTO.email());
+        }
+
+        if (updatePatientDTO.address() != null) {
+            findPatient.setAddress(updatePatientDTO.address());
+        }
+
+        if (updatePatientDTO.notes() != null) {
+            findPatient.setNotes(updatePatientDTO.notes());
+        }
+
+        PatientEntity patientUpdated = this.patientRepository.save(findPatient);
+
+        return PatientResponseDTO.fromEntity(patientUpdated);
     }
 
     @Override
     public PageResponse<PatientResponseDTO> findAllPatients(int page, int size) {
 
-        try {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<PatientEntity> result = this.patientRepository.findAllPatientsPaged(pageable);
 
-            Pageable pageable = PageRequest.of(page, size);
-            Page<PatientEntity> result = this.patientRepository.findAllPatientsPaged(pageable);
-
-            return new PageResponse<>(
-                    result.getContent()
-                            .stream()
-                            .map(PatientResponseDTO::fromEntity)
-                            .toList(),
-                    result.getNumber(),
-                    result.getSize(),
-                    result.getTotalElements(),
-                    result.getTotalPages()
-            );
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        return new PageResponse<>(
+                result.getContent()
+                        .stream()
+                        .map(PatientResponseDTO::fromEntity)
+                        .toList(),
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages()
+        );
     }
 
     @Override
     public PatientResponseDTO findPatientById(UUID id) {
-        try {
 
-            PatientEntity findPatientById = this.patientRepository.findById(id)
-                    .orElseThrow(() -> new ApplicationException(ErrorMessage.PATIENT_NOT_FOUND_ID, id)
-                    );
+        PatientEntity findPatientById = this.patientRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(ErrorMessage.PATIENT_NOT_FOUND_ID, id)
+                );
 
-            return PatientResponseDTO.fromEntity(findPatientById);
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        return PatientResponseDTO.fromEntity(findPatientById);
     }
 
     @Override
     public void deletePatient(UUID id) {
 
-        try {
-
-            PatientEntity user = this.findPatientEntityById(id);
-            patientRepository.deleteById(user.getId());
-
-        } catch (ApplicationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        PatientEntity user = this.findPatientEntityById(id);
+        patientRepository.deleteById(user.getId());
     }
 
     @Override

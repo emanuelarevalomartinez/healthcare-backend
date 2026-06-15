@@ -6,7 +6,7 @@ import com.healthcare.shared.exceptions.ApplicationException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthServiceImpl implements AuthService{
+public class AuthServiceImpl implements AuthService {
 
     private final UserService userService;
     private final RefreshTokenServiceImpl refreshTokenService;
@@ -17,8 +17,8 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public Void register(RegisterUserDTO registerUserDTO) {
-        return userService.registerUser(registerUserDTO);
+    public void register(RegisterUserDTO registerUserDTO) {
+         userService.registerUser(registerUserDTO);
     }
 
     @Override
@@ -29,19 +29,11 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public RefreshTokenResponseDTO refresh(String refreshToken) {
 
-        try{
+        RefreshTokenResponseDTO save = this.refreshTokenService.validateAndSaveNewRefreshToken(refreshToken);
 
-            RefreshTokenResponseDTO save = this.refreshTokenService.validateAndSaveNewRefreshToken(refreshToken);
-
-            return new RefreshTokenResponseDTO(
-                    save.accessToken(),
-                    save.refreshToken()
-            );
-
-        } catch(ApplicationException ex){
-            throw ex;
-        } catch(Exception ex) {
-            throw new ApplicationException(ex);
-        }
+        return new RefreshTokenResponseDTO(
+                save.accessToken(),
+                save.refreshToken()
+        );
     }
 }

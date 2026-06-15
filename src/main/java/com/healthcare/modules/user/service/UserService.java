@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface UserService {
 
-    Void registerUser(RegisterUserDTO registerUserDTO );
+    void registerUser(RegisterUserDTO registerUserDTO );
     LoginResponseDTO loginUser(LoginUserDTO loginUserDTO);
     UserResponseDTO createUser(CreateUserDTO createUserDTO);
     UserResponseDTO updateUser(UUID id, UpdateUserDTO updateUserDTO);
