@@ -59,7 +59,9 @@ public class UserEntity {
 
     @OneToOne(
             mappedBy = "user",
-            fetch = FetchType.LAZY
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     private DoctorEntity doctor;
 
