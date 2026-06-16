@@ -1,14 +1,15 @@
 package com.healthcare.modules.auth.controller;
 
 
-import com.healthcare.config.security.JwtGenerator;
 import com.healthcare.modules.auth.dto.*;
+import com.healthcare.modules.user.dto.UserResponseDTO;
 import com.healthcare.shared.response.ApiResponse;
 import com.healthcare.shared.response.ResponseHandler;
 import com.healthcare.modules.auth.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,7 +18,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    public AuthController(AuthService authService, JwtGenerator jwtGenerator) {
+    public AuthController(AuthService authService) {
         this.authService = authService;
     }
 
@@ -37,6 +38,19 @@ public class AuthController {
     public ResponseEntity<ApiResponse<LoginResponseDTO>> login(@Valid @RequestBody LoginUserDTO loginUserDTO) {
 
         LoginResponseDTO user = authService.login(loginUserDTO);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                null,
+                user
+        );
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<UserResponseDTO>> me(
+            Authentication authentication
+    ) {
+        UserResponseDTO user = authService.me(authentication);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,

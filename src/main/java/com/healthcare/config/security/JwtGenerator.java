@@ -60,7 +60,7 @@ public class JwtGenerator {
         return claimsResolver.apply(claims);
     }
 
-    public String getUsernameFromJWT(String token) {
+    public String getUserFromJWT(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
 

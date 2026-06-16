@@ -10,10 +10,13 @@ import com.healthcare.modules.user.enums.UserRole;
 import com.healthcare.modules.user.service.UserService;
 import com.healthcare.shared.exceptions.ApplicationException;
 import com.healthcare.shared.exceptions.ErrorMessage;
+import com.healthcare.shared.providers.CustomUserDetails;
 import com.healthcare.shared.response.PageResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -44,8 +47,15 @@ public class DoctorServiceImpl implements DoctorService {
             );
         }
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userAuthenticatedDetails = (CustomUserDetails) authentication.getPrincipal();
+        UUID userId = userAuthenticatedDetails.getId();
+
+        UserEntity autenticateUserEntity = this.userService.findUserEntityById(userId);
+
         DoctorEntity newDoctor = new DoctorEntity();
         newDoctor.setUser(userEntity);
+        newDoctor.setCreatedBy(autenticateUserEntity);
         newDoctor.setSpecialty(createDoctorDTO.specialty());
         newDoctor.setLicenseNumber(createDoctorDTO.licenseNumber());
         newDoctor.setDefaultConsultationDuration(createDoctorDTO.defaultConsultationDuration());

@@ -1,5 +1,6 @@
 package com.healthcare.modules.user.entity;
 
+import com.healthcare.modules.auth.entity.RefreshTokenEntity;
 import com.healthcare.modules.doctor.entity.DoctorEntity;
 import com.healthcare.modules.user.enums.UserRole;
 import jakarta.persistence.*;
@@ -8,6 +9,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -64,6 +67,14 @@ public class UserEntity {
             orphanRemoval = true
     )
     private DoctorEntity doctor;
+
+    @OneToMany(
+            mappedBy = "user",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<RefreshTokenEntity> refreshTokens = new ArrayList<>();
 
     public UserEntity() {
     }
@@ -177,6 +188,14 @@ public class UserEntity {
 
     public void setDoctor(DoctorEntity doctor) {
         this.doctor = doctor;
+    }
+
+    public List<RefreshTokenEntity> getRefreshTokens() {
+        return refreshTokens;
+    }
+
+    public void setRefreshTokens(List<RefreshTokenEntity> refreshTokens) {
+        this.refreshTokens = refreshTokens;
     }
 
     public void activate() {

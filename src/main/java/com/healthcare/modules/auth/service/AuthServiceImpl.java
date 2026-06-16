@@ -1,8 +1,9 @@
 package com.healthcare.modules.auth.service;
 
 import com.healthcare.modules.auth.dto.*;
+import com.healthcare.modules.user.dto.UserResponseDTO;
 import com.healthcare.modules.user.service.UserService;
-import com.healthcare.shared.exceptions.ApplicationException;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,6 +25,11 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginResponseDTO login(LoginUserDTO loginUserDTO) {
         return userService.loginUser(loginUserDTO);
+    }
+
+    @Override
+    public UserResponseDTO me(Authentication authentication) {
+        return userService.findUserByEmail(authentication.getName());
     }
 
     @Override

@@ -30,6 +30,14 @@ public class DoctorEntity {
     )
     private UserEntity user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "created_by",
+            nullable = false,
+            updatable = false
+    )
+    private UserEntity createdBy;
+
     @Column(name = "specialty", nullable = false, length = 100)
     private String specialty;
 
@@ -72,6 +80,14 @@ public class DoctorEntity {
 
     public void setDefaultConsultationDuration(Integer defaultConsultationDuration) {
         this.defaultConsultationDuration = defaultConsultationDuration;
+    }
+
+    public UserEntity getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(UserEntity createdBy) {
+        this.createdBy = createdBy;
     }
 
     public UserEntity getUser() {

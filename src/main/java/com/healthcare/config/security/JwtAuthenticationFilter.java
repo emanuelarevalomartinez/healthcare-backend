@@ -40,28 +40,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = getJwtFromRequest(request);
         if (StringUtils.hasText(token) && jwtGenerator.validateToken(token, request) && jwtGenerator.isAccessToken(token)) {
 
-            String username = jwtGenerator.getUsernameFromJWT(token);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            String user = jwtGenerator.getUserFromJWT(token);
+            UserDetails userDetails = userDetailsService.loadUserByEmail(user);
 
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,null,
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null,
                     userDetails.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
 
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-        return path.startsWith("/auth/");
+        return path.equals("/auth/login") || path.equals("/auth/register") || path.equals("/auth/refresh");
     }
 
 
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")){
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;
