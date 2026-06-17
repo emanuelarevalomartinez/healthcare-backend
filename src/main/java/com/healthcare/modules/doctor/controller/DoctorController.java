@@ -1,9 +1,7 @@
 package com.healthcare.modules.doctor.controller;
 
 
-import com.healthcare.modules.doctor.dto.CreateDoctorDTO;
-import com.healthcare.modules.doctor.dto.DoctorResponseDTO;
-import com.healthcare.modules.doctor.dto.UpdateDoctorDTO;
+import com.healthcare.modules.doctor.dto.*;
 import com.healthcare.modules.doctor.service.DoctorService;
 import com.healthcare.shared.response.ApiResponse;
 import com.healthcare.shared.response.PageResponse;
@@ -37,6 +35,18 @@ public class DoctorController {
         );
     }
 
+    @PostMapping("/create-with-user")
+    public ResponseEntity<ApiResponse<DoctorResponseWithUserDTO>> createDoctorWithUser(@Valid @RequestBody CreateDoctorWithUserDTO createDoctorWithUserDTO) {
+
+        DoctorResponseWithUserDTO doctorWithUser = doctorService.createDoctorWithUser(createDoctorWithUserDTO);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.CREATED,
+                "Successfully created doctor with user",
+                doctorWithUser
+        );
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse<DoctorResponseDTO>> findDoctorById(@PathVariable UUID id) {
 
@@ -65,7 +75,7 @@ public class DoctorController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse<DoctorResponseDTO>> updateDoctor(@PathVariable UUID id , @Valid @RequestBody UpdateDoctorDTO updateDoctorDTO) {
+    public ResponseEntity<ApiResponse<DoctorResponseDTO>> updateDoctor(@PathVariable UUID id, @Valid @RequestBody UpdateDoctorDTO updateDoctorDTO) {
 
         DoctorResponseDTO doctorUpdate = this.doctorService.updateDoctor(id, updateDoctorDTO);
 
@@ -73,6 +83,18 @@ public class DoctorController {
                 HttpStatus.OK,
                 "Doctor updated successfully",
                 doctorUpdate
+        );
+    }
+
+    @PutMapping("/update-with-user/{userId}")
+    public ResponseEntity<ApiResponse<DoctorResponseWithUserDTO>> updateDoctorWithUser(@PathVariable UUID userId, @Valid @RequestBody UpdateDoctorWithUserDTO updateDoctorWithUserDTO) {
+
+        DoctorResponseWithUserDTO doctorWithUserUpdate = doctorService.updateDoctorWithUser(userId, updateDoctorWithUserDTO);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                "Doctor with user updated successfully",
+                doctorWithUserUpdate
         );
     }
 

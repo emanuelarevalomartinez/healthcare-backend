@@ -32,11 +32,10 @@ public class DoctorEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
-            name = "created_by",
-            nullable = false,
-            updatable = false
+            name = "modified_by",
+            nullable = false
     )
-    private UserEntity createdBy;
+    private UserEntity modifiedBy;
 
     @Column(name = "specialty", nullable = false, length = 100)
     private String specialty;
@@ -82,12 +81,12 @@ public class DoctorEntity {
         this.defaultConsultationDuration = defaultConsultationDuration;
     }
 
-    public UserEntity getCreatedBy() {
-        return createdBy;
+    public UserEntity getModifiedBy() {
+        return modifiedBy;
     }
 
-    public void setCreatedBy(UserEntity createdBy) {
-        this.createdBy = createdBy;
+    public void setModifiedBy(UserEntity modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
     public UserEntity getUser() {

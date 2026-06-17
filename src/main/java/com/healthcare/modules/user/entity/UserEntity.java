@@ -79,21 +79,6 @@ public class UserEntity {
     public UserEntity() {
     }
 
-    public UserEntity(String username, String passwordHash, UserRole role) {
-        this.username = username;
-        this.passwordHash = passwordHash;
-        this.role = role;
-        this.active = true;
-    }
-
-    public UserEntity(String username, String passwordHash, String email, UserRole role) {
-        this.username = username;
-        this.passwordHash = passwordHash;
-        this.email = email;
-        this.role = role;
-        this.active = true;
-    }
-
     public UUID getId() {
         return id;
     }
@@ -196,21 +181,6 @@ public class UserEntity {
 
     public void setRefreshTokens(List<RefreshTokenEntity> refreshTokens) {
         this.refreshTokens = refreshTokens;
-    }
-
-    public void activate() {
-        this.active = true;
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    public void deactivate() {
-        this.active = false;
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    public void recordLogin() {
-        this.lastLogin = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 
 

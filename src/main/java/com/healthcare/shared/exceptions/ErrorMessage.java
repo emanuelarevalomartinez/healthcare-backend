@@ -11,6 +11,9 @@ public enum ErrorMessage {
     USER_NOT_FOUND_USERNAME(404, "USER_NOT_FOUND", "Usuario con username no encontrado"),
 
     DOCTOR_NOT_FOUND_ID(404, "DOCTOR_NOT_FOUND", "Doctor con id no encontrado"),
+    DOCTOR_LICENSE_NUMBER_ALREADY_EXISTS(409, "DOCTOR_LICENSE_NUMBER_ALREADY_EXISTS", "Ya existe un doctor con este número de licencia"),
+    DOCTOR_NOT_FOUND_LICENSE_NUMBER(404, "DOCTOR_NOT_FOUND_LICENSE_NUMBER", "Doctor con número de licencia no encontrado"),
+    DOCTOR_NOT_FOUND_USER_ID(404, "DOCTOR_NOT_FOUND_USER_ID", "Doctor con userId no encontrado"),
     APPOINTMENT_NOT_FOUND_ID(404, "APPOINTMENT_NOT_FOUND_ID", "Cita con id no encontrado"),
     CONSULTATION_NOT_FOUND_ID(404, "CONSULTATION_NOT_FOUND_ID", "Consulta con id no encontrado"),
     REMINDER_NOT_FOUND_ID(404, "REMINDER_NOT_FOUND_ID", "Recordatorio con id no encontrado"),

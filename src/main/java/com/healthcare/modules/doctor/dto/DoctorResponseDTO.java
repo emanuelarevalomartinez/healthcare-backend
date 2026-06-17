@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public record DoctorResponseDTO(
         UUID id,
-        UUID createdBy,
+        UUID modifiedBy,
         String specialty,
         String licenseNumber,
         Integer defaultConsultationDuration
@@ -16,7 +16,7 @@ public record DoctorResponseDTO(
 
         return new DoctorResponseDTO(
                 doctor.getId(),
-                doctor.getCreatedBy().getId(),
+                doctor.getModifiedBy().getId(),
                 doctor.getSpecialty(),
                 doctor.getLicenseNumber(),
                 doctor.getDefaultConsultationDuration()
