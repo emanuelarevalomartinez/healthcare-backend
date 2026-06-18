@@ -15,5 +15,6 @@ public interface DoctorService {
     DoctorResponseDTO findDoctorById(UUID id);
     DoctorEntity findDoctorEntityById(UUID id);
     void deleteDoctor(UUID id);
+    void deleteDoctorByUserId(UUID userId);
 
 }

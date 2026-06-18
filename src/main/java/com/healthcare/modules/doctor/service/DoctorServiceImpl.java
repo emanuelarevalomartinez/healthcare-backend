@@ -300,6 +300,13 @@ public class DoctorServiceImpl implements DoctorService {
         doctorRepository.deleteById(doctor.getId());
     }
 
+    @Override
+    @Transactional
+    public void deleteDoctorByUserId(UUID userId) {
+        DoctorEntity doctor = this.findDoctorEntityByUserId(userId);
+        doctorRepository.delete(doctor);
+    }
+
     private DoctorEntity findDoctorEntityByUserId(UUID userId) {
         return doctorRepository.findByUserId(userId)
                 .orElseThrow(() -> new ApplicationException(ErrorMessage.DOCTOR_NOT_FOUND_USER_ID, userId));

@@ -110,4 +110,16 @@ public class DoctorController {
         );
     }
 
+    @DeleteMapping("/delete-with-user/{userId}")
+    public ResponseEntity<ApiResponse<Boolean>> deleteDoctorByUserId(@PathVariable UUID userId) {
+
+        this.doctorService.deleteDoctorByUserId(userId);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                "Successfully delete doctor by user",
+                null
+        );
+    }
+
 }
