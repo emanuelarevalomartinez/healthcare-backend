@@ -2,15 +2,16 @@ package com.healthcare.shared.exceptions;
 
 public enum ErrorMessage {
     INTERNAL_ERROR(500, "INTERNAL_ERROR", "Error interno del servidor"),
+    REQUIRED_FIELDS_MISSING(400, "REQUIRED_FIELDS_MISSING", "Faltan campos obligatorios"),
 
     EMAIL_CONFLICT(409, "EMAIL_CONFLICT", "El email ya está registrado"),
     USERNAME_CONFLICT(409, "USERNAME_CONFLICT", "El nombre de usuario ya está en uso"),
 
-    USER_NOT_FOUND_ID(404, "USER_NOT_FOUND", "Usuario con id no encontrado"),
-    USER_NOT_FOUND_EMAIL(404, "USER_NOT_FOUND", "Usuario con email no encontrado"),
-    USER_NOT_FOUND_USERNAME(404, "USER_NOT_FOUND", "Usuario con username no encontrado"),
+    USER_NOT_FOUND_ID(404, "USER_NOT_FOUND_ID", "Usuario con id no encontrado"),
+    USER_NOT_FOUND_EMAIL(404, "USER_NOT_FOUND_EMAIL", "Usuario con email no encontrado"),
+    USER_NOT_FOUND_USERNAME(404, "USER_NOT_FOUND_USERNAME", "Usuario con username no encontrado"),
 
-    DOCTOR_NOT_FOUND_ID(404, "DOCTOR_NOT_FOUND", "Doctor con id no encontrado"),
+    DOCTOR_NOT_FOUND_ID(404, "DOCTOR_NOT_FOUND_ID", "Doctor con id no encontrado"),
     DOCTOR_LICENSE_NUMBER_ALREADY_EXISTS(409, "DOCTOR_LICENSE_NUMBER_ALREADY_EXISTS", "Ya existe un doctor con este número de licencia"),
     DOCTOR_NOT_FOUND_LICENSE_NUMBER(404, "DOCTOR_NOT_FOUND_LICENSE_NUMBER", "Doctor con número de licencia no encontrado"),
     DOCTOR_NOT_FOUND_USER_ID(404, "DOCTOR_NOT_FOUND_USER_ID", "Doctor con userId no encontrado"),
@@ -19,36 +20,36 @@ public enum ErrorMessage {
     REMINDER_NOT_FOUND_ID(404, "REMINDER_NOT_FOUND_ID", "Recordatorio con id no encontrado"),
     AUDIT_NOT_FOUND_ID(404, "AUDIT_NOT_FOUND_ID", "Auditoria con id no encontrado"),
 
-    APPOINTMENT_FINAL_STATUS(404,"APPOINTMENT_NOT_FOUND_ID", "Las citas en estado terminal no se pueden modificar."),
+    APPOINTMENT_FINAL_STATUS(404,"APPOINTMENT_FINAL_STATUS", "Las citas en estado terminal no se pueden modificar."),
     APPOINTMENT_INVALID_STATUS_TRANSITION(404, "APPOINTMENT_INVALID_STATUS_TRANSITION","Transición de estado de cita no válida"),
 
-    INVALID_CREDENTIALS(401, "AUTH_FAILED", "Credenciales inválidas"),
-    INVALID_CHANGE_PASSWORD(400, "INVALID_PREVIOUS_PASSWORD", "La contraseña actual no coincide con la que intenta introducir"),
-    INVALID_PASSWORD_CHANGE_REQUEST(400, "INVALID_PASSWORD_CHANGE", "La solicitud de cambio de contraseña es inválida"),
+    INVALID_CREDENTIALS(401, "INVALID_CREDENTIALS", "Credenciales inválidas"),
+    INVALID_CHANGE_PASSWORD(400, "INVALID_CHANGE_PASSWORD", "La contraseña actual no coincide con la que intenta introducir"),
+    INVALID_PASSWORD_CHANGE_REQUEST(400, "INVALID_PASSWORD_CHANGE_REQUEST", "La solicitud de cambio de contraseña es inválida"),
     USER_INACTIVE(403, "USER_INACTIVE", "El usuario no está activado"),
 
     JWT_EXPIRED(401, "JWT_EXPIRED", "La sesión ha expirado"),
-    JWT_MALFORMED(401, "JWT_INVALID", "Token inválido"),
+    JWT_MALFORMED(401, "JWT_MALFORMED", "Token inválido"),
     JWT_UNSUPPORTED(401, "JWT_UNSUPPORTED", "Token no soportado"),
     JWT_INVALID_SIGNATURE(401, "JWT_INVALID_SIGNATURE", "Token no confiable"),
-    JWT_EMPTY(401, "JWT_MISSING", "No se proporcionó token"),
+    JWT_EMPTY(401, "JWT_EMPTY", "No se proporcionó token"),
     JWT_INVALID_TYPE(401, "JWT_INVALID_TYPE", "Tipo de token inválido"),
     JWT_ACCESS_REQUIRED(401, "JWT_ACCESS_REQUIRED", "Se requiere un access token"),
 
-    CONSULTATION_ALREADY_EXISTS_FOR_APPOINTMENT(409, "CONSULTATION_ALREADY_EXISTS", "Ya existe una consulta para esta cita"),
+    CONSULTATION_ALREADY_EXISTS_FOR_APPOINTMENT(409, "CONSULTATION_ALREADY_EXISTS_FOR_APPOINTMENT", "Ya existe una consulta para esta cita"),
 
     UNAUTHORIZED(401, "UNAUTHORIZED", "Acceso no autorizado"),
 
     PERSISTENCE_ERROR(400, "PERSISTENCE_ERROR", "Error de integridad de datos"),
 
-    PATIENT_NOT_FOUND_ID(404, "PATIENT_NOT_FOUND", "Paciente con id no encontrado"),
+    PATIENT_NOT_FOUND_ID(404, "PATIENT_NOT_FOUND_ID", "Paciente con id no encontrado"),
     PATIENT_MRN_CONFLICT(409, "PATIENT_MRN_CONFLICT", "Historia clínica ya registrada"),
     PATIENT_DOCUMENT_CONFLICT(409, "PATIENT_DOCUMENT_CONFLICT", "Documento ya registrado"),
     REFRESH_TOKEN_INVALID(401, "REFRESH_TOKEN_INVALID", "Sesión inválida, por favor inicie sesión nuevamente"),
     REFRESH_TOKEN_EXPIRED(401, "REFRESH_TOKEN_EXPIRED", "La sesión ha expirado, por favor inicie sesión nuevamente"),
 
     USER_NOT_DOCTOR(403, "USER_NOT_DOCTOR", "El usuario no tiene el rol de DOCTOR. Solo los usuarios con rol DOCTOR pueden ser registrados como médicos."),
-    DOCTOR_ALREADY_EXISTS_FOR_USER(409, "DOCTOR_ALREADY_EXISTS", "El usuario ya tiene un perfil de doctor registrado. No se puede crear otro.");
+    DOCTOR_ALREADY_EXISTS_FOR_USER(409, "DOCTOR_ALREADY_EXISTS_FOR_USER", "El usuario ya tiene un perfil de doctor registrado. No se puede crear otro.");
 
 
     private final String message;

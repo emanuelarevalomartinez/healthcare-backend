@@ -3,7 +3,7 @@ package com.healthcare.modules.doctor.service;
 import com.healthcare.modules.doctor.dto.*;
 import com.healthcare.modules.doctor.entity.DoctorEntity;
 import com.healthcare.modules.doctor.repository.DoctorRepository;
-import com.healthcare.modules.user.dto.UserResponseDTO;
+import com.healthcare.modules.user.dto.UpdateUserDTO;
 import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.modules.user.enums.UserRole;
 import com.healthcare.modules.user.repository.UserRepository;
@@ -167,8 +167,33 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public DoctorResponseWithUserDTO updateDoctorWithUser(UUID userId, UpdateDoctorWithUserDTO updateDoctorWithUserDTO) {
 
-        UserEntity findUser = userService.findUserEntityById(userId);
-        DoctorEntity findDoctor = findDoctorEntityByUserId(userId);
+          UserEntity findUser = userService.findUserEntityById(userId);
+          DoctorEntity findDoctor = null;
+
+        try {
+            findDoctor = findDoctorEntityByUserId(userId);
+
+        } catch (ApplicationException ex) {
+            if (ex.getType().equals(ErrorMessage.DOCTOR_NOT_FOUND_USER_ID.getType())) {
+
+                if (updateDoctorWithUserDTO.specialty() == null || updateDoctorWithUserDTO.licenseNumber() == null || updateDoctorWithUserDTO.defaultConsultationDuration() == null) {
+
+                    throw new ApplicationException(ErrorMessage.REQUIRED_FIELDS_MISSING, "especialidad, numero de licencia y/o duracion predeterminada de la consulta");
+                }
+
+                if (doctorRepository.existsByLicenseNumber(updateDoctorWithUserDTO.licenseNumber())) {
+                    throw new ApplicationException(ErrorMessage.DOCTOR_LICENSE_NUMBER_ALREADY_EXISTS, updateDoctorWithUserDTO.licenseNumber()
+                    );
+                }
+
+                CreateDoctorDTO newDoctor = new CreateDoctorDTO(userId, updateDoctorWithUserDTO.specialty(), updateDoctorWithUserDTO.licenseNumber(), updateDoctorWithUserDTO.defaultConsultationDuration());
+
+                UpdateUserDTO userUpdate = new UpdateUserDTO(null, null, null, UserRole.DOCTOR, null);
+                userService.updateUser(userId, userUpdate);
+                this.createDoctor(newDoctor);
+                findDoctor = this.findDoctorEntityByUserId(userId);
+            }
+        }
 
         if (updateDoctorWithUserDTO.username() != null && !updateDoctorWithUserDTO.username().equals(findUser.getUsername())) {
 
