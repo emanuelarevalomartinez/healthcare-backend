@@ -85,22 +85,9 @@ public class UserServiceImpl implements UserService {
         String refreshToken = refreshTokenService.createAndSaveRefreshToken(user);
 
         user.setLastLogin(LocalDateTime.now());
-        this.userRepository.save(user);
+        UserEntity userSaved = this.userRepository.save(user);
 
-        LoginResponseDTO response = new LoginResponseDTO(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole(),
-                user.isActive(),
-                user.getCreatedAt(),
-                user.getUpdatedAt(),
-                user.getLastLogin(),
-                accessToken,
-                refreshToken
-        );
-
-        return response;
+       return LoginResponseDTO.fromEntity(userSaved, accessToken, refreshToken);
     }
 
     @Override
