@@ -46,7 +46,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         RefreshTokenEntity storedToken = refreshTokenRepository
                 .findByTokenHashAndRevokedFalse(tokenHash)
                 .orElseThrow(() ->
-                        new ApplicationException(ErrorMessage.REFRESH_TOKEN_INVALID, "")
+                        new ApplicationException(ErrorMessage.REFRESH_TOKEN_REVOKED, "")
                 );
 
         storedToken.setRevoked(true);
@@ -54,11 +54,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
         UserEntity user = storedToken.getUser();
 
-        storedToken.setRevoked(true);
-        refreshTokenRepository.save(storedToken);
-
         String newAccessToken = jwtGenerator.generateAccessToken(user);
-        String newRefreshToken = this.saveRefreshToken(user);
+        String newRefreshToken = this.createAndSaveRefreshToken(user);
 
         return new RefreshTokenResponseDTO(
                 newAccessToken,

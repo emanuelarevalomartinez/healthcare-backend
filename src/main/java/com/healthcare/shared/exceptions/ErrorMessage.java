@@ -45,7 +45,7 @@ public enum ErrorMessage {
     PATIENT_NOT_FOUND_ID(404, "PATIENT_NOT_FOUND_ID", "Paciente con id no encontrado"),
     PATIENT_MRN_CONFLICT(409, "PATIENT_MRN_CONFLICT", "Historia clínica ya registrada"),
     PATIENT_DOCUMENT_CONFLICT(409, "PATIENT_DOCUMENT_CONFLICT", "Documento ya registrado"),
-    REFRESH_TOKEN_INVALID(401, "REFRESH_TOKEN_INVALID", "Sesión inválida, por favor inicie sesión nuevamente"),
+    REFRESH_TOKEN_REVOKED(401, "REFRESH_TOKEN_REVOKED", "Sesión inválida, por favor inicie sesión nuevamente"),
     REFRESH_TOKEN_EXPIRED(401, "REFRESH_TOKEN_EXPIRED", "La sesión ha expirado, por favor inicie sesión nuevamente"),
 
     USER_NOT_DOCTOR(403, "USER_NOT_DOCTOR", "El usuario no tiene el rol de DOCTOR. Solo los usuarios con rol DOCTOR pueden ser registrados como médicos."),
