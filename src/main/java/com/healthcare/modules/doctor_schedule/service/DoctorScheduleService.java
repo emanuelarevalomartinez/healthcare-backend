@@ -14,7 +14,10 @@ public interface DoctorScheduleService {
             CreateDoctorScheduleDTO createDoctorScheduleDTO);
     List<DoctorScheduleEntity> createDoctorSchedulesResponseEntities(
             CreateDoctorScheduleDTO createDoctorScheduleDTO);
-    List<DoctorScheduleResponseDTO> updateDoctorSchedules(UpdateDoctorScheduleDTO updateDoctorScheduleDTO);
+    List<DoctorScheduleResponseDTO> updateDoctorSchedulesResponseDTO(
+            UpdateDoctorScheduleDTO updateDoctorScheduleDTO);
+    List<DoctorScheduleEntity> updateDoctorSchedulesResponseEntities(
+            UpdateDoctorScheduleDTO updateDoctorScheduleDTO);
     PageResponse<DoctorScheduleResponseDTO> findAllDoctorSchedules(int page, int size);
     DoctorScheduleResponseDTO findDoctorScheduleById(UUID id);
     DoctorScheduleEntity findDoctorScheduleEntityById(UUID id);

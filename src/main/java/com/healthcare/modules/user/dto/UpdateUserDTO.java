@@ -26,4 +26,26 @@ public record UpdateUserDTO(
         UserRole role,
 
         Boolean isActive
-) { }
+) {
+
+        public UpdateUserDTO withUsername(String username) {
+                return new UpdateUserDTO(username, this.password, this.email, this.role, this.isActive);
+        }
+
+        public UpdateUserDTO withPassword(String password) {
+                return new UpdateUserDTO(this.username, password, this.email, this.role, this.isActive);
+        }
+
+        public UpdateUserDTO withEmail(String email) {
+                return new UpdateUserDTO(this.username, this.password, email, this.role, this.isActive);
+        }
+
+        public UpdateUserDTO withRole(UserRole role) {
+                return new UpdateUserDTO(this.username, this.password, this.email, role, this.isActive);
+        }
+
+        public UpdateUserDTO withIsActive(Boolean isActive) {
+                return new UpdateUserDTO(this.username, this.password, this.email, this.role, isActive);
+        }
+
+}

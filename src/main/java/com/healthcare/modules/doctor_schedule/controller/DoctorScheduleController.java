@@ -66,9 +66,9 @@ public class DoctorScheduleController {
     }
 
     @PutMapping()
-    public ResponseEntity<ApiResponse<List<DoctorScheduleResponseDTO>>> updateDoctorSchedule( @Valid @RequestBody UpdateDoctorScheduleDTO updateDoctorScheduleDTO) {
+    public ResponseEntity<ApiResponse<List<DoctorScheduleResponseDTO>>> updateDoctorSchedule(@Valid @RequestBody UpdateDoctorScheduleDTO updateDoctorScheduleDTO) {
 
-        List<DoctorScheduleResponseDTO> doctorSchedulesUpdate = this.doctorScheduleService.updateDoctorSchedules(updateDoctorScheduleDTO);
+        List<DoctorScheduleResponseDTO> doctorSchedulesUpdate = this.doctorScheduleService.updateDoctorSchedulesResponseDTO(updateDoctorScheduleDTO);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,

@@ -10,7 +10,7 @@ public interface DoctorService {
     DoctorResponseDTO createDoctor(CreateDoctorDTO createDoctorDTO);
     DoctorResponseDTO updateDoctor(UUID id, UpdateDoctorDTO updateDoctorDTO);
     DoctorWithUserAndScheduleResponseDTO createDoctorWithUserAndSchedule(CreateDoctorWithUserAndScheduleDTO createDoctorWithUserAndScheduleDTO);
-   /* DoctorWithUserAndScheduleResponseDTO updateDoctorWithUser(UUID userId, UpdateDoctorWithUserDTO updateDoctorWithUserDTO);*/
+    DoctorWithUserAndScheduleResponseDTO updateDoctorWithUserAndSchedule(UUID userId, UpdateDoctorWithUserAndScheduleDTO updateDoctorWithUserDTO);
     PageResponse<DoctorResponseDTO> findAllDoctors(int page, int size);
     DoctorResponseDTO findDoctorById(UUID id);
   /*  PageResponse<DoctorWithUserAndScheduleResponseDTO> findDoctorsFiltered(int page, int size, String search);*/

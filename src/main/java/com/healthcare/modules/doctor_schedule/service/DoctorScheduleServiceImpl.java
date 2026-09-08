@@ -24,61 +24,11 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
 
     private final DoctorScheduleRepository doctorScheduleRepository;
     private final DoctorHelperService doctorHelperService;
- //   private final DoctorService doctorService;
 
     public DoctorScheduleServiceImpl(DoctorScheduleRepository doctorScheduleRepository, DoctorHelperService doctorHelperService) {
         this.doctorScheduleRepository = doctorScheduleRepository;
         this.doctorHelperService = doctorHelperService;
     }
-
-
-  /*  @Override
-    public <T> List<T> createDoctorSchedules(CreateDoctorScheduleDTO createDoctorScheduleDTO, Class<T> returnType) {
-
-        DoctorEntity doctor = this.doctorService.findDoctorEntityById(createDoctorScheduleDTO.doctorId());
-
-        List<DoctorScheduleEntity> schedules = new ArrayList<>();
-        Set<DoctorScheduleDay> days = new HashSet<>();
-
-        for (CreateDoctorScheduleDTO.DayScheduleDTO scheduleDTO : createDoctorScheduleDTO.schedules()) {
-
-            if (!days.add(scheduleDTO.dayOfWeek())) {
-                throw new ApplicationException(ErrorMessage.DOCTOR_SCHEDULE_DUPLICATED_DAY, scheduleDTO.dayOfWeek());
-            }
-
-            boolean exists = this.doctorScheduleRepository
-                    .existsByDoctorIdAndDayOfWeek(doctor.getId(), scheduleDTO.dayOfWeek());
-
-            if (exists) {
-                throw new ApplicationException(ErrorMessage.DOCTOR_SCHEDULE_ALREADY_EXISTS, scheduleDTO.dayOfWeek());
-            }
-
-            DoctorScheduleEntity newDoctorSchedule = new DoctorScheduleEntity();
-
-            newDoctorSchedule.setDoctor(doctor);
-            newDoctorSchedule.setDayOfWeek(scheduleDTO.dayOfWeek());
-            newDoctorSchedule.setStartTime(scheduleDTO.startTime());
-            newDoctorSchedule.setEndTime(scheduleDTO.endTime());
-            newDoctorSchedule.setAvailable(scheduleDTO.available());
-            newDoctorSchedule.setNotes(scheduleDTO.notes());
-
-            schedules.add(newDoctorSchedule);
-        }
-
-        List<DoctorScheduleEntity> savedSchedules = this.doctorScheduleRepository.saveAll(schedules);
-
-        if (returnType == DoctorScheduleEntity.class) {
-            return (List<T>) savedSchedules;
-        } else if (returnType == DoctorScheduleResponseDTO.class) {
-            return (List<T>) savedSchedules.stream()
-                    .map(DoctorScheduleResponseDTO::fromEntity)
-                    .toList();
-        } else {
-            throw new IllegalArgumentException(
-                    "Tipo de retorno no soportado: " + returnType.getName()
-            );
-        }
-    }*/
 
     @Transactional
     public List<DoctorScheduleResponseDTO> createDoctorSchedulesResponseDTO(
@@ -101,7 +51,7 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
     }
 
     @Transactional
-    public <T> List<T> createDoctorSchedules(CreateDoctorScheduleDTO createDoctorScheduleDTO, Class<T> returnType) {
+    private <T> List<T> createDoctorSchedules(CreateDoctorScheduleDTO createDoctorScheduleDTO, Class<T> returnType) {
 
         DoctorEntity doctor = this.doctorHelperService.findDoctorEntityById(
                 createDoctorScheduleDTO.doctorId()
@@ -149,13 +99,32 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
                     .map(DoctorScheduleResponseDTO::fromEntity)
                     .toList();
         } else {
-            // TODO corregir mensaje de erroor
-            throw new ApplicationException(ErrorMessage.DOCTOR_SCHEDULE_DUPLICATED_DAY, "ERROR DE PRUEBAAAAAAAAA");
+            throw new ApplicationException(ErrorMessage.DOCTOR_SCHEDULE_CREATE_UNSUPPORTED_RETURN_TYPE, "");
         }
     }
 
-    @Override
-    public List<DoctorScheduleResponseDTO> updateDoctorSchedules(UpdateDoctorScheduleDTO updateDoctorScheduleDTO) {
+    @Transactional
+    public List<DoctorScheduleResponseDTO> updateDoctorSchedulesResponseDTO(
+            UpdateDoctorScheduleDTO updateDoctorScheduleDTO) {
+
+        return updateDoctorSchedules(
+                updateDoctorScheduleDTO,
+                DoctorScheduleResponseDTO.class
+        );
+    }
+
+    @Transactional
+    public List<DoctorScheduleEntity> updateDoctorSchedulesResponseEntities(
+            UpdateDoctorScheduleDTO updateDoctorScheduleDTO) {
+
+        return updateDoctorSchedules(
+                updateDoctorScheduleDTO,
+                DoctorScheduleEntity.class
+        );
+    }
+
+    @Transactional
+    private <T> List<T> updateDoctorSchedules(UpdateDoctorScheduleDTO updateDoctorScheduleDTO, Class<T> returnType) {
 
         List<DoctorScheduleEntity> schedules = new ArrayList<>();
         Set<DoctorScheduleDay> days = new HashSet<>();
@@ -192,9 +161,15 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
 
         List<DoctorScheduleEntity> savedSchedules = this.doctorScheduleRepository.saveAll(schedules);
 
-        return savedSchedules.stream()
-                .map(DoctorScheduleResponseDTO::fromEntity)
-                .toList();
+        if (returnType == DoctorScheduleEntity.class) {
+            return (List<T>) savedSchedules;
+        } else if (returnType == DoctorScheduleResponseDTO.class) {
+            return (List<T>) savedSchedules.stream()
+                    .map(DoctorScheduleResponseDTO::fromEntity)
+                    .toList();
+        } else {
+            throw new ApplicationException(ErrorMessage.DOCTOR_SCHEDULE_UPDATE_UNSUPPORTED_RETURN_TYPE, "");
+        }
     }
 
     @Override

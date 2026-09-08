@@ -1,6 +1,7 @@
 package com.healthcare.modules.user.controller;
 
 import com.healthcare.modules.user.dto.*;
+import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.shared.response.ApiResponse;
 import com.healthcare.shared.response.PageResponse;
 import com.healthcare.shared.response.ResponseHandler;
@@ -36,9 +37,9 @@ public class UserController {
 
 
     @GetMapping("/username/{username}")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> findUserByUsername(@PathVariable String username) {
+    public ResponseEntity<ApiResponse<UserEntity>> findUserByUsername(@PathVariable String username) {
 
-        UserResponseDTO user = this.userService.findUserByUsername(username);
+        UserEntity user = this.userService.findUserByUsername(username);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,

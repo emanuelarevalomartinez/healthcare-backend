@@ -17,7 +17,7 @@ public interface UserService {
     UserResponseDTO updateUser(UUID id, UpdateUserDTO updateUserDTO);
     PageResponse<UserResponseDTO> findAllUsers(int page, int size);
     UserResponseDTO findUserById(UUID id);
-    UserResponseDTO findUserByUsername(String username);
+    UserEntity findUserByUsername(String username);
     UserResponseDTO findUserByEmail(String email);
     void deleteUser(UUID id);
     UserEntity findUserEntityById(UUID id);

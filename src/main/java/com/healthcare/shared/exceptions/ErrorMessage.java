@@ -22,6 +22,8 @@ public enum ErrorMessage {
     DOCTOR_SCHEDULE_NOT_FOUND_ID(404, "DOCTOR_SCHEDULE_NOT_FOUND_ID", "No se encontró el horario del médico con el id proporcionado"),
     DOCTOR_SCHEDULE_DUPLICATED_DAY(400, "DOCTOR_SCHEDULE_DUPLICATED_DAY", "El día está repetido en la solicitud"),
     DOCTOR_SCHEDULE_ALREADY_EXISTS(409, "DOCTOR_SCHEDULE_ALREADY_EXISTS", "Ya existe un horario para el médico en el día"),
+    DOCTOR_SCHEDULE_CREATE_UNSUPPORTED_RETURN_TYPE(500, "DOCTOR_SCHEDULE_CREATE_UNSUPPORTED_RETURN_TYPE", "Tipo de retorno no soportado para el la creación de horarios"),
+    DOCTOR_SCHEDULE_UPDATE_UNSUPPORTED_RETURN_TYPE(500, "DOCTOR_SCHEDULE_UPDATE_UNSUPPORTED_RETURN_TYPE", "Tipo de retorno no soportado para la actualizacion de horarios"),
 
     APPOINTMENT_FINAL_STATUS(409,"APPOINTMENT_FINAL_STATUS", "Las citas en estado terminal no se pueden modificar."),
     APPOINTMENT_INVALID_STATUS_TRANSITION(409, "APPOINTMENT_INVALID_STATUS_TRANSITION","Transición de estado de cita no válida"),

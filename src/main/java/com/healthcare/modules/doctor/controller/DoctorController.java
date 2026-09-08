@@ -35,7 +35,7 @@ public class DoctorController {
     }
 
     @PostMapping("/create-with-user-and-schedule")
-    public ResponseEntity<ApiResponse<DoctorWithUserAndScheduleResponseDTO>> createDoctorWithUser(@Valid @RequestBody CreateDoctorWithUserAndScheduleDTO createDoctorWithUserAndScheduleDTO) {
+    public ResponseEntity<ApiResponse<DoctorWithUserAndScheduleResponseDTO>> createDoctorWithUserAndSchedule(@Valid @RequestBody CreateDoctorWithUserAndScheduleDTO createDoctorWithUserAndScheduleDTO) {
 
         DoctorWithUserAndScheduleResponseDTO doctorWithUser = doctorService.createDoctorWithUserAndSchedule(createDoctorWithUserAndScheduleDTO);
 
@@ -102,17 +102,17 @@ public class DoctorController {
         );
     }
 
-/*    @PutMapping("/update-with-user/{userId}")
-    public ResponseEntity<ApiResponse<DoctorWithUserAndScheduleResponseDTO>> updateDoctorWithUser(@PathVariable UUID userId, @Valid @RequestBody UpdateDoctorWithUserDTO updateDoctorWithUserDTO) {
+    @PutMapping("/update-with-user-and-schedule/{userId}")
+    public ResponseEntity<ApiResponse<DoctorWithUserAndScheduleResponseDTO>> updateDoctorWithUser(@PathVariable UUID userId, @Valid @RequestBody UpdateDoctorWithUserAndScheduleDTO updateDoctorWithUserAndScheduleDTO) {
 
-        DoctorWithUserAndScheduleResponseDTO doctorWithUserUpdate = doctorService.updateDoctorWithUser(userId, updateDoctorWithUserDTO);
+        DoctorWithUserAndScheduleResponseDTO doctorWithUserUpdate = doctorService.updateDoctorWithUserAndSchedule(userId, updateDoctorWithUserAndScheduleDTO);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
-                "Doctor with user updated successfully",
+                "Doctor with user and schedule updated successfully",
                 doctorWithUserUpdate
         );
-    }*/
+    }
 
     @DeleteMapping("{id}")
     public ResponseEntity<ApiResponse<Boolean>> deleteDoctorById(@PathVariable UUID id) {

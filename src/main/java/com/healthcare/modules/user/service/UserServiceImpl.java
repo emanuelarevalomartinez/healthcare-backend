@@ -170,13 +170,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO findUserByUsername(String username) {
+    public UserEntity findUserByUsername(String username) {
 
         UserEntity findUserByUsername = this.userRepository.findByUsername(username)
                 .orElseThrow(() -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_USERNAME, "")
                 );
 
-        return UserResponseDTO.fromEntity(findUserByUsername);
+        return findUserByUsername;
     }
 
     @Override
