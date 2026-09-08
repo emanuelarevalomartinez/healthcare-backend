@@ -5,7 +5,13 @@ import com.healthcare.modules.doctor.dto.*;
 import com.healthcare.modules.doctor.entity.DoctorEntity;
 import com.healthcare.modules.doctor.entity.specifications.DoctorSpecifications;
 import com.healthcare.modules.doctor.repository.DoctorRepository;
+import com.healthcare.modules.doctor_schedule.dto.CreateDoctorScheduleDTO;
+import com.healthcare.modules.doctor_schedule.dto.DoctorScheduleResponseDTO;
+import com.healthcare.modules.doctor_schedule.entity.DoctorScheduleEntity;
+import com.healthcare.modules.doctor_schedule.service.DoctorScheduleService;
+import com.healthcare.modules.user.dto.CreateUserDTO;
 import com.healthcare.modules.user.dto.UpdateUserDTO;
+import com.healthcare.modules.user.dto.UserResponseDTO;
 import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.modules.user.enums.UserRole;
 import com.healthcare.modules.user.repository.UserRepository;
@@ -24,6 +30,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -35,13 +43,15 @@ public class DoctorServiceImpl implements DoctorService {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
+    private final DoctorScheduleService doctorScheduleService;
 
-    public DoctorServiceImpl(DoctorRepository doctorRepository, UserRepository userRepository, UserService userService, PasswordEncoder passwordEncoder, AuthService authService) {
+    public DoctorServiceImpl(DoctorRepository doctorRepository, UserRepository userRepository, UserService userService, PasswordEncoder passwordEncoder, AuthService authService, DoctorScheduleService doctorScheduleService) {
         this.doctorRepository = doctorRepository;
         this.userRepository = userRepository;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.authService = authService;
+        this.doctorScheduleService = doctorScheduleService;
     }
 
     @Override
@@ -109,42 +119,49 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public DoctorResponseWithUserDTO createDoctorWithUser(CreateDoctorWithUserDTO createDoctorWithUserDTO) {
+    public DoctorWithUserAndScheduleResponseDTO createDoctorWithUserAndSchedule(CreateDoctorWithUserAndScheduleDTO createDoctorWithUserAndScheduleDTO) {
 
-        if (userRepository.findByUsername(createDoctorWithUserDTO.username()).isPresent()) {
+     /*   if (userRepository.findByUsername(createDoctorWithUserAndScheduleDTO.user().username()).isPresent()) {
             throw new ApplicationException(ErrorMessage.USERNAME_CONFLICT, "");
         }
 
-        if (userRepository.findByEmail(createDoctorWithUserDTO.email()).isPresent()) {
+        if (userRepository.findByEmail(createDoctorWithUserAndScheduleDTO.user().email()).isPresent()) {
             throw new ApplicationException(ErrorMessage.EMAIL_CONFLICT, "");
-        }
+        }*/
 
-        if (!UserRole.DOCTOR.equals(UserRole.DOCTOR)) {
+        CreateUserDTO userDTO = createDoctorWithUserAndScheduleDTO.user();
+
+        if (!UserRole.DOCTOR.equals(userDTO.role())) {
             throw new ApplicationException(ErrorMessage.USER_NOT_DOCTOR, "");
         }
 
-        if (doctorRepository.existsByLicenseNumber(createDoctorWithUserDTO.licenseNumber())) {
-            throw new ApplicationException(ErrorMessage.DOCTOR_LICENSE_NUMBER_ALREADY_EXISTS, createDoctorWithUserDTO.licenseNumber());
+        UserResponseDTO userResponse = userService.createUser(userDTO);
+        UserEntity user = userService.findUserEntityById(userResponse.id());
+
+        CreateDoctorWithoutUserDTO doctorDTO = createDoctorWithUserAndScheduleDTO.doctor();
+
+        if (doctorRepository.existsByLicenseNumber(doctorDTO.licenseNumber())) {
+            throw new ApplicationException(ErrorMessage.DOCTOR_LICENSE_NUMBER_ALREADY_EXISTS, doctorDTO.licenseNumber());
         }
 
         UUID userId = authService.getCurrentUserId();
-        UserEntity user = userService.findUserEntityById(userId);
+        UserEntity currentUser = userService.findUserEntityById(userId);
 
-        UserEntity newUser = new UserEntity();
-        newUser.setUsername(createDoctorWithUserDTO.username());
-        newUser.setEmail(createDoctorWithUserDTO.email());
-        newUser.setPasswordHash(passwordEncoder.encode(createDoctorWithUserDTO.password()));
-        newUser.setRole(createDoctorWithUserDTO.role());
-        newUser.setActive(createDoctorWithUserDTO.isActive());
+       /* UserEntity newUser = new UserEntity();
+        newUser.setUsername(createDoctorWithUserAndScheduleDTO.user().username());
+        newUser.setEmail(createDoctorWithUserAndScheduleDTO.user().email());
+        newUser.setPasswordHash(passwordEncoder.encode(createDoctorWithUserAndScheduleDTO.user().password()));
+        newUser.setRole(createDoctorWithUserAndScheduleDTO.user().role());
+        newUser.setActive(createDoctorWithUserAndScheduleDTO.user().isActive());
 
-        UserEntity userSaved = this.userRepository.save(newUser);
+        UserEntity userSaved = this.userRepository.save(newUser);*/
 
         DoctorEntity newDoctor = new DoctorEntity();
-        newDoctor.setUser(userSaved);
-        newDoctor.setModifiedBy(user);
-        newDoctor.setSpecialty(createDoctorWithUserDTO.specialty());
-        newDoctor.setLicenseNumber(createDoctorWithUserDTO.licenseNumber());
-        newDoctor.setDefaultConsultationDuration(createDoctorWithUserDTO.defaultConsultationDuration());
+        newDoctor.setUser(user);
+        newDoctor.setModifiedBy(currentUser);
+        newDoctor.setSpecialty(doctorDTO.specialty());
+        newDoctor.setLicenseNumber(doctorDTO.licenseNumber());
+        newDoctor.setDefaultConsultationDuration(doctorDTO.defaultConsultationDuration());
 
         DoctorEntity doctorSaved;
 
@@ -153,16 +170,30 @@ public class DoctorServiceImpl implements DoctorService {
         } catch (DataIntegrityViolationException ex) {
             throw new ApplicationException(
                     ErrorMessage.DOCTOR_LICENSE_NUMBER_ALREADY_EXISTS,
-                    createDoctorWithUserDTO.licenseNumber()
+                    doctorDTO.licenseNumber()
             );
         }
 
-        return DoctorResponseWithUserDTO.fromEntity(newUser, newDoctor);
+        List<DoctorScheduleEntity> scheduleSaved = new ArrayList<>();
+        if (createDoctorWithUserAndScheduleDTO.schedule() != null &&
+                createDoctorWithUserAndScheduleDTO.schedule().schedules() != null &&
+                !createDoctorWithUserAndScheduleDTO.schedule().schedules().isEmpty()) {
+
+            CreateDoctorScheduleDTO scheduleDTO = new CreateDoctorScheduleDTO(
+                    doctorSaved.getId(),
+                    createDoctorWithUserAndScheduleDTO.schedule().schedules()
+            );
+
+            // Necesitas un método que devuelva entidades, no DTOs
+            scheduleSaved = doctorScheduleService.createDoctorSchedulesResponseEntities(scheduleDTO);
+        }
+
+        return DoctorWithUserAndScheduleResponseDTO.fromEntities(user, newDoctor, scheduleSaved);
     }
 
-    @Transactional
+/*    @Transactional
     @Override
-    public DoctorResponseWithUserDTO updateDoctorWithUser(UUID userId, UpdateDoctorWithUserDTO updateDoctorWithUserDTO) {
+    public DoctorWithUserAndScheduleResponseDTO updateDoctorWithUser(UUID userId, UpdateDoctorWithUserDTO updateDoctorWithUserDTO) {
 
         UserEntity findUser = userService.findUserEntityById(userId);
         DoctorEntity findDoctor = null;
@@ -248,9 +279,9 @@ public class DoctorServiceImpl implements DoctorService {
             throw new ApplicationException(ErrorMessage.DOCTOR_LICENSE_NUMBER_ALREADY_EXISTS, updateDoctorWithUserDTO.licenseNumber());
         }
 
-        return DoctorResponseWithUserDTO.fromEntity(findUser, findDoctor);
+        return DoctorWithUserAndScheduleResponseDTO.fromEntities(findUser, findDoctor);
 
-    }
+    }*/
 
     @Override
     public PageResponse<DoctorResponseDTO> findAllDoctors(int page, int size) {
@@ -280,8 +311,8 @@ public class DoctorServiceImpl implements DoctorService {
         return DoctorResponseDTO.fromEntity(findDoctorById);
     }
 
-    @Override
-    public PageResponse<DoctorResponseWithUserDTO> findDoctorsFiltered(int page, int size, String search) {
+/*    @Override
+    public PageResponse<DoctorWithUserAndScheduleResponseDTO> findDoctorsFiltered(int page, int size, String search) {
         Specification<DoctorEntity> spec = Specification.where(DoctorSpecifications.search(search));
 
         Pageable pageable = PageRequest.of(
@@ -296,7 +327,7 @@ public class DoctorServiceImpl implements DoctorService {
                 result.getContent()
                         .stream()
                         .map(doctor ->
-                                DoctorResponseWithUserDTO.fromEntity(
+                                DoctorWithUserAndScheduleResponseDTO.fromEntities(
                                         doctor.getUser(),
                                         doctor)
                         )
@@ -306,7 +337,7 @@ public class DoctorServiceImpl implements DoctorService {
                 result.getTotalElements(),
                 result.getTotalPages()
         );
-    }
+    }*/
 
     @Override
     public DoctorEntity findDoctorEntityById(UUID id) {

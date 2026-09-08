@@ -98,30 +98,6 @@ public class UserController {
         );
     }
 
-    @PutMapping("changePassword/{id}")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> changePassword(@PathVariable UUID id, @Valid @RequestBody UpdateUserPasswordRequestDTO updateUserPasswordRequestDTO) {
-
-        this.userService.changePassword(id, updateUserPasswordRequestDTO);
-
-        return ResponseHandler.generateResponse(
-                HttpStatus.OK,
-                "User password update",
-                null
-        );
-    }
-
-    @PutMapping("changeIsActive/{id}")
-    public ResponseEntity<ApiResponse<Boolean>> changeUserIsActive(@PathVariable UUID id, @Valid @RequestBody UpdateUserIsActiveRequestDTO updateUserIsActiveRequestDTO) {
-
-        boolean newStatus = this.userService.changeUserIsActiveStatus(id, updateUserIsActiveRequestDTO);
-
-        return ResponseHandler.generateResponse(
-                HttpStatus.OK,
-                "User status changed",
-                newStatus
-        );
-    }
-
     @DeleteMapping("{id}")
     public ResponseEntity<ApiResponse<Boolean>> deleteUserById(@PathVariable UUID id) {
 

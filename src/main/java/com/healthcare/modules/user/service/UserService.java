@@ -22,7 +22,5 @@ public interface UserService {
     void deleteUser(UUID id);
     UserEntity findUserEntityById(UUID id);
     UserEntity findUserEntityByEmail(String email);
-    void changePassword(UUID userId, UpdateUserPasswordRequestDTO updateUserPasswordRequestDTO);
-    boolean changeUserIsActiveStatus(UUID userId, UpdateUserIsActiveRequestDTO updateUserIsActiveRequestDTO);
 
 }

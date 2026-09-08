@@ -1,6 +1,8 @@
 
 
 // TODO
+
+// no se estan aplicando las validaciones a la hora de crear el doctor con usuario y hroario porque el horario se esta creando sin validaciones
 // hay que incluir filtrar el paciente por Nombre, Teléfono y Documento de identidad
 // incluir en el registro de usuarios en el caso de doctor el horario medico establecido para que trabaje asi como todos los datos restantes pertinentes
 // crud de el horario medico

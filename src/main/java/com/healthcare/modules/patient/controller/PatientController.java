@@ -1,6 +1,5 @@
 package com.healthcare.modules.patient.controller;
 
-import com.healthcare.modules.doctor.dto.DoctorResponseWithUserDTO;
 import com.healthcare.modules.patient.dto.UpdatePatientDTO;
 import com.healthcare.modules.patient.enums.DocumentType;
 import com.healthcare.modules.patient.enums.Sex;

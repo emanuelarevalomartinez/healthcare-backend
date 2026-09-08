@@ -34,14 +34,14 @@ public class DoctorController {
         );
     }
 
-    @PostMapping("/create-with-user")
-    public ResponseEntity<ApiResponse<DoctorResponseWithUserDTO>> createDoctorWithUser(@Valid @RequestBody CreateDoctorWithUserDTO createDoctorWithUserDTO) {
+    @PostMapping("/create-with-user-and-schedule")
+    public ResponseEntity<ApiResponse<DoctorWithUserAndScheduleResponseDTO>> createDoctorWithUser(@Valid @RequestBody CreateDoctorWithUserAndScheduleDTO createDoctorWithUserAndScheduleDTO) {
 
-        DoctorResponseWithUserDTO doctorWithUser = doctorService.createDoctorWithUser(createDoctorWithUserDTO);
+        DoctorWithUserAndScheduleResponseDTO doctorWithUser = doctorService.createDoctorWithUserAndSchedule(createDoctorWithUserAndScheduleDTO);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.CREATED,
-                "Successfully created doctor with user",
+                "Successfully created doctor with user and schedule",
                 doctorWithUser
         );
     }
@@ -59,21 +59,21 @@ public class DoctorController {
     }
 
 
-    @GetMapping("/filter")
-    public ResponseEntity<ApiResponse<PageResponse<DoctorResponseWithUserDTO>>> findDoctorsFiltered(
+/*    @GetMapping("/filter")
+    public ResponseEntity<ApiResponse<PageResponse<DoctorWithUserAndScheduleResponseDTO>>> findDoctorsFiltered(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String search
     ) {
 
-        PageResponse<DoctorResponseWithUserDTO> doctors = this.doctorService.findDoctorsFiltered(page, size, search);
+        PageResponse<DoctorWithUserAndScheduleResponseDTO> doctors = this.doctorService.findDoctorsFiltered(page, size, search);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
                 null,
                 doctors
         );
-    }
+    }*/
 
     @GetMapping
     public ResponseEntity<ApiResponse<PageResponse<DoctorResponseDTO>>> findAllDoctors(
@@ -102,17 +102,17 @@ public class DoctorController {
         );
     }
 
-    @PutMapping("/update-with-user/{userId}")
-    public ResponseEntity<ApiResponse<DoctorResponseWithUserDTO>> updateDoctorWithUser(@PathVariable UUID userId, @Valid @RequestBody UpdateDoctorWithUserDTO updateDoctorWithUserDTO) {
+/*    @PutMapping("/update-with-user/{userId}")
+    public ResponseEntity<ApiResponse<DoctorWithUserAndScheduleResponseDTO>> updateDoctorWithUser(@PathVariable UUID userId, @Valid @RequestBody UpdateDoctorWithUserDTO updateDoctorWithUserDTO) {
 
-        DoctorResponseWithUserDTO doctorWithUserUpdate = doctorService.updateDoctorWithUser(userId, updateDoctorWithUserDTO);
+        DoctorWithUserAndScheduleResponseDTO doctorWithUserUpdate = doctorService.updateDoctorWithUser(userId, updateDoctorWithUserDTO);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
                 "Doctor with user updated successfully",
                 doctorWithUserUpdate
         );
-    }
+    }*/
 
     @DeleteMapping("{id}")
     public ResponseEntity<ApiResponse<Boolean>> deleteDoctorById(@PathVariable UUID id) {

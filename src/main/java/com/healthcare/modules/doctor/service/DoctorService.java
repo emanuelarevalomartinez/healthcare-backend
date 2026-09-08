@@ -9,11 +9,11 @@ import java.util.UUID;
 public interface DoctorService {
     DoctorResponseDTO createDoctor(CreateDoctorDTO createDoctorDTO);
     DoctorResponseDTO updateDoctor(UUID id, UpdateDoctorDTO updateDoctorDTO);
-    DoctorResponseWithUserDTO createDoctorWithUser(CreateDoctorWithUserDTO createDoctorWithUserDTO);
-    DoctorResponseWithUserDTO updateDoctorWithUser(UUID userId,UpdateDoctorWithUserDTO updateDoctorWithUserDTO);
+    DoctorWithUserAndScheduleResponseDTO createDoctorWithUserAndSchedule(CreateDoctorWithUserAndScheduleDTO createDoctorWithUserAndScheduleDTO);
+   /* DoctorWithUserAndScheduleResponseDTO updateDoctorWithUser(UUID userId, UpdateDoctorWithUserDTO updateDoctorWithUserDTO);*/
     PageResponse<DoctorResponseDTO> findAllDoctors(int page, int size);
     DoctorResponseDTO findDoctorById(UUID id);
-    PageResponse<DoctorResponseWithUserDTO> findDoctorsFiltered(int page, int size, String search);
+  /*  PageResponse<DoctorWithUserAndScheduleResponseDTO> findDoctorsFiltered(int page, int size, String search);*/
     DoctorEntity findDoctorEntityById(UUID id);
     void deleteDoctor(UUID id);
     void deleteDoctorByUserId(UUID userId);

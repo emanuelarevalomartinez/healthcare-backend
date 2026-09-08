@@ -214,37 +214,4 @@ public class UserServiceImpl implements UserService {
                 });
     }
 
-    @Override
-    public void changePassword(UUID userId, UpdateUserPasswordRequestDTO updateUserPasswordRequestDTO) {
-        UserEntity user = this.findUserEntityById(userId);
-
-        if (updateUserPasswordRequestDTO.previousPassword().isEmpty() || updateUserPasswordRequestDTO.newPassword().isEmpty()) {
-            throw new ApplicationException(
-                    ErrorMessage.INVALID_PASSWORD_CHANGE_REQUEST, ""
-            );
-        }
-
-        boolean passwordMatch = passwordEncoder.matches(
-                updateUserPasswordRequestDTO.previousPassword(),
-                user.getPasswordHash()
-        );
-
-        if (!passwordMatch) {
-            throw new ApplicationException(
-                    ErrorMessage.INVALID_CHANGE_PASSWORD, updateUserPasswordRequestDTO.previousPassword()
-            );
-        }
-
-        user.setPasswordHash(passwordEncoder.encode(updateUserPasswordRequestDTO.newPassword()));
-        this.userRepository.save(user);
-    }
-
-    @Override
-    public boolean changeUserIsActiveStatus(UUID userId, UpdateUserIsActiveRequestDTO updateUserIsActiveRequestDTO) {
-        UserEntity user = this.findUserEntityById(userId);
-
-        user.setActive(updateUserIsActiveRequestDTO.isActive());
-        return this.userRepository.save(user).isActive();
-    }
-
 }

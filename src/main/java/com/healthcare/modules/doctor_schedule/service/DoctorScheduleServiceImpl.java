@@ -1,7 +1,7 @@
 package com.healthcare.modules.doctor_schedule.service;
 
 import com.healthcare.modules.doctor.entity.DoctorEntity;
-import com.healthcare.modules.doctor.service.DoctorService;
+import com.healthcare.modules.doctor.service.DoctorHelperService;
 import com.healthcare.modules.doctor_schedule.dto.CreateDoctorScheduleDTO;
 import com.healthcare.modules.doctor_schedule.dto.DoctorScheduleResponseDTO;
 import com.healthcare.modules.doctor_schedule.dto.UpdateDoctorScheduleDTO;
@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -22,16 +23,17 @@ import java.util.*;
 public class DoctorScheduleServiceImpl implements DoctorScheduleService {
 
     private final DoctorScheduleRepository doctorScheduleRepository;
-    private final DoctorService doctorService;
+    private final DoctorHelperService doctorHelperService;
+ //   private final DoctorService doctorService;
 
-    public DoctorScheduleServiceImpl(DoctorScheduleRepository doctorScheduleRepository, DoctorService doctorService) {
+    public DoctorScheduleServiceImpl(DoctorScheduleRepository doctorScheduleRepository, DoctorHelperService doctorHelperService) {
         this.doctorScheduleRepository = doctorScheduleRepository;
-        this.doctorService = doctorService;
+        this.doctorHelperService = doctorHelperService;
     }
 
 
-    @Override
-    public List<DoctorScheduleResponseDTO> createDoctorSchedules(CreateDoctorScheduleDTO createDoctorScheduleDTO) {
+  /*  @Override
+    public <T> List<T> createDoctorSchedules(CreateDoctorScheduleDTO createDoctorScheduleDTO, Class<T> returnType) {
 
         DoctorEntity doctor = this.doctorService.findDoctorEntityById(createDoctorScheduleDTO.doctorId());
 
@@ -65,9 +67,91 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
 
         List<DoctorScheduleEntity> savedSchedules = this.doctorScheduleRepository.saveAll(schedules);
 
-        return savedSchedules.stream()
-                .map(DoctorScheduleResponseDTO::fromEntity)
-                .toList();
+        if (returnType == DoctorScheduleEntity.class) {
+            return (List<T>) savedSchedules;
+        } else if (returnType == DoctorScheduleResponseDTO.class) {
+            return (List<T>) savedSchedules.stream()
+                    .map(DoctorScheduleResponseDTO::fromEntity)
+                    .toList();
+        } else {
+            throw new IllegalArgumentException(
+                    "Tipo de retorno no soportado: " + returnType.getName()
+            );
+        }
+    }*/
+
+    @Transactional
+    public List<DoctorScheduleResponseDTO> createDoctorSchedulesResponseDTO(
+            CreateDoctorScheduleDTO createDoctorScheduleDTO) {
+
+        return createDoctorSchedules(
+                createDoctorScheduleDTO,
+                DoctorScheduleResponseDTO.class
+        );
+    }
+
+    @Transactional
+    public List<DoctorScheduleEntity> createDoctorSchedulesResponseEntities(
+            CreateDoctorScheduleDTO createDoctorScheduleDTO) {
+
+        return createDoctorSchedules(
+                createDoctorScheduleDTO,
+                DoctorScheduleEntity.class
+        );
+    }
+
+    @Transactional
+    public <T> List<T> createDoctorSchedules(CreateDoctorScheduleDTO createDoctorScheduleDTO, Class<T> returnType) {
+
+        DoctorEntity doctor = this.doctorHelperService.findDoctorEntityById(
+                createDoctorScheduleDTO.doctorId()
+        );
+
+        List<DoctorScheduleEntity> schedules = new ArrayList<>();
+        Set<DoctorScheduleDay> days = new HashSet<>();
+
+        for (CreateDoctorScheduleDTO.DayScheduleDTO scheduleDTO : createDoctorScheduleDTO.schedules()) {
+
+            if (!days.add(scheduleDTO.dayOfWeek())) {
+                throw new ApplicationException(
+                        ErrorMessage.DOCTOR_SCHEDULE_DUPLICATED_DAY,
+                        scheduleDTO.dayOfWeek()
+                );
+            }
+
+            boolean exists = this.doctorScheduleRepository
+                    .existsByDoctorIdAndDayOfWeek(doctor.getId(), scheduleDTO.dayOfWeek());
+
+            if (exists) {
+                throw new ApplicationException(
+                        ErrorMessage.DOCTOR_SCHEDULE_ALREADY_EXISTS,
+                        scheduleDTO.dayOfWeek()
+                );
+            }
+
+            DoctorScheduleEntity newDoctorSchedule = new DoctorScheduleEntity();
+            newDoctorSchedule.setDoctor(doctor);
+            newDoctorSchedule.setDayOfWeek(scheduleDTO.dayOfWeek());
+            newDoctorSchedule.setStartTime(scheduleDTO.startTime());
+            newDoctorSchedule.setEndTime(scheduleDTO.endTime());
+            newDoctorSchedule.setAvailable(scheduleDTO.available());
+            newDoctorSchedule.setNotes(scheduleDTO.notes());
+
+            schedules.add(newDoctorSchedule);
+        }
+
+        List<DoctorScheduleEntity> savedSchedules = this.doctorScheduleRepository.saveAll(schedules);
+
+        if (returnType == DoctorScheduleEntity.class) {
+            return (List<T>) savedSchedules;
+        } else if (returnType == DoctorScheduleResponseDTO.class) {
+            return (List<T>) savedSchedules.stream()
+                    .map(DoctorScheduleResponseDTO::fromEntity)
+                    .toList();
+        } else {
+            // TODO corregir mensaje de erroor
+            throw new ApplicationException(ErrorMessage.DOCTOR_SCHEDULE_DUPLICATED_DAY, "ERROR DE PRUEBAAAAAAAAA");
+        }
     }
 
     @Override

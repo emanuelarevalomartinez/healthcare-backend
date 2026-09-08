@@ -29,7 +29,7 @@ public class DoctorScheduleController {
     @PostMapping
     public ResponseEntity<ApiResponse<List<DoctorScheduleResponseDTO>>> createDoctorSchedules(@Valid @RequestBody CreateDoctorScheduleDTO createDoctorScheduleDTO) {
 
-        List<DoctorScheduleResponseDTO> doctorSchedules = doctorScheduleService.createDoctorSchedules(createDoctorScheduleDTO);
+        List<DoctorScheduleResponseDTO> doctorSchedules = doctorScheduleService.createDoctorSchedulesResponseDTO(createDoctorScheduleDTO);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.CREATED,

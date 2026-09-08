@@ -9,7 +9,6 @@ import java.util.UUID;
 
 public record DoctorScheduleResponseDTO(
         UUID id,
-        DoctorResponseDTO doctor,
         DoctorScheduleDay dayOfWeek,
         LocalTime startTime,
         LocalTime endTime,
@@ -24,9 +23,6 @@ public record DoctorScheduleResponseDTO(
 
         return new DoctorScheduleResponseDTO(
                 schedule.getId(),
-                schedule.getDoctor() != null
-                        ? DoctorResponseDTO.fromEntity(schedule.getDoctor())
-                        : null,
                 schedule.getDayOfWeek(),
                 schedule.getStartTime(),
                 schedule.getEndTime(),

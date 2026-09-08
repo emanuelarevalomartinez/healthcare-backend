@@ -10,7 +10,10 @@ import java.util.List;
 import java.util.UUID;
 
 public interface DoctorScheduleService {
-    List<DoctorScheduleResponseDTO> createDoctorSchedules(CreateDoctorScheduleDTO createDoctorScheduleDTO);
+    List<DoctorScheduleResponseDTO> createDoctorSchedulesResponseDTO(
+            CreateDoctorScheduleDTO createDoctorScheduleDTO);
+    List<DoctorScheduleEntity> createDoctorSchedulesResponseEntities(
+            CreateDoctorScheduleDTO createDoctorScheduleDTO);
     List<DoctorScheduleResponseDTO> updateDoctorSchedules(UpdateDoctorScheduleDTO updateDoctorScheduleDTO);
     PageResponse<DoctorScheduleResponseDTO> findAllDoctorSchedules(int page, int size);
     DoctorScheduleResponseDTO findDoctorScheduleById(UUID id);
