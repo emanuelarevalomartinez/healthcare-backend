@@ -2,7 +2,7 @@ package com.healthcare.modules.auth.controller;
 
 
 import com.healthcare.modules.auth.dto.*;
-import com.healthcare.modules.user.dto.UserResponseDTO;
+import com.healthcare.modules.user.dto.UserWithDoctorResponseDTO;
 import com.healthcare.shared.response.ApiResponse;
 import com.healthcare.shared.response.ResponseHandler;
 import com.healthcare.modules.auth.service.AuthService;
@@ -47,10 +47,10 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> me(
+    public ResponseEntity<ApiResponse<UserWithDoctorResponseDTO>> me(
             Authentication authentication
     ) {
-        UserResponseDTO user = authService.me(authentication);
+        UserWithDoctorResponseDTO user = authService.me(authentication);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,

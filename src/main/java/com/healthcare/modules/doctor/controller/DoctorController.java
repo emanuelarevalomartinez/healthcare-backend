@@ -59,7 +59,7 @@ public class DoctorController {
     }
 
 
-/*    @GetMapping("/filter")
+    @GetMapping("/filter")
     public ResponseEntity<ApiResponse<PageResponse<DoctorWithUserAndScheduleResponseDTO>>> findDoctorsFiltered(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -73,7 +73,7 @@ public class DoctorController {
                 null,
                 doctors
         );
-    }*/
+    }
 
     @GetMapping
     public ResponseEntity<ApiResponse<PageResponse<DoctorResponseDTO>>> findAllDoctors(
@@ -126,14 +126,14 @@ public class DoctorController {
         );
     }
 
-    @DeleteMapping("/delete-with-user/{userId}")
+    @DeleteMapping("/delete-with-user-and-schedule/{userId}")
     public ResponseEntity<ApiResponse<Boolean>> deleteDoctorByUserId(@PathVariable UUID userId) {
 
-        this.doctorService.deleteDoctorByUserId(userId);
+        this.doctorService.deleteDoctorAndItScheduleByUserId(userId);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
-                "Successfully delete doctor by user",
+                "Successfully delete doctor and schedule by user",
                 null
         );
     }

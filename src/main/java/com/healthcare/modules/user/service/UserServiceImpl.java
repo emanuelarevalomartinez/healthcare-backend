@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO createUser(CreateUserDTO createUserDTO) {
+    public UserWithDoctorResponseDTO createUser(CreateUserDTO createUserDTO) {
 
         if (userRepository.findByUsername(createUserDTO.username()).isPresent()) {
             throw new ApplicationException(ErrorMessage.USERNAME_CONFLICT, "");
@@ -109,11 +109,11 @@ public class UserServiceImpl implements UserService {
         newUser.setActive(createUserDTO.isActive());
 
         UserEntity userSaved = this.userRepository.save(newUser);
-        return UserResponseDTO.fromEntity(userSaved);
+        return UserWithDoctorResponseDTO.fromEntity(userSaved);
     }
 
     @Override
-    public UserResponseDTO updateUser(UUID id, UpdateUserDTO updateUserDTO) {
+    public UserWithDoctorResponseDTO updateUser(UUID id, UpdateUserDTO updateUserDTO) {
 
         UserEntity findUser = this.findUserEntityById(id);
 
@@ -138,11 +138,11 @@ public class UserServiceImpl implements UserService {
         }
 
         UserEntity userUpdated = this.userRepository.save(findUser);
-        return UserResponseDTO.fromEntity(userUpdated);
+        return UserWithDoctorResponseDTO.fromEntity(userUpdated);
     }
 
     @Override
-    public PageResponse<UserResponseDTO> findAllUsers(int page, int size) {
+    public PageResponse<UserWithDoctorResponseDTO> findAllUsers(int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("username").ascending());
         Page<UserEntity> result = userRepository.findAllUsersPaged(pageable);
@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService {
         return new PageResponse<>(
                 result.getContent()
                         .stream()
-                        .map(UserResponseDTO::fromEntity)
+                        .map(UserWithDoctorResponseDTO::fromEntity)
                         .toList(),
                 result.getNumber(),
                 result.getSize(),
@@ -160,13 +160,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO findUserById(UUID id) {
+    public UserWithDoctorResponseDTO findUserById(UUID id) {
 
         UserEntity findUserById = this.userRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_ID, "")
                 );
 
-        return UserResponseDTO.fromEntity(findUserById);
+        return UserWithDoctorResponseDTO.fromEntity(findUserById);
     }
 
     @Override
@@ -180,13 +180,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO findUserByEmail(String email) {
+    public UserWithDoctorResponseDTO findUserByEmail(String email) {
 
         UserEntity findUserByEmail = this.userRepository.findByEmail(email)
                 .orElseThrow(() -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_EMAIL, "")
                 );
 
-        return UserResponseDTO.fromEntity(findUserByEmail);
+        return UserWithDoctorResponseDTO.fromEntity(findUserByEmail);
     }
 
 

@@ -13,12 +13,12 @@ public interface UserService {
 
     void registerUser(RegisterUserDTO registerUserDTO );
     LoginResponseDTO loginUser(LoginUserDTO loginUserDTO);
-    UserResponseDTO createUser(CreateUserDTO createUserDTO);
-    UserResponseDTO updateUser(UUID id, UpdateUserDTO updateUserDTO);
-    PageResponse<UserResponseDTO> findAllUsers(int page, int size);
-    UserResponseDTO findUserById(UUID id);
+    UserWithDoctorResponseDTO createUser(CreateUserDTO createUserDTO);
+    UserWithDoctorResponseDTO updateUser(UUID id, UpdateUserDTO updateUserDTO);
+    PageResponse<UserWithDoctorResponseDTO> findAllUsers(int page, int size);
+    UserWithDoctorResponseDTO findUserById(UUID id);
     UserEntity findUserByUsername(String username);
-    UserResponseDTO findUserByEmail(String email);
+    UserWithDoctorResponseDTO findUserByEmail(String email);
     void deleteUser(UUID id);
     UserEntity findUserEntityById(UUID id);
     UserEntity findUserEntityByEmail(String email);

@@ -1,9 +1,12 @@
 package com.healthcare.modules.doctor.entity;
 
+import com.healthcare.modules.doctor_schedule.entity.DoctorScheduleEntity;
 import com.healthcare.modules.user.entity.UserEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -45,6 +48,14 @@ public class DoctorEntity {
 
     @Column(name = "default_consultation_duration")
     private Integer defaultConsultationDuration;
+
+    @OneToMany(
+            mappedBy = "doctor",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<DoctorScheduleEntity> schedules = new ArrayList<>();
 
     public DoctorEntity() {
     }
@@ -95,5 +106,13 @@ public class DoctorEntity {
 
     public void setUser(UserEntity user) {
         this.user = user;
+    }
+
+    public List<DoctorScheduleEntity> getSchedules() {
+        return schedules;
+    }
+
+    public void setSchedules(List<DoctorScheduleEntity> schedules) {
+        this.schedules = schedules;
     }
 }

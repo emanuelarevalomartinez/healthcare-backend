@@ -13,9 +13,9 @@ public interface DoctorService {
     DoctorWithUserAndScheduleResponseDTO updateDoctorWithUserAndSchedule(UUID userId, UpdateDoctorWithUserAndScheduleDTO updateDoctorWithUserDTO);
     PageResponse<DoctorResponseDTO> findAllDoctors(int page, int size);
     DoctorResponseDTO findDoctorById(UUID id);
-  /*  PageResponse<DoctorWithUserAndScheduleResponseDTO> findDoctorsFiltered(int page, int size, String search);*/
+    PageResponse<DoctorWithUserAndScheduleResponseDTO> findDoctorsFiltered(int page, int size, String search);
     DoctorEntity findDoctorEntityById(UUID id);
     void deleteDoctor(UUID id);
-    void deleteDoctorByUserId(UUID userId);
+    void deleteDoctorAndItScheduleByUserId(UUID userId);
 
 }

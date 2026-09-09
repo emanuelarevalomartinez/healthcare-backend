@@ -3,6 +3,7 @@ package com.healthcare.modules.doctor.service;
 import com.healthcare.modules.auth.service.AuthService;
 import com.healthcare.modules.doctor.dto.*;
 import com.healthcare.modules.doctor.entity.DoctorEntity;
+import com.healthcare.modules.doctor.entity.specifications.DoctorSpecifications;
 import com.healthcare.modules.doctor.repository.DoctorRepository;
 import com.healthcare.modules.doctor_schedule.dto.CreateDoctorScheduleDTO;
 import com.healthcare.modules.doctor_schedule.dto.UpdateDoctorScheduleDTO;
@@ -10,7 +11,7 @@ import com.healthcare.modules.doctor_schedule.entity.DoctorScheduleEntity;
 import com.healthcare.modules.doctor_schedule.service.DoctorScheduleService;
 import com.healthcare.modules.user.dto.CreateUserDTO;
 import com.healthcare.modules.user.dto.UpdateUserDTO;
-import com.healthcare.modules.user.dto.UserResponseDTO;
+import com.healthcare.modules.user.dto.UserWithDoctorResponseDTO;
 import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.modules.user.enums.UserRole;
 import com.healthcare.modules.user.service.UserService;
@@ -22,6 +23,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,7 +121,7 @@ public class DoctorServiceImpl implements DoctorService {
             throw new ApplicationException(ErrorMessage.USER_NOT_DOCTOR, "");
         }
 
-        UserResponseDTO userResponse = userService.createUser(userDTO);
+        UserWithDoctorResponseDTO userResponse = userService.createUser(userDTO);
         UserEntity user = userService.findUserEntityById(userResponse.id());
 
         CreateDoctorWithoutUserDTO doctorDTO = createDoctorWithUserAndScheduleDTO.doctor();
@@ -285,7 +288,7 @@ public class DoctorServiceImpl implements DoctorService {
         return DoctorResponseDTO.fromEntity(findDoctorById);
     }
 
-/*    @Override
+    @Override
     public PageResponse<DoctorWithUserAndScheduleResponseDTO> findDoctorsFiltered(int page, int size, String search) {
         Specification<DoctorEntity> spec = Specification.where(DoctorSpecifications.search(search));
 
@@ -303,7 +306,9 @@ public class DoctorServiceImpl implements DoctorService {
                         .map(doctor ->
                                 DoctorWithUserAndScheduleResponseDTO.fromEntities(
                                         doctor.getUser(),
-                                        doctor)
+                                        doctor,
+                                        doctor.getSchedules()
+                                        )
                         )
                         .toList(),
                 result.getNumber(),
@@ -311,7 +316,7 @@ public class DoctorServiceImpl implements DoctorService {
                 result.getTotalElements(),
                 result.getTotalPages()
         );
-    }*/
+    }
 
     @Override
     public DoctorEntity findDoctorEntityById(UUID id) {
@@ -330,7 +335,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     @Transactional
-    public void deleteDoctorByUserId(UUID userId) {
+    public void deleteDoctorAndItScheduleByUserId(UUID userId) {
         DoctorEntity doctor = this.findDoctorEntityByUserId(userId);
         doctorRepository.delete(doctor);
     }
