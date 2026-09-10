@@ -11,7 +11,7 @@ import com.healthcare.modules.doctor_schedule.entity.DoctorScheduleEntity;
 import com.healthcare.modules.doctor_schedule.service.DoctorScheduleService;
 import com.healthcare.modules.user.dto.CreateUserDTO;
 import com.healthcare.modules.user.dto.UpdateUserDTO;
-import com.healthcare.modules.user.dto.UserWithDoctorResponseDTO;
+import com.healthcare.modules.user.dto.UserWithDoctorAndSchedulesResponseDTO;
 import com.healthcare.modules.user.entity.UserEntity;
 import com.healthcare.modules.user.enums.UserRole;
 import com.healthcare.modules.user.service.UserService;
@@ -121,7 +121,7 @@ public class DoctorServiceImpl implements DoctorService {
             throw new ApplicationException(ErrorMessage.USER_NOT_DOCTOR, "");
         }
 
-        UserWithDoctorResponseDTO userResponse = userService.createUser(userDTO);
+        UserWithDoctorAndSchedulesResponseDTO userResponse = userService.createUser(userDTO);
         UserEntity user = userService.findUserEntityById(userResponse.id());
 
         CreateDoctorWithoutUserDTO doctorDTO = createDoctorWithUserAndScheduleDTO.doctor();

@@ -24,9 +24,9 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<UserWithDoctorResponseDTO>> createPatient(@Valid @RequestBody CreateUserDTO createUserDTO) {
+    public ResponseEntity<ApiResponse<UserWithDoctorAndSchedulesResponseDTO>> createPatient(@Valid @RequestBody CreateUserDTO createUserDTO) {
 
-        UserWithDoctorResponseDTO user = userService.createUser(createUserDTO);
+        UserWithDoctorAndSchedulesResponseDTO user = userService.createUser(createUserDTO);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.CREATED,
@@ -49,9 +49,9 @@ public class UserController {
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<ApiResponse<UserWithDoctorResponseDTO>> findAllUsers(@PathVariable String email) {
+    public ResponseEntity<ApiResponse<UserWithDoctorAndSchedulesResponseDTO>> findAllUsers(@PathVariable String email) {
 
-        UserWithDoctorResponseDTO user = this.userService.findUserByEmail(email);
+        UserWithDoctorAndSchedulesResponseDTO user = this.userService.findUserByEmail(email);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
@@ -61,12 +61,12 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<UserWithDoctorResponseDTO>>> findAllUsers(
+    public ResponseEntity<ApiResponse<PageResponse<UserWithDoctorAndSchedulesResponseDTO>>> findAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
 
-        PageResponse<UserWithDoctorResponseDTO> users = userService.findAllUsers(page, size);
+        PageResponse<UserWithDoctorAndSchedulesResponseDTO> users = userService.findAllUsers(page, size);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
@@ -76,9 +76,9 @@ public class UserController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ApiResponse<UserWithDoctorResponseDTO>> findUserById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<UserWithDoctorAndSchedulesResponseDTO>> findUserById(@PathVariable UUID id) {
 
-        UserWithDoctorResponseDTO user = userService.findUserById(id);
+        UserWithDoctorAndSchedulesResponseDTO user = userService.findUserById(id);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
@@ -88,9 +88,9 @@ public class UserController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse<UserWithDoctorResponseDTO>> updateUser(@PathVariable UUID id, @Valid @RequestBody UpdateUserDTO updateUserDTO) {
+    public ResponseEntity<ApiResponse<UserWithDoctorAndSchedulesResponseDTO>> updateUser(@PathVariable UUID id, @Valid @RequestBody UpdateUserDTO updateUserDTO) {
 
-        UserWithDoctorResponseDTO userUpdate = this.userService.updateUser(id, updateUserDTO);
+        UserWithDoctorAndSchedulesResponseDTO userUpdate = this.userService.updateUser(id, updateUserDTO);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,

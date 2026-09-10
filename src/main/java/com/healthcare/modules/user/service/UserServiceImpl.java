@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserWithDoctorResponseDTO createUser(CreateUserDTO createUserDTO) {
+    public UserWithDoctorAndSchedulesResponseDTO createUser(CreateUserDTO createUserDTO) {
 
         if (userRepository.findByUsername(createUserDTO.username()).isPresent()) {
             throw new ApplicationException(ErrorMessage.USERNAME_CONFLICT, "");
@@ -109,11 +109,11 @@ public class UserServiceImpl implements UserService {
         newUser.setActive(createUserDTO.isActive());
 
         UserEntity userSaved = this.userRepository.save(newUser);
-        return UserWithDoctorResponseDTO.fromEntity(userSaved);
+        return UserWithDoctorAndSchedulesResponseDTO.fromEntity(userSaved);
     }
 
     @Override
-    public UserWithDoctorResponseDTO updateUser(UUID id, UpdateUserDTO updateUserDTO) {
+    public UserWithDoctorAndSchedulesResponseDTO updateUser(UUID id, UpdateUserDTO updateUserDTO) {
 
         UserEntity findUser = this.findUserEntityById(id);
 
@@ -138,11 +138,11 @@ public class UserServiceImpl implements UserService {
         }
 
         UserEntity userUpdated = this.userRepository.save(findUser);
-        return UserWithDoctorResponseDTO.fromEntity(userUpdated);
+        return UserWithDoctorAndSchedulesResponseDTO.fromEntity(userUpdated);
     }
 
     @Override
-    public PageResponse<UserWithDoctorResponseDTO> findAllUsers(int page, int size) {
+    public PageResponse<UserWithDoctorAndSchedulesResponseDTO> findAllUsers(int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("username").ascending());
         Page<UserEntity> result = userRepository.findAllUsersPaged(pageable);
@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService {
         return new PageResponse<>(
                 result.getContent()
                         .stream()
-                        .map(UserWithDoctorResponseDTO::fromEntity)
+                        .map(UserWithDoctorAndSchedulesResponseDTO::fromEntity)
                         .toList(),
                 result.getNumber(),
                 result.getSize(),
@@ -160,13 +160,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserWithDoctorResponseDTO findUserById(UUID id) {
+    public UserWithDoctorAndSchedulesResponseDTO findUserById(UUID id) {
 
         UserEntity findUserById = this.userRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_ID, "")
                 );
 
-        return UserWithDoctorResponseDTO.fromEntity(findUserById);
+        return UserWithDoctorAndSchedulesResponseDTO.fromEntity(findUserById);
     }
 
     @Override
@@ -180,13 +180,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserWithDoctorResponseDTO findUserByEmail(String email) {
+    public UserWithDoctorAndSchedulesResponseDTO findUserByEmail(String email) {
 
         UserEntity findUserByEmail = this.userRepository.findByEmail(email)
                 .orElseThrow(() -> new ApplicationException(ErrorMessage.USER_NOT_FOUND_EMAIL, "")
                 );
 
-        return UserWithDoctorResponseDTO.fromEntity(findUserByEmail);
+        return UserWithDoctorAndSchedulesResponseDTO.fromEntity(findUserByEmail);
     }
 
 

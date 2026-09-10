@@ -2,7 +2,7 @@ package com.healthcare.modules.auth.service;
 
 import com.healthcare.modules.auth.dto.*;
 import com.healthcare.modules.auth.providers.CustomUserDetails;
-import com.healthcare.modules.user.dto.UserWithDoctorResponseDTO;
+import com.healthcare.modules.user.dto.UserWithDoctorAndSchedulesResponseDTO;
 import com.healthcare.modules.user.enums.UserRole;
 import com.healthcare.modules.user.service.UserService;
 import org.springframework.security.core.Authentication;
@@ -34,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserWithDoctorResponseDTO me(Authentication authentication) {
+    public UserWithDoctorAndSchedulesResponseDTO me(Authentication authentication) {
         return userService.findUserByEmail(authentication.getName());
     }
 
