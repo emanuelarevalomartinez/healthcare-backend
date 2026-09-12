@@ -18,6 +18,7 @@ public record UpdateDoctorScheduleDTO(
 
         public record DayScheduleDTO(
 
+                @NotNull(message = "El id del horario medico es obligatorio")
                 UUID id,
 
                 @NotNull(message = "El día de la semana es obligatorio")
