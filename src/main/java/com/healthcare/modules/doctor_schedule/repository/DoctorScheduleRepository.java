@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -22,6 +23,11 @@ public interface DoctorScheduleRepository extends JpaRepository<DoctorScheduleEn
             UUID doctorId,
             DoctorScheduleDay dayOfWeek,
             UUID id
+    );
+
+    Optional<DoctorScheduleEntity> findByDoctorIdAndDayOfWeek(
+            UUID doctorId,
+            DoctorScheduleDay dayOfWeek
     );
 
     @Query("SELECT ds FROM DoctorScheduleEntity ds")

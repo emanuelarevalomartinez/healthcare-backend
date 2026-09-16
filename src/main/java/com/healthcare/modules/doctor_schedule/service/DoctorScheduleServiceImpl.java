@@ -69,25 +69,25 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
                 );
             }
 
-            boolean exists = this.doctorScheduleRepository
-                    .existsByDoctorIdAndDayOfWeek(doctor.getId(), scheduleDTO.dayOfWeek());
+            Optional<DoctorScheduleEntity> existingSchedule = this.doctorScheduleRepository
+                    .findByDoctorIdAndDayOfWeek(doctor.getId(), scheduleDTO.dayOfWeek());
 
-            if (exists) {
-                throw new ApplicationException(
-                        ErrorMessage.DOCTOR_SCHEDULE_ALREADY_EXISTS,
-                        scheduleDTO.dayOfWeek()
-                );
+            DoctorScheduleEntity scheduleEntity;
+
+            if (existingSchedule.isPresent()) {
+                scheduleEntity = existingSchedule.get();
+            } else {
+                scheduleEntity = new DoctorScheduleEntity();
+                scheduleEntity.setDoctor(doctor);
+                scheduleEntity.setDayOfWeek(scheduleDTO.dayOfWeek());
             }
 
-            DoctorScheduleEntity newDoctorSchedule = new DoctorScheduleEntity();
-            newDoctorSchedule.setDoctor(doctor);
-            newDoctorSchedule.setDayOfWeek(scheduleDTO.dayOfWeek());
-            newDoctorSchedule.setStartTime(scheduleDTO.startTime());
-            newDoctorSchedule.setEndTime(scheduleDTO.endTime());
-            newDoctorSchedule.setAvailable(scheduleDTO.available());
-            newDoctorSchedule.setNotes(scheduleDTO.notes());
+            scheduleEntity.setStartTime(scheduleDTO.startTime());
+            scheduleEntity.setEndTime(scheduleDTO.endTime());
+            scheduleEntity.setAvailable(scheduleDTO.available());
+            scheduleEntity.setNotes(scheduleDTO.notes());
 
-            schedules.add(newDoctorSchedule);
+            schedules.add(scheduleEntity);
         }
 
         List<DoctorScheduleEntity> savedSchedules = this.doctorScheduleRepository.saveAll(schedules);
@@ -139,15 +139,17 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
 
             UUID doctorId = findSchedule.getDoctor().getId();
 
-            boolean exists = this.doctorScheduleRepository
-                    .existsByDoctorIdAndDayOfWeekAndIdNot(
-                            doctorId,
-                            scheduleDTO.dayOfWeek(),
-                            scheduleDTO.id()
-                    );
+            if (scheduleDTO.id() != null) {
+                boolean exists = this.doctorScheduleRepository
+                        .existsByDoctorIdAndDayOfWeekAndIdNot(
+                                doctorId,
+                                scheduleDTO.dayOfWeek(),
+                                scheduleDTO.id()
+                        );
 
-            if (exists) {
-                throw new ApplicationException(ErrorMessage.DOCTOR_SCHEDULE_ALREADY_EXISTS, scheduleDTO.dayOfWeek());
+                if (exists) {
+                    throw new ApplicationException(ErrorMessage.DOCTOR_SCHEDULE_ALREADY_EXISTS, scheduleDTO.dayOfWeek());
+                }
             }
 
             findSchedule.setDayOfWeek(scheduleDTO.dayOfWeek());

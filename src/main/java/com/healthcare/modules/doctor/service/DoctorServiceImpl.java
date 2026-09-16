@@ -251,10 +251,36 @@ public class DoctorServiceImpl implements DoctorService {
         List<DoctorScheduleEntity> scheduleUpdated = new ArrayList<>();
         if (updateDoctorWithUserDTO.schedule() != null && updateDoctorWithUserDTO.schedule().schedules() != null && !updateDoctorWithUserDTO.schedule().schedules().isEmpty()) {
 
-            UpdateDoctorScheduleDTO scheduleDTO = new UpdateDoctorScheduleDTO(
-                    updateDoctorWithUserDTO.schedule().schedules()
-            );
-            scheduleUpdated = doctorScheduleService.updateDoctorSchedulesResponseEntities(scheduleDTO);
+            List<UpdateDoctorScheduleDTO.DayScheduleDTO> toUpdate = new ArrayList<>();
+            List<CreateDoctorScheduleDTO.DayScheduleDTO> toCreate = new ArrayList<>();
+
+            for (var scheduleItem : updateDoctorWithUserDTO.schedule().schedules()) {
+                if (scheduleItem.id() != null) {
+
+                    toUpdate.add(scheduleItem);
+                } else {
+                    toCreate.add(new CreateDoctorScheduleDTO.DayScheduleDTO(
+                            scheduleItem.dayOfWeek(),
+                            scheduleItem.startTime(),
+                            scheduleItem.endTime(),
+                            scheduleItem.available(),
+                            scheduleItem.notes()
+                    ));
+                }
+            }
+            if (!toUpdate.isEmpty()) {
+                UpdateDoctorScheduleDTO updateScheduleDTO = new UpdateDoctorScheduleDTO(toUpdate);
+                scheduleUpdated.addAll(
+                        doctorScheduleService.updateDoctorSchedulesResponseEntities(updateScheduleDTO)
+                );
+            }
+
+            if (!toCreate.isEmpty()) {
+                CreateDoctorScheduleDTO createScheduleDTO = new CreateDoctorScheduleDTO(findDoctor.getId(), toCreate);
+                scheduleUpdated.addAll(
+                        doctorScheduleService.createDoctorSchedulesResponseEntities(createScheduleDTO)
+                );
+            }
         }
 
         return DoctorWithUserAndScheduleResponseDTO.fromEntities(findUser, findDoctor, scheduleUpdated);
@@ -308,7 +334,7 @@ public class DoctorServiceImpl implements DoctorService {
                                         doctor.getUser(),
                                         doctor,
                                         doctor.getSchedules()
-                                        )
+                                )
                         )
                         .toList(),
                 result.getNumber(),
