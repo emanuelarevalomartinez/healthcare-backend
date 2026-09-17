@@ -319,6 +319,7 @@ public class DoctorServiceImpl implements DoctorService {
                 }
             }
 
+
             // 4.6 Un solo save del agregado. Hibernate ordena INSERT/UPDATE/DELETE.
             doctorRepository.save(doctorWithSchedules);
 
