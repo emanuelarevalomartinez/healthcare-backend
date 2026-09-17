@@ -28,9 +28,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -251,12 +250,85 @@ public class DoctorServiceImpl implements DoctorService {
         List<DoctorScheduleEntity> scheduleUpdated = new ArrayList<>();
         if (updateDoctorWithUserDTO.schedule() != null && updateDoctorWithUserDTO.schedule().schedules() != null && !updateDoctorWithUserDTO.schedule().schedules().isEmpty()) {
 
-            List<UpdateDoctorScheduleDTO.DayScheduleDTO> toUpdate = new ArrayList<>();
+            List<UpdateDoctorScheduleDTO.DayScheduleDTO> incomingSchedules = updateDoctorWithUserDTO.schedule().schedules();
+
+
+
+          /*  // 1. IDs que vienen en el payload (los que el usuario quiere conservar/actualizar)
+            List<UUID> incomingIds = incomingSchedules.stream()
+                    .map(UpdateDoctorScheduleDTO.DayScheduleDTO::id)
+                    .filter(java.util.Objects::nonNull)
+                    .toList();
+
+            // 2. Horarios actuales en BD para este doctor
+            List<DoctorScheduleEntity> currentSchedules = doctorScheduleService.findByDoctorId(findDoctor.getId()); // ver nota abajo
+
+            // 3. Los que existen en BD pero ya no están en el payload => eliminar
+            List<UUID> idsToDelete = currentSchedules.stream()
+                    .map(DoctorScheduleEntity::getId)
+                    .filter(id -> !incomingIds.contains(id))
+                    .toList();
+
+            if (!idsToDelete.isEmpty()) {
+                doctorScheduleService.deleteAllByIds(idsToDelete); // ver nota abajo
+
+            }*/
+
+
+
+            // 4.1 Cargar el doctor CON sus schedules en la MISMA transacción
+            //      para que la colección esté managed y orphanRemoval funcione.
+            DoctorEntity doctorWithSchedules = doctorRepository
+                    .findWithSchedulesById(findDoctor.getId())
+                    .orElse(findDoctor);   //
+
+            // 4.2 Índice por id de los schedules actuales
+            Map<UUID, DoctorScheduleEntity> existingById = doctorWithSchedules.getSchedules().stream()
+                    .collect(Collectors.toMap(DoctorScheduleEntity::getId, s -> s));
+
+            Set<UUID> incomingIds = incomingSchedules.stream()
+                    .map(UpdateDoctorScheduleDTO.DayScheduleDTO::id)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+
+            doctorWithSchedules.getSchedules().removeIf(s -> !incomingIds.contains(s.getId()));
+
+            for (UpdateDoctorScheduleDTO.DayScheduleDTO dto : incomingSchedules) {
+                if (dto.id() != null) {
+                    DoctorScheduleEntity entity = existingById.get(dto.id());
+                    if (entity == null) {
+                        throw new ApplicationException(
+                                ErrorMessage.DOCTOR_SCHEDULE_NOT_FOUND_ID, dto.id().toString());
+                    }
+                    entity.setDayOfWeek(dto.dayOfWeek());
+                    entity.setStartTime(dto.startTime());
+                    entity.setEndTime(dto.endTime());
+                    entity.setAvailable(dto.available());
+                    entity.setNotes(dto.notes());
+                    scheduleUpdated.add(entity);
+                } else {
+                    DoctorScheduleEntity nueva = new DoctorScheduleEntity();
+                    nueva.setDoctor(doctorWithSchedules);
+                    nueva.setDayOfWeek(dto.dayOfWeek());
+                    nueva.setStartTime(dto.startTime());
+                    nueva.setEndTime(dto.endTime());
+                    nueva.setAvailable(dto.available());
+                    nueva.setNotes(dto.notes());
+                    doctorWithSchedules.getSchedules().add(nueva);
+                    scheduleUpdated.add(nueva);
+                }
+            }
+
+            // 4.6 Un solo save del agregado. Hibernate ordena INSERT/UPDATE/DELETE.
+            doctorRepository.save(doctorWithSchedules);
+
+
+
+         /*   List<UpdateDoctorScheduleDTO.DayScheduleDTO> toUpdate = new ArrayList<>();
             List<CreateDoctorScheduleDTO.DayScheduleDTO> toCreate = new ArrayList<>();
 
             for (var scheduleItem : updateDoctorWithUserDTO.schedule().schedules()) {
                 if (scheduleItem.id() != null) {
-
                     toUpdate.add(scheduleItem);
                 } else {
                     toCreate.add(new CreateDoctorScheduleDTO.DayScheduleDTO(
@@ -280,7 +352,7 @@ public class DoctorServiceImpl implements DoctorService {
                 scheduleUpdated.addAll(
                         doctorScheduleService.createDoctorSchedulesResponseEntities(createScheduleDTO)
                 );
-            }
+            }*/
         }
 
         return DoctorWithUserAndScheduleResponseDTO.fromEntities(findUser, findDoctor, scheduleUpdated);

@@ -3,6 +3,7 @@ package com.healthcare.modules.doctor.repository;
 import com.healthcare.modules.doctor.entity.DoctorEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -24,5 +25,8 @@ public interface DoctorRepository extends JpaRepository<DoctorEntity, UUID>, Jpa
     boolean existsByLicenseNumber(String licenseNumber);
 
     Optional<DoctorEntity> findByUserId(UUID userId);
+
+    @EntityGraph(attributePaths = "schedules")
+    Optional<DoctorEntity> findWithSchedulesById(UUID id);
 
 }

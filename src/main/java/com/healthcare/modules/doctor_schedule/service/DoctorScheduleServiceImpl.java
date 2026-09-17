@@ -209,6 +209,20 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
     }
 
     @Override
+    public List<DoctorScheduleEntity> findByDoctorId(UUID doctorId) {
+        return this.doctorScheduleRepository.findByDoctorId(doctorId);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAllByIds(List<UUID> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return;
+        }
+        this.doctorScheduleRepository.deleteAllByIdIn(ids);
+    }
+
+    @Override
     public void deleteDoctorSchedule(UUID id) {
         DoctorScheduleEntity doctorSchedule = this.findDoctorScheduleEntityById(id);
         doctorScheduleRepository.deleteById(doctorSchedule.getId());

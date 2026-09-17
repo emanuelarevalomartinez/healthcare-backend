@@ -21,6 +21,8 @@ public interface DoctorScheduleService {
     PageResponse<DoctorScheduleResponseDTO> findAllDoctorSchedules(int page, int size);
     DoctorScheduleResponseDTO findDoctorScheduleById(UUID id);
     DoctorScheduleEntity findDoctorScheduleEntityById(UUID id);
+    List<DoctorScheduleEntity> findByDoctorId(UUID doctorId);
+    void deleteAllByIds(List<UUID> ids);
     void deleteDoctorSchedule(UUID id);
 
 }
