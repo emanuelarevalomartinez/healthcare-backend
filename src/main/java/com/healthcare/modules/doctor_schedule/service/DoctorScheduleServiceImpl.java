@@ -69,25 +69,25 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
                 );
             }
 
-            Optional<DoctorScheduleEntity> existingSchedule = this.doctorScheduleRepository
-                    .findByDoctorIdAndDayOfWeek(doctor.getId(), scheduleDTO.dayOfWeek());
+            boolean exists = this.doctorScheduleRepository
+                    .existsByDoctorIdAndDayOfWeek(doctor.getId(), scheduleDTO.dayOfWeek());
 
-            DoctorScheduleEntity scheduleEntity;
-
-            if (existingSchedule.isPresent()) {
-                scheduleEntity = existingSchedule.get();
-            } else {
-                scheduleEntity = new DoctorScheduleEntity();
-                scheduleEntity.setDoctor(doctor);
-                scheduleEntity.setDayOfWeek(scheduleDTO.dayOfWeek());
+            if (exists) {
+                throw new ApplicationException(
+                        ErrorMessage.DOCTOR_SCHEDULE_ALREADY_EXISTS,
+                        scheduleDTO.dayOfWeek()
+                );
             }
 
-            scheduleEntity.setStartTime(scheduleDTO.startTime());
-            scheduleEntity.setEndTime(scheduleDTO.endTime());
-            scheduleEntity.setAvailable(scheduleDTO.available());
-            scheduleEntity.setNotes(scheduleDTO.notes());
+            DoctorScheduleEntity newDoctorSchedule = new DoctorScheduleEntity();
+            newDoctorSchedule.setDoctor(doctor);
+            newDoctorSchedule.setDayOfWeek(scheduleDTO.dayOfWeek());
+            newDoctorSchedule.setStartTime(scheduleDTO.startTime());
+            newDoctorSchedule.setEndTime(scheduleDTO.endTime());
+            newDoctorSchedule.setAvailable(scheduleDTO.available());
+            newDoctorSchedule.setNotes(scheduleDTO.notes());
 
-            schedules.add(scheduleEntity);
+            schedules.add(newDoctorSchedule);
         }
 
         List<DoctorScheduleEntity> savedSchedules = this.doctorScheduleRepository.saveAll(schedules);
