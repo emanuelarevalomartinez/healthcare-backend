@@ -10,6 +10,9 @@ import com.healthcare.modules.appointment.service.role.DoctorAppointmentExecutor
 import com.healthcare.modules.auth.service.AuthService;
 import com.healthcare.modules.doctor.entity.DoctorEntity;
 import com.healthcare.modules.doctor.service.DoctorService;
+import com.healthcare.modules.doctor_schedule.entity.DoctorScheduleEntity;
+import com.healthcare.modules.doctor_schedule.enums.DoctorScheduleDay;
+import com.healthcare.modules.doctor_schedule.service.DoctorScheduleService;
 import com.healthcare.modules.patient.entity.PatientEntity;
 import com.healthcare.modules.patient.service.PatientService;
 import com.healthcare.modules.user.entity.UserEntity;
@@ -27,6 +30,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Slf4j
@@ -38,14 +42,16 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final UserService userService;
     private final AppointmentRepository appointmentRepository;
     private final AuthService authService;
+    private final DoctorScheduleService doctorScheduleService;
     private final DoctorAppointmentExecutor doctorAppointmentExecutor;
 
-    public AppointmentServiceImpl(PatientService patientService, DoctorService doctorService, UserService userService, AppointmentRepository appointmentRepository, AuthService authService, DoctorAppointmentExecutor doctorAppointmentExecutor) {
+    public AppointmentServiceImpl(PatientService patientService, DoctorService doctorService, UserService userService, AppointmentRepository appointmentRepository, AuthService authService, DoctorScheduleService doctorScheduleService, DoctorAppointmentExecutor doctorAppointmentExecutor) {
         this.patientService = patientService;
         this.doctorService = doctorService;
         this.userService = userService;
         this.appointmentRepository = appointmentRepository;
         this.authService = authService;
+        this.doctorScheduleService = doctorScheduleService;
         this.doctorAppointmentExecutor = doctorAppointmentExecutor;
     }
 
@@ -57,6 +63,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         LocalDateTime appointmentStart = createAppointmentDTO.appointmentDateTime();
         LocalDateTime appointmentEnd = appointmentStart.plusMinutes(createAppointmentDTO.durationMinutes());
+
+        if (!appointmentStart.toLocalDate().equals(appointmentEnd.toLocalDate())) {
+            throw new ApplicationException(ErrorMessage.APPOINTMENT_CROSSES_MIDNIGHT, "");
+        }
+
+        validateDoctorSchedule(doctorEntity.getId(), appointmentStart, appointmentEnd);
 
         boolean doctorHasConflict = this.appointmentRepository.existsDoctorConflict(
                 doctorEntity.getId(),
@@ -315,5 +327,28 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         Pageable pageable = PageRequest.of(params.page(), params.size(), sort);
         return new AppointmentSpecificationQuery(spec, pageable);
+    }
+
+    private void validateDoctorSchedule(UUID doctorId,
+                                        LocalDateTime appointmentStart,
+                                        LocalDateTime appointmentEnd) {
+
+        DoctorScheduleDay day = DoctorScheduleDay.fromDayOfWeek(appointmentStart.getDayOfWeek());
+        DoctorScheduleEntity schedule = this.doctorScheduleService.findDoctorScheduleByDoctorAndDayOfWeek(doctorId, day);
+
+        if (!schedule.isAvailable()) {
+            throw new ApplicationException(
+                    ErrorMessage.APPOINTMENT_DOCTOR_SCHEDULE_NOT_AVAILABLE, "");
+        }
+
+        LocalTime startTime = appointmentStart.toLocalTime();
+        LocalTime endTime = appointmentEnd.toLocalTime();
+
+        boolean insideSchedule = !startTime.isBefore(schedule.getStartTime()) && !endTime.isAfter(schedule.getEndTime());
+
+        if (!insideSchedule) {
+            throw new ApplicationException(
+                    ErrorMessage.APPOINTMENT_OUTSIDE_DOCTOR_SCHEDULE, "Horario del doctor: " + schedule.getStartTime() + " - " + schedule.getEndTime());
+        }
     }
 }

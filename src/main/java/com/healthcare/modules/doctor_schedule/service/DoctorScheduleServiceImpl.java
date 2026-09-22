@@ -209,6 +209,14 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
     }
 
     @Override
+    public DoctorScheduleEntity findDoctorScheduleByDoctorAndDayOfWeek(UUID doctorId,DoctorScheduleDay day){
+        return this.doctorScheduleRepository
+                .findByDoctorIdAndDayOfWeek(doctorId, day)
+                .orElseThrow(() -> new ApplicationException(
+                        ErrorMessage.APPOINTMENT_DOCTOR_NOT_AVAILABLE_THIS_DAY, ""));
+    }
+
+    @Override
     public List<DoctorScheduleEntity> findByDoctorId(UUID doctorId) {
         return this.doctorScheduleRepository.findByDoctorId(doctorId);
     }

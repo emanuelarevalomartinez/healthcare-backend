@@ -29,6 +29,10 @@ public enum ErrorMessage {
     APPOINTMENT_INVALID_STATUS_TRANSITION(409, "APPOINTMENT_INVALID_STATUS_TRANSITION","Transición de estado de cita no válida"),
     APPOINTMENT_DOCTOR_SCHEDULE_CONFLICT(409, "APPOINTMENT_DOCTOR_SCHEDULE_CONFLICT", "El doctor ya tiene una cita programada en el horario seleccionado."),
     APPOINTMENT_PATIENT_SCHEDULE_CONFLICT(409, "APPOINTMENT_PATIENT_SCHEDULE_CONFLICT", "El paciente ya tiene una cita programada en el horario seleccionado."),
+    APPOINTMENT_DOCTOR_NOT_AVAILABLE_THIS_DAY(409, "APPOINTMENT_DOCTOR_NOT_AVAILABLE_THIS_DAY", "El doctor no tiene horario definido para el día seleccionado."),
+    APPOINTMENT_OUTSIDE_DOCTOR_SCHEDULE(409, "APPOINTMENT_OUTSIDE_DOCTOR_SCHEDULE", "La cita está fuera del horario de atención del doctor."),
+    APPOINTMENT_CROSSES_MIDNIGHT(409, "APPOINTMENT_CROSSES_MIDNIGHT", "La cita no puede cruzar la medianoche."),
+    APPOINTMENT_DOCTOR_SCHEDULE_NOT_AVAILABLE(409, "APPOINTMENT_DOCTOR_SCHEDULE_NOT_AVAILABLE", "El doctor no tiene horario activo para el dia seleccionado."),
 
     INVALID_CREDENTIALS(401, "INVALID_CREDENTIALS", "Credenciales inválidas"),
     INVALID_CHANGE_PASSWORD(400, "INVALID_CHANGE_PASSWORD", "La contraseña actual no coincide con la que intenta introducir"),
