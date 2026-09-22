@@ -48,20 +48,20 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public DoctorResponseDTO createDoctor(CreateDoctorDTO createDoctorDTO) {
+    public DoctorWithSchedulesResponseDTO createDoctorWithSchedules(CreateDoctorWithSchedulesDTO createDoctorWithSchedulesDTO) {
 
-        if (doctorRepository.existsByUserId(createDoctorDTO.userId())) {
+        if (doctorRepository.existsByUserId(createDoctorWithSchedulesDTO.userId())) {
             throw new ApplicationException(ErrorMessage.DOCTOR_ALREADY_EXISTS_FOR_USER, "");
         }
 
-        UserEntity userEntity = this.userService.findUserEntityById(createDoctorDTO.userId());
+        UserEntity userEntity = this.userService.findUserEntityById(createDoctorWithSchedulesDTO.userId());
 
         if (!userEntity.getRole().equals(UserRole.DOCTOR)) {
             throw new ApplicationException(ErrorMessage.USER_NOT_DOCTOR, "");
         }
 
-        if (doctorRepository.existsByLicenseNumber(createDoctorDTO.licenseNumber())) {
-            throw new ApplicationException(ErrorMessage.DOCTOR_LICENSE_NUMBER_ALREADY_EXISTS, createDoctorDTO.licenseNumber());
+        if (doctorRepository.existsByLicenseNumber(createDoctorWithSchedulesDTO.licenseNumber())) {
+            throw new ApplicationException(ErrorMessage.DOCTOR_LICENSE_NUMBER_ALREADY_EXISTS, createDoctorWithSchedulesDTO.licenseNumber());
         }
 
         UUID userId = authService.getCurrentUserId();
@@ -70,13 +70,18 @@ public class DoctorServiceImpl implements DoctorService {
         DoctorEntity newDoctor = new DoctorEntity();
         newDoctor.setUser(userEntity);
         newDoctor.setModifiedBy(autenticateUserEntity);
-        newDoctor.setSpecialty(createDoctorDTO.specialty());
-        newDoctor.setLicenseNumber(createDoctorDTO.licenseNumber());
-        newDoctor.setDefaultConsultationDuration(createDoctorDTO.defaultConsultationDuration());
+        newDoctor.setSpecialty(createDoctorWithSchedulesDTO.specialty());
+        newDoctor.setLicenseNumber(createDoctorWithSchedulesDTO.licenseNumber());
+        newDoctor.setDefaultConsultationDuration(createDoctorWithSchedulesDTO.defaultConsultationDuration());
 
-        this.doctorRepository.save(newDoctor);
+        DoctorEntity doctorSaved = this.doctorRepository.save(newDoctor);
 
-        return DoctorResponseDTO.fromEntity(newDoctor);
+        List<DoctorScheduleEntity> schedulesSaved = doctorScheduleService.createDoctorSchedulesForDoctor(
+                doctorSaved,
+                createDoctorWithSchedulesDTO.schedule().schedules()
+        );
+
+        return DoctorWithSchedulesResponseDTO.fromEntity(doctorSaved, schedulesSaved);
     }
 
     @Override
@@ -200,40 +205,44 @@ public class DoctorServiceImpl implements DoctorService {
 
         UpdateUserDTO userUpdate = new UpdateUserDTO(null, null, null, null, null);
 
-        if (userDTO.username() != null && !userDTO.username().equals(findUser.getUsername())) {
-            userUpdate = userUpdate.withUsername(userDTO.username());
-        }
-
-        if (userDTO.email() != null && !userDTO.email().equals(findUser.getEmail())) {
-            userUpdate = userUpdate.withEmail(userDTO.username());
-        }
-
-        if (userDTO.password() != null) {
-            userUpdate = userUpdate.withPassword(userDTO.password());
-        }
-
-        if (userDTO.role() != null) {
-            userUpdate = userUpdate.withRole(userDTO.role());
-        }
-
-        if (userDTO.isActive() != null) {
-            userUpdate = userUpdate.withIsActive(userDTO.isActive());
-        }
-
-        if (doctorDTO.specialty() != null) {
-            findDoctor.setSpecialty(doctorDTO.specialty());
-        }
-
-        if (doctorDTO.licenseNumber() != null && !doctorDTO.licenseNumber().equals(findDoctor.getLicenseNumber())) {
-            if (doctorRepository.existsByLicenseNumber(doctorDTO.licenseNumber())) {
-                throw new ApplicationException(ErrorMessage.DOCTOR_LICENSE_NUMBER_ALREADY_EXISTS, doctorDTO.licenseNumber()
-                );
+        if (userDTO != null) {
+            if (userDTO.username() != null && !userDTO.username().equals(findUser.getUsername())) {
+                userUpdate = userUpdate.withUsername(userDTO.username());
             }
-            findDoctor.setLicenseNumber(doctorDTO.licenseNumber());
+
+            if (userDTO.email() != null && !userDTO.email().equals(findUser.getEmail())) {
+                userUpdate = userUpdate.withEmail(userDTO.username());
+            }
+
+            if (userDTO.password() != null) {
+                userUpdate = userUpdate.withPassword(userDTO.password());
+            }
+
+            if (userDTO.role() != null) {
+                userUpdate = userUpdate.withRole(userDTO.role());
+            }
+
+            if (userDTO.isActive() != null) {
+                userUpdate = userUpdate.withIsActive(userDTO.isActive());
+            }
         }
 
-        if (doctorDTO.defaultConsultationDuration() != null) {
-            findDoctor.setDefaultConsultationDuration(doctorDTO.defaultConsultationDuration());
+        if (doctorDTO != null) {
+            if (doctorDTO.specialty() != null) {
+                findDoctor.setSpecialty(doctorDTO.specialty());
+            }
+
+            if (doctorDTO.licenseNumber() != null && !doctorDTO.licenseNumber().equals(findDoctor.getLicenseNumber())) {
+                if (doctorRepository.existsByLicenseNumber(doctorDTO.licenseNumber())) {
+                    throw new ApplicationException(ErrorMessage.DOCTOR_LICENSE_NUMBER_ALREADY_EXISTS, doctorDTO.licenseNumber()
+                    );
+                }
+                findDoctor.setLicenseNumber(doctorDTO.licenseNumber());
+            }
+
+            if (doctorDTO.defaultConsultationDuration() != null) {
+                findDoctor.setDefaultConsultationDuration(doctorDTO.defaultConsultationDuration());
+            }
         }
 
         UUID userUuid = authService.getCurrentUserId();
@@ -314,6 +323,37 @@ public class DoctorServiceImpl implements DoctorService {
                 result.getTotalElements(),
                 result.getTotalPages()
         );
+    }
+
+    private DoctorResponseDTO createDoctor(CreateDoctorDTO createDoctorDTO) {
+
+        if (doctorRepository.existsByUserId(createDoctorDTO.userId())) {
+            throw new ApplicationException(ErrorMessage.DOCTOR_ALREADY_EXISTS_FOR_USER, "");
+        }
+
+        UserEntity userEntity = this.userService.findUserEntityById(createDoctorDTO.userId());
+
+        if (!userEntity.getRole().equals(UserRole.DOCTOR)) {
+            throw new ApplicationException(ErrorMessage.USER_NOT_DOCTOR, "");
+        }
+
+        if (doctorRepository.existsByLicenseNumber(createDoctorDTO.licenseNumber())) {
+            throw new ApplicationException(ErrorMessage.DOCTOR_LICENSE_NUMBER_ALREADY_EXISTS, createDoctorDTO.licenseNumber());
+        }
+
+        UUID userId = authService.getCurrentUserId();
+        UserEntity autenticateUserEntity = this.userService.findUserEntityById(userId);
+
+        DoctorEntity newDoctor = new DoctorEntity();
+        newDoctor.setUser(userEntity);
+        newDoctor.setModifiedBy(autenticateUserEntity);
+        newDoctor.setSpecialty(createDoctorDTO.specialty());
+        newDoctor.setLicenseNumber(createDoctorDTO.licenseNumber());
+        newDoctor.setDefaultConsultationDuration(createDoctorDTO.defaultConsultationDuration());
+
+        this.doctorRepository.save(newDoctor);
+
+        return DoctorResponseDTO.fromEntity(newDoctor);
     }
 
     @Override

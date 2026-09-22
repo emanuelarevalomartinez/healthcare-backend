@@ -1,6 +1,5 @@
 package com.healthcare.modules.doctor_schedule.dto;
 
-import com.healthcare.modules.doctor.dto.DoctorResponseDTO;
 import com.healthcare.modules.doctor_schedule.entity.DoctorScheduleEntity;
 import com.healthcare.modules.doctor_schedule.enums.DoctorScheduleDay;
 

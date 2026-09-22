@@ -23,14 +23,14 @@ public class DoctorController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<DoctorResponseDTO>> createDoctor(@Valid @RequestBody CreateDoctorDTO createDoctorDTO) {
+    public ResponseEntity<ApiResponse<DoctorWithSchedulesResponseDTO>> createDoctorWithSchedules(@Valid @RequestBody CreateDoctorWithSchedulesDTO createDoctorWithSchedulesDTO) {
 
-        DoctorResponseDTO doctor = doctorService.createDoctor(createDoctorDTO);
+        DoctorWithSchedulesResponseDTO doctorWithSchedules = doctorService.createDoctorWithSchedules(createDoctorWithSchedulesDTO);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.CREATED,
-                "Successfully created doctor",
-                doctor
+                "Successfully created doctor with Schedules",
+                doctorWithSchedules
         );
     }
 

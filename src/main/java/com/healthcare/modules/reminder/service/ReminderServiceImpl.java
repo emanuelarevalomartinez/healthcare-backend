@@ -1,7 +1,5 @@
 package com.healthcare.modules.reminder.service;
 
-import com.healthcare.modules.doctor.dto.DoctorResponseDTO;
-import com.healthcare.modules.doctor.entity.DoctorEntity;
 import com.healthcare.modules.reminder.dto.CreateReminderDTO;
 import com.healthcare.modules.reminder.dto.ReminderResponseDTO;
 import com.healthcare.modules.reminder.dto.UpdateReminderDTO;

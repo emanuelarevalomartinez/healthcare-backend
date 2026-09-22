@@ -7,7 +7,7 @@ import com.healthcare.shared.response.PageResponse;
 import java.util.UUID;
 
 public interface DoctorService {
-    DoctorResponseDTO createDoctor(CreateDoctorDTO createDoctorDTO);
+    DoctorWithSchedulesResponseDTO createDoctorWithSchedules(CreateDoctorWithSchedulesDTO createDoctorWithSchedulesDTO);
     DoctorResponseDTO updateDoctor(UUID id, UpdateDoctorDTO updateDoctorDTO);
     DoctorWithUserAndScheduleResponseDTO createDoctorWithUserAndSchedule(CreateDoctorWithUserAndScheduleDTO createDoctorWithUserAndScheduleDTO);
     DoctorWithUserAndScheduleResponseDTO updateDoctorWithUserAndSchedule(UUID userId, UpdateDoctorWithUserAndScheduleDTO updateDoctorWithUserDTO);

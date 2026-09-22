@@ -2,39 +2,8 @@
 
 // TODO
 
-// a�adir el tema de que cuando se elimine un doctor se elimine su horario asociado asi como el usuario de una mejor manera
 // hay que incluir filtrar el paciente por Nombre, Teléfono y Documento de identidad
-// incluir en el registro de usuarios en el caso de doctor el horario medico establecido para que trabaje asi como todos los datos restantes pertinentes
-// crud de el horario medico
-
 
 // el modulo e reminder realmente n ose crea mediante endpoint si no de forma interna automatica dentro de la api
 
 // ver si la tabla de auditoria es actualizable o no
-
-
-@Service
-public class CurrentUserService {
-
-    public Authentication getAuthentication() {
-        return SecurityContextHolder.getContext().getAuthentication();
-    }
-
-    public boolean hasRole(String role) {
-        return getAuthentication()
-                .getAuthorities()
-                .stream()
-                .anyMatch(
-                        authority ->
-                                authority.getAuthority().equals("ROLE_" + role)
-                );
-    }
-
-    public String getCurrentUserEmail() {
-        return getAuthentication().getName();
-    }
-
-    public CustomUserDetails getCurrentUser() {
-        return (CustomUserDetails) getAuthentication().getPrincipal();
-    }
-}

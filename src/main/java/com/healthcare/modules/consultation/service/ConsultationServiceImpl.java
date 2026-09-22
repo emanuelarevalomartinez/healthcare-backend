@@ -7,7 +7,6 @@ import com.healthcare.modules.consultation.dto.CreateConsultationDTO;
 import com.healthcare.modules.consultation.dto.UpdateConsultationDTO;
 import com.healthcare.modules.consultation.entity.ConsultationEntity;
 import com.healthcare.modules.consultation.repository.ConsultationRepository;
-import com.healthcare.modules.doctor.dto.DoctorResponseDTO;
 import com.healthcare.modules.doctor.entity.DoctorEntity;
 import com.healthcare.modules.doctor.service.DoctorService;
 import com.healthcare.shared.exceptions.ApplicationException;

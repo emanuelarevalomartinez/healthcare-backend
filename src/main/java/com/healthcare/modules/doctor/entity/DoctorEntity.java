@@ -1,5 +1,6 @@
 package com.healthcare.modules.doctor.entity;
 
+import com.healthcare.modules.appointment.entity.AppointmentEntity;
 import com.healthcare.modules.doctor_schedule.entity.DoctorScheduleEntity;
 import com.healthcare.modules.user.entity.UserEntity;
 import jakarta.persistence.*;
@@ -56,6 +57,21 @@ public class DoctorEntity {
             orphanRemoval = true
     )
     private List<DoctorScheduleEntity> schedules = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "doctor",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<AppointmentEntity> appointments = new ArrayList<>();
+
+    public List<AppointmentEntity> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<AppointmentEntity> appointments) {
+        this.appointments = appointments;
+    }
 
     public DoctorEntity() {
     }

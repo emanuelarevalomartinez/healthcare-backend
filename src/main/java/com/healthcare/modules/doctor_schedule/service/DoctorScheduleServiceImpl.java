@@ -104,6 +104,42 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
     }
 
     @Transactional
+    @Override
+    public List<DoctorScheduleEntity> createDoctorSchedulesForDoctor(
+            DoctorEntity doctor,
+            List<CreateDoctorScheduleDTO.DayScheduleDTO> schedules
+    ) {
+        if (schedules == null || schedules.isEmpty()) {
+            return List.of();
+        }
+
+        List<DoctorScheduleEntity> doctorSchedules = new ArrayList<>();
+        Set<DoctorScheduleDay> days = new HashSet<>();
+
+        for (CreateDoctorScheduleDTO.DayScheduleDTO scheduleDTO : schedules) {
+            if (!days.add(scheduleDTO.dayOfWeek())) {
+                throw new ApplicationException(
+                        ErrorMessage.DOCTOR_SCHEDULE_DUPLICATED_DAY,
+                        scheduleDTO.dayOfWeek()
+                );
+            }
+
+            DoctorScheduleEntity newDoctorSchedule = new DoctorScheduleEntity();
+
+            newDoctorSchedule.setDoctor(doctor);
+            newDoctorSchedule.setDayOfWeek(scheduleDTO.dayOfWeek());
+            newDoctorSchedule.setStartTime(scheduleDTO.startTime());
+            newDoctorSchedule.setEndTime(scheduleDTO.endTime());
+            newDoctorSchedule.setAvailable(scheduleDTO.available());
+            newDoctorSchedule.setNotes(scheduleDTO.notes());
+
+            doctorSchedules.add(newDoctorSchedule);
+        }
+
+        return doctorScheduleRepository.saveAll(doctorSchedules);
+    }
+
+    @Transactional
     public List<DoctorScheduleResponseDTO> updateDoctorSchedulesResponseDTO(
             UpdateDoctorScheduleDTO updateDoctorScheduleDTO) {
 

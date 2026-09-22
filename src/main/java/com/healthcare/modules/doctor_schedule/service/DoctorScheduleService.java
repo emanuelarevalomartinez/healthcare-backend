@@ -1,5 +1,6 @@
 package com.healthcare.modules.doctor_schedule.service;
 
+import com.healthcare.modules.doctor.entity.DoctorEntity;
 import com.healthcare.modules.doctor_schedule.dto.CreateDoctorScheduleDTO;
 import com.healthcare.modules.doctor_schedule.dto.DoctorScheduleResponseDTO;
 import com.healthcare.modules.doctor_schedule.dto.UpdateDoctorScheduleDTO;
@@ -15,6 +16,10 @@ public interface DoctorScheduleService {
             CreateDoctorScheduleDTO createDoctorScheduleDTO);
     List<DoctorScheduleEntity> createDoctorSchedulesResponseEntities(
             CreateDoctorScheduleDTO createDoctorScheduleDTO);
+    List<DoctorScheduleEntity> createDoctorSchedulesForDoctor(
+            DoctorEntity doctor,
+            List<CreateDoctorScheduleDTO.DayScheduleDTO> schedules
+    );
     List<DoctorScheduleResponseDTO> updateDoctorSchedulesResponseDTO(
             UpdateDoctorScheduleDTO updateDoctorScheduleDTO);
     List<DoctorScheduleEntity> updateDoctorSchedulesResponseEntities(
