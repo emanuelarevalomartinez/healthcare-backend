@@ -2,6 +2,7 @@ package com.healthcare.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -38,6 +39,8 @@ public class SecurityConfig {
                                 "/api-docs/**"
                         ).permitAll()
                         .requestMatchers("/auth/me")
+                        .hasAnyRole("ADMIN", "DOCTOR", "RECEPTIONIST")
+                        .requestMatchers(HttpMethod.GET, "/users/{id}")
                         .hasAnyRole("ADMIN", "DOCTOR", "RECEPTIONIST")
                         .requestMatchers( "/users/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

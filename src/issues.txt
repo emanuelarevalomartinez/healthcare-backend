@@ -2,6 +2,10 @@
 
 // TODO
 
+// hay que hacer que al intentar crear o actualizar una cita con usuario de tipo doctor el id del usuario debe ser el mismo del doctor que esta intentando colocar en la creacion de la cita
+
+// corregir que el findUserById solo devuelva la informacion del uusario loguado en el sistema si su rol no es administrador o recepcionista
+
 // hay que incluir filtrar el paciente por Nombre, Teléfono y Documento de identidad
 
 // el modulo e reminder realmente n ose crea mediante endpoint si no de forma interna automatica dentro de la api

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DoctorScheduleServiceImpl implements DoctorScheduleService {
@@ -249,7 +250,7 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
         return this.doctorScheduleRepository
                 .findByDoctorIdAndDayOfWeek(doctorId, day)
                 .orElseThrow(() -> new ApplicationException(
-                        ErrorMessage.APPOINTMENT_DOCTOR_NOT_AVAILABLE_THIS_DAY, ""));
+                        ErrorMessage.APPOINTMENT_DOCTOR_NOT_AVAILABLE_THIS_DAY, buildNotAvailableMessage(doctorId)));
     }
 
     @Override
@@ -270,5 +271,34 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
     public void deleteDoctorSchedule(UUID id) {
         DoctorScheduleEntity doctorSchedule = this.findDoctorScheduleEntityById(id);
         doctorScheduleRepository.deleteById(doctorSchedule.getId());
+    }
+
+    private String buildNotAvailableMessage(UUID doctorId) {
+        return "Días disponibles: " + buildAvailableDaysMessage(doctorId);
+    }
+
+    private String buildAvailableDaysMessage(UUID doctorId) {
+        List<DoctorScheduleEntity> schedules = this.findByDoctorId(doctorId);
+
+        String availableDays = schedules.stream()
+                .filter(DoctorScheduleEntity::isAvailable)
+                .sorted(Comparator.comparing(s -> s.getDayOfWeek().ordinal()))
+                .map(s -> formatDay(s.getDayOfWeek())
+                        + " (" + s.getStartTime() + "-" + s.getEndTime() + ")")
+                .collect(Collectors.joining(", "));
+
+        return availableDays.isEmpty() ? "ninguno" : availableDays;
+    }
+
+    private String formatDay(DoctorScheduleDay day) {
+        return switch (day) {
+            case MONDAY    -> "Lunes";
+            case TUESDAY   -> "Martes";
+            case WEDNESDAY -> "Miércoles";
+            case THURSDAY  -> "Jueves";
+            case FRIDAY    -> "Viernes";
+            case SATURDAY  -> "Sábado";
+            case SUNDAY    -> "Domingo";
+        };
     }
 }
