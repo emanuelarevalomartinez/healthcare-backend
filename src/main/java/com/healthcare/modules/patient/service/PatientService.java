@@ -18,5 +18,5 @@ public interface PatientService {
     void deletePatient(UUID id);
     PageResponse<PatientResponseDTO> findPatientsFiltered(int page, int size, String search);
     PatientEntity findPatientEntityById(UUID id);
-    PageResponse<PatientResponseDTO> findPatientsByArguments(String search, Sex sex, DocumentType documentType, int page, int size);
+    PageResponse<PatientResponseDTO> findPatientsByArguments(String searchTerm, Sex sex, DocumentType documentType, int page, int size);
 }

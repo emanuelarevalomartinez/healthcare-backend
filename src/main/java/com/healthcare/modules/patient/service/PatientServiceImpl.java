@@ -192,14 +192,14 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public PageResponse<PatientResponseDTO> findPatientsByArguments(String search, Sex sex, DocumentType documentType, int page, int size) {
+    public PageResponse<PatientResponseDTO> findPatientsByArguments(String searchTerm, Sex sex, DocumentType documentType, int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
         Specification<PatientEntity> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-            if (search != null && !search.isEmpty()) {
-                String searchPattern = "%" + search.toLowerCase() + "%";
+            if (searchTerm != null && !searchTerm.isEmpty()) {
+                String searchPattern = "%" + searchTerm.toLowerCase() + "%";
                 predicates.add(cb.or(
                         cb.like(cb.lower(root.get("fullName")), searchPattern),
                         cb.like(cb.lower(root.get("documentNumber")), searchPattern),

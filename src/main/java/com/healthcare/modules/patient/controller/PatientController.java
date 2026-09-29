@@ -53,16 +53,16 @@ public class PatientController {
         );
     }
 
-    @GetMapping("/filter/search")
+    @GetMapping("/search")
     public ResponseEntity<ApiResponse<PageResponse<PatientResponseDTO>>> findPatientsByFilters(
-            @RequestParam(required = false) String search,
+            @RequestParam(required = true) String searchTerm,
             @RequestParam(required = false) Sex sex,
             @RequestParam(required = false) DocumentType documentType,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
 
-        PageResponse<PatientResponseDTO> patientsFiltered = patientService.findPatientsByArguments(search, sex, documentType, page, size);
+        PageResponse<PatientResponseDTO> patientsFiltered = patientService.findPatientsByArguments(searchTerm, sex, documentType, page, size);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
