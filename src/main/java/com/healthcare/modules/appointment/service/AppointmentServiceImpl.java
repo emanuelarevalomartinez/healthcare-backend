@@ -61,6 +61,11 @@ public class AppointmentServiceImpl implements AppointmentService {
         DoctorEntity doctorEntity = this.doctorService.findDoctorEntityById(createAppointmentDTO.doctorId());
         PatientEntity patientEntity = this.patientService.findPatientEntityById(createAppointmentDTO.patientId());
 
+        UUID userId = authService.getCurrentUserId();
+        UserEntity userEntity = this.userService.findUserEntityById(userId);
+
+        validateDoctorOwnership(userEntity, doctorEntity.getId());
+
         LocalDateTime appointmentStart = createAppointmentDTO.appointmentDateTime();
         LocalDateTime appointmentEnd = appointmentStart.plusMinutes(createAppointmentDTO.durationMinutes());
 
@@ -90,10 +95,6 @@ public class AppointmentServiceImpl implements AppointmentService {
             throw new ApplicationException(ErrorMessage.APPOINTMENT_PATIENT_SCHEDULE_CONFLICT, "");
         }
 
-        UUID userId = authService.getCurrentUserId();
-
-        UserEntity userEntity = this.userService.findUserEntityById(userId);
-
         AppointmentEntity newAppointment = new AppointmentEntity();
         newAppointment.setPatient(patientEntity);
         newAppointment.setDoctor(doctorEntity);
@@ -114,7 +115,14 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     public AppointmentResponseDTO updateAppointment(UUID id, UpdateAppointmentDTO dto) {
+
         AppointmentEntity appointment = this.findAppointmentEntityById(id);
+        DoctorEntity doctorEntity = this.doctorService.findDoctorEntityById(appointment.getDoctor().getId());
+
+        UUID userId = authService.getCurrentUserId();
+        UserEntity userEntity = this.userService.findUserEntityById(userId);
+
+        validateDoctorOwnership(userEntity, doctorEntity.getId());
 
         AppointmentStatus currentStatus = appointment.getStatus();
         AppointmentStatus newStatus = dto.status();
@@ -165,10 +173,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 
             if (newStatus == AppointmentStatus.CANCELLED) {
                 appointment.setCancellationReason(dto.cancellationReason());
-
-                UUID userId = authService.getCurrentUserId();
-
-                UserEntity userEntity = this.userService.findUserEntityById(userId);
                 appointment.setCancelledBy(userEntity);
             }
         }
@@ -206,9 +210,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
 
         Page<AppointmentEntity> result = appointmentRepository.findAll(
-                        query.specification(),
-                        query.pageable()
-                );
+                query.specification(),
+                query.pageable()
+        );
 
         return new PageResponse<>(
                 result.getContent().stream()
@@ -349,6 +353,27 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (!insideSchedule) {
             throw new ApplicationException(
                     ErrorMessage.APPOINTMENT_OUTSIDE_DOCTOR_SCHEDULE, "Horario del doctor: " + schedule.getStartTime() + " - " + schedule.getEndTime());
+        }
+    }
+
+    private void validateDoctorOwnership(UserEntity userEntity, UUID targetDoctorId) {
+
+        if (userEntity.getRole() != UserRole.DOCTOR) {
+            return;
+        }
+
+        if (userEntity.getDoctor() == null) {
+            throw new ApplicationException(
+                    ErrorMessage.APPOINTMENT_DOCTOR_PROFILE_MISSING,
+                    userEntity.getId().toString()
+            );
+        }
+
+        if (!userEntity.getDoctor().getId().equals(targetDoctorId)) {
+            throw new ApplicationException(
+                    ErrorMessage.APPOINTMENT_DOCTOR_NOT_ALLOWED,
+                    userEntity.getId().toString()
+            );
         }
     }
 }

@@ -33,6 +33,8 @@ public enum ErrorMessage {
     APPOINTMENT_OUTSIDE_DOCTOR_SCHEDULE(409, "APPOINTMENT_OUTSIDE_DOCTOR_SCHEDULE", "La cita está fuera del horario de atención del doctor."),
     APPOINTMENT_CROSSES_MIDNIGHT(409, "APPOINTMENT_CROSSES_MIDNIGHT", "La cita no puede cruzar la medianoche."),
     APPOINTMENT_DOCTOR_SCHEDULE_NOT_AVAILABLE(409, "APPOINTMENT_DOCTOR_SCHEDULE_NOT_AVAILABLE", "El doctor no tiene horario activo para el dia seleccionado."),
+    APPOINTMENT_DOCTOR_NOT_ALLOWED(403, "APPOINTMENT_DOCTOR_NOT_ALLOWED", "Un doctor solo puede crear citas asignadas a sí mismo."),
+    APPOINTMENT_DOCTOR_PROFILE_MISSING(500, "APPOINTMENT_DOCTOR_PROFILE_MISSING", "El usuario no tiene un perfil de doctor asociado."),
 
     INVALID_CREDENTIALS(401, "INVALID_CREDENTIALS", "Credenciales inválidas"),
     INVALID_CHANGE_PASSWORD(400, "INVALID_CHANGE_PASSWORD", "La contraseña actual no coincide con la que intenta introducir"),

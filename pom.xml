@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.healthcare</groupId>
 	<artifactId>healthcare</artifactId>
-	<version>0.0.1</version>
+	<version>1.0.0</version>
 	<name>healthcare</name>
 	<description>This is an web application designed to manage the complete operational workflow of a small private medical clinic.</description>
 	<url/>

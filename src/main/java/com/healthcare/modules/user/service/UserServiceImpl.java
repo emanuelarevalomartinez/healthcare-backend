@@ -5,6 +5,8 @@ import com.healthcare.modules.auth.dto.LoginResponseDTO;
 import com.healthcare.modules.auth.dto.LoginUserDTO;
 import com.healthcare.modules.auth.service.RefreshTokenService;
 import com.healthcare.modules.user.dto.*;
+import com.healthcare.modules.user.enums.UserRole;
+import com.healthcare.modules.user.repository.specifications.UserSpecifications;
 import com.healthcare.shared.exceptions.ApplicationException;
 import com.healthcare.shared.exceptions.ErrorMessage;
 import com.healthcare.modules.auth.dto.RegisterUserDTO;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -146,6 +149,33 @@ public class UserServiceImpl implements UserService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("username").ascending());
         Page<UserEntity> result = userRepository.findAllUsersPaged(pageable);
+
+        return new PageResponse<>(
+                result.getContent()
+                        .stream()
+                        .map(UserWithDoctorAndSchedulesResponseDTO::fromEntity)
+                        .toList(),
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages()
+        );
+    }
+
+    @Override
+    public PageResponse<UserWithDoctorAndSchedulesResponseDTO> findUsersByArguments(String searchTerm, UserRole userRole, Boolean active, int page, int size) {
+        Specification<UserEntity> spec = Specification.where(UserSpecifications.search(searchTerm))
+                .and(UserSpecifications.hasRole(userRole))
+                .and(UserSpecifications.isActive(active));
+
+
+        Pageable pageable = PageRequest.of(
+                page,
+                Math.min(size, 10),
+                Sort.by(Sort.Direction.ASC, "username")
+        );
+
+        Page<UserEntity> result = userRepository.findAll(spec, pageable);
 
         return new PageResponse<>(
                 result.getContent()

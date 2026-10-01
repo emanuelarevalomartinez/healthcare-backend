@@ -5,6 +5,7 @@ import com.healthcare.modules.auth.dto.LoginUserDTO;
 import com.healthcare.modules.auth.dto.RegisterUserDTO;
 import com.healthcare.modules.user.dto.*;
 import com.healthcare.modules.user.entity.UserEntity;
+import com.healthcare.modules.user.enums.UserRole;
 import com.healthcare.shared.response.PageResponse;
 
 import java.util.UUID;
@@ -16,6 +17,7 @@ public interface UserService {
     UserWithDoctorAndSchedulesResponseDTO createUser(CreateUserDTO createUserDTO);
     UserWithDoctorAndSchedulesResponseDTO updateUser(UUID id, UpdateUserDTO updateUserDTO);
     PageResponse<UserWithDoctorAndSchedulesResponseDTO> findAllUsers(int page, int size);
+    PageResponse<UserWithDoctorAndSchedulesResponseDTO> findUsersByArguments(String searchTerm, UserRole userRole, Boolean active, int page, int size);
     UserWithDoctorAndSchedulesResponseDTO findUserById(UUID id);
     UserEntity findUserByUsername(String username);
     UserWithDoctorAndSchedulesResponseDTO findUserByEmail(String email);

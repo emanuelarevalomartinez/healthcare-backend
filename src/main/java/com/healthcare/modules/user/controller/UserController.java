@@ -2,6 +2,7 @@ package com.healthcare.modules.user.controller;
 
 import com.healthcare.modules.user.dto.*;
 import com.healthcare.modules.user.entity.UserEntity;
+import com.healthcare.modules.user.enums.UserRole;
 import com.healthcare.shared.response.ApiResponse;
 import com.healthcare.shared.response.PageResponse;
 import com.healthcare.shared.response.ResponseHandler;
@@ -72,6 +73,24 @@ public class UserController {
                 HttpStatus.OK,
                 null,
                 users
+        );
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<PageResponse<UserWithDoctorAndSchedulesResponseDTO>>> findUsersByFilters(
+            @RequestParam(required = true) String searchTerm,
+            @RequestParam(required = false) UserRole userRole,
+            @RequestParam(required = false) Boolean active,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+
+        PageResponse<UserWithDoctorAndSchedulesResponseDTO> usersFiltered = userService.findUsersByArguments(searchTerm, userRole, active, page, size);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                null,
+                usersFiltered
         );
     }
 
