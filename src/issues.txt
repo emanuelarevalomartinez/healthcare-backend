@@ -1,7 +1,9 @@
 
 
 // TODO
+// a�adir cache al la lista de consultas y de citas
 
+// hacer el search de las consultas
 
 // cuando se va a crear la consulta hay que crear un endpoint que traiga las citas a partir del doctor que esten seleccionado y que el estado de las cita sea confirmed solamente
 
