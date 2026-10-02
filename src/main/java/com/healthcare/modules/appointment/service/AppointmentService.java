@@ -23,4 +23,6 @@ public interface AppointmentService {
 
     void deleteAppointment(UUID id);
 
+    void markAsAttended(UUID appointmentId);
+
 }

@@ -1,22 +1,31 @@
 package com.healthcare.modules.consultation.service;
 
 import com.healthcare.modules.appointment.entity.AppointmentEntity;
+import com.healthcare.modules.appointment.enums.AppointmentStatus;
 import com.healthcare.modules.appointment.service.AppointmentService;
+import com.healthcare.modules.auth.service.AuthService;
 import com.healthcare.modules.consultation.dto.ConsultationResponseDTO;
 import com.healthcare.modules.consultation.dto.CreateConsultationDTO;
 import com.healthcare.modules.consultation.dto.UpdateConsultationDTO;
 import com.healthcare.modules.consultation.entity.ConsultationEntity;
 import com.healthcare.modules.consultation.repository.ConsultationRepository;
+import com.healthcare.modules.consultation.repository.specifications.ConsultationSpecifications;
+import com.healthcare.modules.consultation.service.role.ConsultationSpecificationQuery;
+import com.healthcare.modules.consultation.service.role.DoctorConsultationExecutor;
 import com.healthcare.modules.doctor.entity.DoctorEntity;
 import com.healthcare.modules.doctor.service.DoctorService;
+import com.healthcare.modules.user.enums.UserRole;
 import com.healthcare.shared.exceptions.ApplicationException;
 import com.healthcare.shared.exceptions.ErrorMessage;
 import com.healthcare.shared.response.PageResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -26,11 +35,15 @@ public class ConsultationServiceImpl implements ConsultationService {
     private final DoctorService doctorService;
     private final AppointmentService appointmentService;
     private final ConsultationRepository consultationRepository;
+    private final AuthService authService;
+    private final DoctorConsultationExecutor doctorConsultationExecutor;
 
-    public ConsultationServiceImpl(DoctorService doctorService, AppointmentService appointmentService, ConsultationRepository consultationRepository) {
+    public ConsultationServiceImpl(DoctorService doctorService, AppointmentService appointmentService, ConsultationRepository consultationRepository, AuthService authService, DoctorConsultationExecutor doctorConsultationExecutor) {
         this.doctorService = doctorService;
         this.appointmentService = appointmentService;
         this.consultationRepository = consultationRepository;
+        this.authService = authService;
+        this.doctorConsultationExecutor = doctorConsultationExecutor;
     }
 
     @Override
@@ -41,7 +54,16 @@ public class ConsultationServiceImpl implements ConsultationService {
         }
 
         DoctorEntity doctorEntity = this.doctorService.findDoctorEntityById(createConsultationDTO.createdByDoctor());
+
         AppointmentEntity appointmentEntity = this.appointmentService.findAppointmentEntityById(createConsultationDTO.appointmentId());
+
+        if(appointmentEntity.getStatus() != AppointmentStatus.CONFIRMED) {
+            throw new ApplicationException(ErrorMessage.CONSULTATION_APPOINTMENT_NOT_CONFIRMED, "");
+        }
+
+        if(!doctorEntity.getId().equals(appointmentEntity.getDoctor().getId())){
+            throw new ApplicationException(ErrorMessage.CONSULTATION_DOCTOR_MISMATCH, "");
+        }
 
         ConsultationEntity newConsultation = new ConsultationEntity();
         newConsultation.setAppointment(appointmentEntity);
@@ -56,6 +78,7 @@ public class ConsultationServiceImpl implements ConsultationService {
         newConsultation.setRegistrationDate(LocalDateTime.now());
 
         this.consultationRepository.save(newConsultation);
+        this.appointmentService.markAsAttended(appointmentEntity.getId());
 
         return ConsultationResponseDTO.fromEntity(newConsultation);
     }
@@ -64,6 +87,10 @@ public class ConsultationServiceImpl implements ConsultationService {
     public ConsultationResponseDTO updateConsultation(UUID id, UpdateConsultationDTO updateConsultationDTO) {
 
         ConsultationEntity findConsultation = this.findConsultationEntityById(id);
+
+        if(findConsultation.getAppointment().getStatus() != AppointmentStatus.ATTENDED) {
+            throw new ApplicationException(ErrorMessage.CONSULTATION_APPOINTMENT_NOT_ATTENDED, "");
+        }
 
         if (updateConsultationDTO.symptoms() != null) {
             findConsultation.setSymptoms(updateConsultationDTO.symptoms());
@@ -111,6 +138,33 @@ public class ConsultationServiceImpl implements ConsultationService {
     }
 
     @Override
+    public PageResponse<ConsultationResponseDTO> findConsultationsFiltered(int page, int size, boolean ascending, LocalDate date) {
+
+        ConsultationSpecificationQuery query;
+
+        if (authService.getCurrentRole().equals(UserRole.DOCTOR)) {
+            query = doctorConsultationExecutor.findConsultationsFilteredByDoctor(page, size, ascending, date);
+        } else {
+            query = buildDefaultFindConsultationFilteredQuery(page, size, ascending, date);
+        }
+
+        Page<ConsultationEntity> result = consultationRepository.findAll(
+                query.specification(),
+                query.pageable()
+        );
+
+        return new PageResponse<>(
+                result.getContent().stream()
+                        .map(ConsultationResponseDTO::fromEntity)
+                        .toList(),
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages()
+        );
+    }
+
+    @Override
     public ConsultationResponseDTO findConsultationById(UUID id) {
 
         ConsultationEntity findConsultationById = this.consultationRepository.findById(id)
@@ -132,5 +186,21 @@ public class ConsultationServiceImpl implements ConsultationService {
     public void deleteConsultation(UUID id) {
         ConsultationEntity consultation = this.findConsultationEntityById(id);
         consultationRepository.deleteById(consultation.getId());
+    }
+
+    private ConsultationSpecificationQuery buildDefaultFindConsultationFilteredQuery(int page, int size, boolean ascending, LocalDate date) {
+
+        Specification<ConsultationEntity> spec = Specification
+                .where(ConsultationSpecifications.hasDate(date));
+
+
+        Sort sort = Sort.by(
+                ascending ? Sort.Direction.ASC : Sort.Direction.DESC,
+                "registrationDate"
+        );
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return new ConsultationSpecificationQuery(spec, pageable);
     }
 }

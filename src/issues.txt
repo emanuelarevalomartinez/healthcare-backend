@@ -2,9 +2,12 @@
 
 // TODO
 
-comenzar a revisar el modulo de consultation por si falta algo
+
+// cuando se va a crear la consulta hay que crear un endpoint que traiga las citas a partir del doctor que esten en estado confirmada o algo asi
 
 crear el modulo de historial de consultas
+
+// a�adir un endpoint que sea para saber el estado de la api un health
 
 // el modulo e reminder realmente n ose crea mediante endpoint si no de forma interna automatica dentro de la api
 

@@ -36,6 +36,10 @@ public enum ErrorMessage {
     APPOINTMENT_DOCTOR_NOT_ALLOWED(403, "APPOINTMENT_DOCTOR_NOT_ALLOWED", "Un doctor solo puede crear citas asignadas a sí mismo."),
     APPOINTMENT_DOCTOR_PROFILE_MISSING(500, "APPOINTMENT_DOCTOR_PROFILE_MISSING", "El usuario no tiene un perfil de doctor asociado."),
 
+    CONSULTATION_DOCTOR_MISMATCH(403, "CONSULTATION_DOCTOR_MISMATCH", "El doctor seleccionado para la consulta no coincide con el doctor asignado en la cita."),
+    CONSULTATION_APPOINTMENT_NOT_CONFIRMED(409, "CONSULTATION_APPOINTMENT_NOT_CONFIRMED", "Solo se puede registrar una consulta para citas en estado CONFIRMADA."),
+    CONSULTATION_APPOINTMENT_NOT_ATTENDED(409, "CONSULTATION_APPOINTMENT_NOT_ATTENDED", "Solo se puede modificar una consulta cuya cita esté en estado ATENDIDA."),
+
     INVALID_CREDENTIALS(401, "INVALID_CREDENTIALS", "Credenciales inválidas"),
     INVALID_CHANGE_PASSWORD(400, "INVALID_CHANGE_PASSWORD", "La contraseña actual no coincide con la que intenta introducir"),
     INVALID_PASSWORD_CHANGE_REQUEST(400, "INVALID_PASSWORD_CHANGE_REQUEST", "La solicitud de cambio de contraseña es inválida"),

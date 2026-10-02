@@ -21,6 +21,7 @@ import com.healthcare.modules.user.service.UserService;
 import com.healthcare.shared.exceptions.ApplicationException;
 import com.healthcare.shared.exceptions.ErrorMessage;
 import com.healthcare.shared.response.PageResponse;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -279,6 +280,22 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (!valid && current != next) {
             throw new ApplicationException(ErrorMessage.APPOINTMENT_INVALID_STATUS_TRANSITION, "");
         }
+    }
+
+    @Transactional
+    public void markAsAttended(UUID appointmentId) {
+        AppointmentEntity appointment = findAppointmentEntityById(appointmentId);
+
+        if (appointment.getStatus() != AppointmentStatus.CONFIRMED) {
+            throw new ApplicationException(
+                    ErrorMessage.APPOINTMENT_INVALID_STATUS_TRANSITION, ""
+            );
+        }
+
+        appointment.setStatus(AppointmentStatus.ATTENDED);
+        appointment.setAttendedAt(LocalDateTime.now());
+
+        appointmentRepository.save(appointment);
     }
 
     private AppointmentSpecificationQuery buildDefaultFindAppointmentFilteredQuery(

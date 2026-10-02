@@ -9,10 +9,12 @@ import com.healthcare.shared.response.ApiResponse;
 import com.healthcare.shared.response.PageResponse;
 import com.healthcare.shared.response.ResponseHandler;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @RestController
@@ -56,6 +58,23 @@ public class ConsultationController {
     ) {
 
         PageResponse<ConsultationResponseDTO> consultations = consultationService.findAllConsultations(page, size);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                null,
+                consultations
+        );
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<ApiResponse<PageResponse<ConsultationResponseDTO>>> findConsultationsFiltered(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "true") boolean ascending,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+
+        PageResponse<ConsultationResponseDTO> consultations = this.consultationService.findConsultationsFiltered(page, size, ascending, date);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,

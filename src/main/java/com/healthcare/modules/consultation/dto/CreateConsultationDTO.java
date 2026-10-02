@@ -1,5 +1,6 @@
 package com.healthcare.modules.consultation.dto;
 
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -34,6 +35,7 @@ public record CreateConsultationDTO(
         String observations,
 
         @NotNull(message = "La fecha de consulta es obligatoria")
+        @Future(message = "La fecha y hora de la consulta debe ser futura")
         LocalDateTime consultationDate,
 
         LocalDateTime nextReview

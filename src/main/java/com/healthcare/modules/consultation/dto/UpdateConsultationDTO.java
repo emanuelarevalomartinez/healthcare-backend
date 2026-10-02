@@ -1,5 +1,6 @@
 package com.healthcare.modules.consultation.dto;
 
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public record UpdateConsultationDTO(
         @Size(max = 1000, message = "Las observaciones no pueden exceder 1000 caracteres")
         String observations,
 
+        @Future(message = "La fecha y hora de la consulta debe ser futura")
         LocalDateTime consultationDate,
 
         LocalDateTime nextReview
