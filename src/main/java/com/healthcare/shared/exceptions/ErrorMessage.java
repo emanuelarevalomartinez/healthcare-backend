@@ -39,6 +39,7 @@ public enum ErrorMessage {
     CONSULTATION_DOCTOR_MISMATCH(403, "CONSULTATION_DOCTOR_MISMATCH", "El doctor seleccionado para la consulta no coincide con el doctor asignado en la cita."),
     CONSULTATION_APPOINTMENT_NOT_CONFIRMED(409, "CONSULTATION_APPOINTMENT_NOT_CONFIRMED", "Solo se puede registrar una consulta para citas en estado CONFIRMADA."),
     CONSULTATION_APPOINTMENT_NOT_ATTENDED(409, "CONSULTATION_APPOINTMENT_NOT_ATTENDED", "Solo se puede modificar una consulta cuya cita esté en estado ATENDIDA."),
+    CONSULTATION_DATE_BEFORE_APPOINTMENT(409, "CONSULTATION_DATE_BEFORE_APPOINTMENT", "La fecha de la consulta no puede ser anterior a la fecha de la cita."),
 
     INVALID_CREDENTIALS(401, "INVALID_CREDENTIALS", "Credenciales inválidas"),
     INVALID_CHANGE_PASSWORD(400, "INVALID_CHANGE_PASSWORD", "La contraseña actual no coincide con la que intenta introducir"),

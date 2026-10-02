@@ -65,6 +65,10 @@ public class ConsultationServiceImpl implements ConsultationService {
             throw new ApplicationException(ErrorMessage.CONSULTATION_DOCTOR_MISMATCH, "");
         }
 
+        if (createConsultationDTO.consultationDate().isBefore(appointmentEntity.getAppointmentDateTime())) {
+            throw new ApplicationException(ErrorMessage.CONSULTATION_DATE_BEFORE_APPOINTMENT, "");
+        }
+
         ConsultationEntity newConsultation = new ConsultationEntity();
         newConsultation.setAppointment(appointmentEntity);
         newConsultation.setSymptoms(createConsultationDTO.symptoms());

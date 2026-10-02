@@ -3,7 +3,7 @@
 // TODO
 
 
-// cuando se va a crear la consulta hay que crear un endpoint que traiga las citas a partir del doctor que esten en estado confirmada o algo asi
+// cuando se va a crear la consulta hay que crear un endpoint que traiga las citas a partir del doctor que esten seleccionado y que el estado de las cita sea confirmed solamente
 
 crear el modulo de historial de consultas
 

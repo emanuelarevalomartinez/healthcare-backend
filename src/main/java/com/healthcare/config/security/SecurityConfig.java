@@ -43,6 +43,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/users/{id}")
                         .hasAnyRole("ADMIN", "DOCTOR", "RECEPTIONIST")
                         .requestMatchers( "/users/**").hasRole("ADMIN")
+                        .requestMatchers("/consultations/**")
+                        .hasAnyRole("ADMIN", "DOCTOR")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->
