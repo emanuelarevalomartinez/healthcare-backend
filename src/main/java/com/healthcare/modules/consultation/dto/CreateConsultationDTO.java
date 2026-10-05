@@ -32,7 +32,6 @@ public record CreateConsultationDTO(
         String observations,
 
         @NotNull(message = "La fecha de consulta es obligatoria")
-        @PastOrPresent(message = "La fecha de consulta no puede ser futura")
         LocalDateTime consultationDate,
 
         LocalDateTime nextReview

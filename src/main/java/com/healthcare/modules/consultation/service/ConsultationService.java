@@ -4,6 +4,7 @@ import com.healthcare.modules.consultation.dto.ConsultationResponseDTO;
 import com.healthcare.modules.consultation.dto.CreateConsultationDTO;
 import com.healthcare.modules.consultation.dto.UpdateConsultationDTO;
 import com.healthcare.modules.consultation.entity.ConsultationEntity;
+import com.healthcare.modules.doctor.dto.DoctorWithUserAndScheduleResponseDTO;
 import com.healthcare.shared.response.PageResponse;
 
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ public interface ConsultationService {
     ConsultationResponseDTO updateConsultation(UUID id, UpdateConsultationDTO updateConsultationDTO);
     PageResponse<ConsultationResponseDTO> findAllConsultations(int page, int size);
     PageResponse<ConsultationResponseDTO> findConsultationsFiltered(int page, int size, boolean ascending, LocalDate date);
+    PageResponse<ConsultationResponseDTO> searchConsultations(int page, int size, Boolean ascending, String search);
     ConsultationResponseDTO findConsultationById(UUID id);
     ConsultationEntity findConsultationEntityById(UUID id);
     void deleteConsultation(UUID id);

@@ -14,10 +14,24 @@ public record ConsultationResponseDTO(
         String observations,
         LocalDateTime consultationDate,
         LocalDateTime nextReview,
-        LocalDateTime registrationDate
+        LocalDateTime registrationDate,
+        String doctorName,
+        String patientName
 ) {
 
     public static ConsultationResponseDTO fromEntity(ConsultationEntity consultation) {
+
+        String doctorName = null;
+        String patientName = null;
+
+        if (consultation.getAppointment() != null) {
+            if (consultation.getAppointment().getDoctor() != null && consultation.getAppointment().getDoctor().getUser() != null) {
+                doctorName = consultation.getAppointment().getDoctor().getUser().getUsername();
+            }
+            if (consultation.getAppointment().getPatient() != null) {
+                patientName = consultation.getAppointment().getPatient().getFullName();
+            }
+        }
 
         return new ConsultationResponseDTO(
                 consultation.getId(),
@@ -28,7 +42,9 @@ public record ConsultationResponseDTO(
                 consultation.getObservations(),
                 consultation.getConsultationDate(),
                 consultation.getNextReview(),
-                consultation.getRegistrationDate()
+                consultation.getRegistrationDate(),
+                doctorName,
+                patientName
         );
     }
 

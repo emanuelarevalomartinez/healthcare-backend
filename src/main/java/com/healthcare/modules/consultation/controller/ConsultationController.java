@@ -1,10 +1,14 @@
 package com.healthcare.modules.consultation.controller;
 
 
+import com.healthcare.modules.appointment.dto.AppointmentResponseDTO;
+import com.healthcare.modules.appointment.dto.AppointmentSearchParams;
+import com.healthcare.modules.appointment.enums.AppointmentStatus;
 import com.healthcare.modules.consultation.dto.ConsultationResponseDTO;
 import com.healthcare.modules.consultation.dto.CreateConsultationDTO;
 import com.healthcare.modules.consultation.dto.UpdateConsultationDTO;
 import com.healthcare.modules.consultation.service.ConsultationService;
+import com.healthcare.modules.patient.enums.DocumentType;
 import com.healthcare.shared.response.ApiResponse;
 import com.healthcare.shared.response.PageResponse;
 import com.healthcare.shared.response.ResponseHandler;
@@ -75,6 +79,23 @@ public class ConsultationController {
     ) {
 
         PageResponse<ConsultationResponseDTO> consultations = this.consultationService.findConsultationsFiltered(page, size, ascending, date);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                null,
+                consultations
+        );
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<PageResponse<ConsultationResponseDTO>>> searchConsultations(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "true") boolean ascending,
+            @RequestParam(required = true) String searchTerm
+    ) {
+
+        PageResponse<ConsultationResponseDTO> consultations = consultationService.searchConsultations(page, size, ascending, searchTerm);
 
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,

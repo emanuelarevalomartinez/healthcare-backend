@@ -1,8 +1,10 @@
 package com.healthcare.modules.consultation.service;
 
+import com.healthcare.modules.appointment.dto.AppointmentResponseDTO;
 import com.healthcare.modules.appointment.entity.AppointmentEntity;
 import com.healthcare.modules.appointment.enums.AppointmentStatus;
 import com.healthcare.modules.appointment.service.AppointmentService;
+import com.healthcare.modules.appointment.service.role.AppointmentSpecificationQuery;
 import com.healthcare.modules.auth.service.AuthService;
 import com.healthcare.modules.consultation.dto.ConsultationResponseDTO;
 import com.healthcare.modules.consultation.dto.CreateConsultationDTO;
@@ -169,6 +171,34 @@ public class ConsultationServiceImpl implements ConsultationService {
     }
 
     @Override
+    public PageResponse<ConsultationResponseDTO> searchConsultations(int page, int size, Boolean ascending, String searchTerm) {
+
+        ConsultationSpecificationQuery query;
+
+        if (authService.getCurrentRole().equals(UserRole.DOCTOR)) {
+            query = doctorConsultationExecutor.searchConsultationsFilteredByDoctor(page, size, ascending, searchTerm);
+        } else {
+            query = buildDefaultFindConsultationsSearchQuery(page, size, ascending, searchTerm);
+        }
+
+        Page<ConsultationEntity> result = consultationRepository.findAll(
+                query.specification(),
+                query.pageable()
+        );
+
+        return new PageResponse<>(
+                result.getContent().stream()
+                        .map(ConsultationResponseDTO::fromEntity)
+                        .toList(),
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages()
+        );
+
+    }
+
+    @Override
     public ConsultationResponseDTO findConsultationById(UUID id) {
 
         ConsultationEntity findConsultationById = this.consultationRepository.findById(id)
@@ -196,6 +226,22 @@ public class ConsultationServiceImpl implements ConsultationService {
 
         Specification<ConsultationEntity> spec = Specification
                 .where(ConsultationSpecifications.hasDate(date));
+
+
+        Sort sort = Sort.by(
+                ascending ? Sort.Direction.ASC : Sort.Direction.DESC,
+                "registrationDate"
+        );
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return new ConsultationSpecificationQuery(spec, pageable);
+    }
+
+    private ConsultationSpecificationQuery buildDefaultFindConsultationsSearchQuery(int page, int size, boolean ascending, String searchTerm) {
+        Specification<ConsultationEntity> spec = Specification
+                .where(ConsultationSpecifications.matchesDoctorOrPatientName(searchTerm))
+                .or(ConsultationSpecifications.matchesClinicalText(searchTerm));
 
 
         Sort sort = Sort.by(

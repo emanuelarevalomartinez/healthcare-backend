@@ -22,7 +22,6 @@ public record UpdateConsultationDTO(
         @Size(max = 1000, message = "Las observaciones no pueden exceder 1000 caracteres")
         String observations,
 
-        @PastOrPresent(message = "La fecha de consulta no puede ser futura")
         LocalDateTime consultationDate,
 
         LocalDateTime nextReview

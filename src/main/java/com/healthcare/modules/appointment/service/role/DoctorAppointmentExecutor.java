@@ -69,8 +69,8 @@ public class DoctorAppointmentExecutor {
             String term = params.searchTerm().trim();
             Specification<AppointmentEntity> searchSpec =
                     Specification.where(AppointmentSpecifications.hasPatientFullName(term))
-                            .and(AppointmentSpecifications.hasDoctorUsername(user.getUsername()))
-                            .or(AppointmentSpecifications.hasPatientMedicalRecordNumber(term));
+                            .or(AppointmentSpecifications.hasPatientMedicalRecordNumber(term))
+                            .and(AppointmentSpecifications.hasDoctorUsername(user.getUsername()));
 
             spec = spec.and(searchSpec);
         }
