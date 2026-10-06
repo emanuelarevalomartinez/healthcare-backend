@@ -1,8 +1,8 @@
 package com.healthcare.modules.auth.dto;
 
-import com.healthcare.modules.doctor.dto.DoctorResponseDTO;
-import com.healthcare.modules.user.entity.UserEntity;
-import com.healthcare.modules.user.enums.UserRole;
+import com.healthcare.modules.doctors.dto.DoctorResponseDTO;
+import com.healthcare.modules.users.entity.UserEntity;
+import com.healthcare.modules.users.enums.UserRole;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

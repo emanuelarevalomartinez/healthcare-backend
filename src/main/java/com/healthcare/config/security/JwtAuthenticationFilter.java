@@ -1,6 +1,6 @@
 package com.healthcare.config.security;
 
-import com.healthcare.modules.user.service.UserDetailsServiceImpl;
+import com.healthcare.modules.users.service.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

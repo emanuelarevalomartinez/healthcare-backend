@@ -1,0 +1,22 @@
+package com.healthcare.modules.patients.service;
+
+import com.healthcare.modules.patients.dto.CreatePatientDTO;
+import com.healthcare.modules.patients.dto.PatientResponseDTO;
+import com.healthcare.modules.patients.dto.UpdatePatientDTO;
+import com.healthcare.modules.patients.entity.PatientEntity;
+import com.healthcare.modules.patients.enums.DocumentType;
+import com.healthcare.modules.patients.enums.Sex;
+import com.healthcare.shared.response.PageResponse;
+
+import java.util.UUID;
+
+public interface PatientService {
+    PatientResponseDTO createPatient(CreatePatientDTO createPatientDTO);
+    PatientResponseDTO updatePatient(UUID id, UpdatePatientDTO updatePatientDTO);
+    PageResponse<PatientResponseDTO> findAllPatients(int page, int size);
+    PatientResponseDTO findPatientById(UUID id);
+    void deletePatient(UUID id);
+    PageResponse<PatientResponseDTO> findPatientsFiltered(int page, int size, String search);
+    PatientEntity findPatientEntityById(UUID id);
+    PageResponse<PatientResponseDTO> findPatientsByArguments(String searchTerm, Sex sex, DocumentType documentType, int page, int size);
+}

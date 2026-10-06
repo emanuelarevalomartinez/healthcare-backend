@@ -1,6 +1,6 @@
 package com.healthcare.modules.auth.dto;
 
-import com.healthcare.modules.user.enums.UserRole;
+import com.healthcare.modules.users.enums.UserRole;
 import jakarta.validation.constraints.*;
 
 public record RegisterUserDTO(

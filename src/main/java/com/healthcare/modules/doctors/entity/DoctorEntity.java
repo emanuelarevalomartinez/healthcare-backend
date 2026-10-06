@@ -1,0 +1,134 @@
+package com.healthcare.modules.doctors.entity;
+
+import com.healthcare.modules.appointments.entity.AppointmentEntity;
+import com.healthcare.modules.doctor_schedules.entity.DoctorScheduleEntity;
+import com.healthcare.modules.users.entity.UserEntity;
+import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Entity
+@Table(
+        name = "doctor"
+)
+public class DoctorEntity {
+
+    @Id
+    @UuidGenerator
+    @Column(
+            name = "id",
+            nullable = false,
+            updatable = false,
+            columnDefinition = "UUID DEFAULT gen_random_uuid()"
+    )
+    private UUID id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "user_id",
+            nullable = false,
+            unique = true
+    )
+    private UserEntity user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "modified_by",
+            nullable = false
+    )
+    private UserEntity modifiedBy;
+
+    @Column(name = "specialty", nullable = false, length = 100)
+    private String specialty;
+
+    @Column(name = "license_number", nullable = false, unique = true, length = 50)
+    private String licenseNumber;
+
+    @Column(name = "default_consultation_duration")
+    private Integer defaultConsultationDuration;
+
+    @OneToMany(
+            mappedBy = "doctor",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<DoctorScheduleEntity> schedules = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "doctor",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<AppointmentEntity> appointments = new ArrayList<>();
+
+    public List<AppointmentEntity> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<AppointmentEntity> appointments) {
+        this.appointments = appointments;
+    }
+
+    public DoctorEntity() {
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getSpecialty() {
+        return specialty;
+    }
+
+    public void setSpecialty(String specialty) {
+        this.specialty = specialty;
+    }
+
+    public String getLicenseNumber() {
+        return licenseNumber;
+    }
+
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
+    }
+
+    public Integer getDefaultConsultationDuration() {
+        return defaultConsultationDuration;
+    }
+
+    public void setDefaultConsultationDuration(Integer defaultConsultationDuration) {
+        this.defaultConsultationDuration = defaultConsultationDuration;
+    }
+
+    public UserEntity getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(UserEntity modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
+    public List<DoctorScheduleEntity> getSchedules() {
+        return schedules;
+    }
+
+    public void setSchedules(List<DoctorScheduleEntity> schedules) {
+        this.schedules = schedules;
+    }
+}

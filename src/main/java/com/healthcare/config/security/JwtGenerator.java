@@ -1,6 +1,6 @@
 package com.healthcare.config.security;
 
-import com.healthcare.modules.user.entity.UserEntity;
+import com.healthcare.modules.users.entity.UserEntity;
 import com.healthcare.shared.exceptions.ErrorMessage;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;

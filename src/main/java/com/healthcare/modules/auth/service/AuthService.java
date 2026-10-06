@@ -2,8 +2,8 @@ package com.healthcare.modules.auth.service;
 
 import com.healthcare.modules.auth.dto.*;
 import com.healthcare.modules.auth.providers.CustomUserDetails;
-import com.healthcare.modules.user.dto.UserWithDoctorAndSchedulesResponseDTO;
-import com.healthcare.modules.user.enums.UserRole;
+import com.healthcare.modules.users.dto.UserWithDoctorAndSchedulesResponseDTO;
+import com.healthcare.modules.users.enums.UserRole;
 import org.springframework.security.core.Authentication;
 
 import java.util.UUID;

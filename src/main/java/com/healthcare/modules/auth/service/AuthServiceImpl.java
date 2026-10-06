@@ -2,9 +2,9 @@ package com.healthcare.modules.auth.service;
 
 import com.healthcare.modules.auth.dto.*;
 import com.healthcare.modules.auth.providers.CustomUserDetails;
-import com.healthcare.modules.user.dto.UserWithDoctorAndSchedulesResponseDTO;
-import com.healthcare.modules.user.enums.UserRole;
-import com.healthcare.modules.user.service.UserService;
+import com.healthcare.modules.users.dto.UserWithDoctorAndSchedulesResponseDTO;
+import com.healthcare.modules.users.enums.UserRole;
+import com.healthcare.modules.users.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;

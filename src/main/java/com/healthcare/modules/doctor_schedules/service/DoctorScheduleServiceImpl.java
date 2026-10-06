@@ -1,0 +1,304 @@
+package com.healthcare.modules.doctor_schedules.service;
+
+import com.healthcare.modules.doctors.entity.DoctorEntity;
+import com.healthcare.modules.doctors.service.DoctorHelperService;
+import com.healthcare.modules.doctor_schedules.dto.CreateDoctorScheduleDTO;
+import com.healthcare.modules.doctor_schedules.dto.DoctorScheduleResponseDTO;
+import com.healthcare.modules.doctor_schedules.dto.UpdateDoctorScheduleDTO;
+import com.healthcare.modules.doctor_schedules.entity.DoctorScheduleEntity;
+import com.healthcare.modules.doctor_schedules.enums.DoctorScheduleDay;
+import com.healthcare.modules.doctor_schedules.repository.DoctorScheduleRepository;
+import com.healthcare.shared.exceptions.ApplicationException;
+import com.healthcare.shared.exceptions.ErrorMessage;
+import com.healthcare.shared.response.PageResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+public class DoctorScheduleServiceImpl implements DoctorScheduleService {
+
+    private final DoctorScheduleRepository doctorScheduleRepository;
+    private final DoctorHelperService doctorHelperService;
+
+    public DoctorScheduleServiceImpl(DoctorScheduleRepository doctorScheduleRepository, DoctorHelperService doctorHelperService) {
+        this.doctorScheduleRepository = doctorScheduleRepository;
+        this.doctorHelperService = doctorHelperService;
+    }
+
+    @Transactional
+    public List<DoctorScheduleResponseDTO> createDoctorSchedulesResponseDTO(
+            CreateDoctorScheduleDTO createDoctorScheduleDTO) {
+
+        return createDoctorSchedules(
+                createDoctorScheduleDTO,
+                DoctorScheduleResponseDTO.class
+        );
+    }
+
+    @Transactional
+    public List<DoctorScheduleEntity> createDoctorSchedulesResponseEntities(
+            CreateDoctorScheduleDTO createDoctorScheduleDTO) {
+
+        return createDoctorSchedules(
+                createDoctorScheduleDTO,
+                DoctorScheduleEntity.class
+        );
+    }
+
+    @Transactional
+    private <T> List<T> createDoctorSchedules(CreateDoctorScheduleDTO createDoctorScheduleDTO, Class<T> returnType) {
+
+        DoctorEntity doctor = this.doctorHelperService.findDoctorEntityById(
+                createDoctorScheduleDTO.doctorId()
+        );
+
+        List<DoctorScheduleEntity> schedules = new ArrayList<>();
+        Set<DoctorScheduleDay> days = new HashSet<>();
+
+        for (CreateDoctorScheduleDTO.DayScheduleDTO scheduleDTO : createDoctorScheduleDTO.schedules()) {
+
+            if (!days.add(scheduleDTO.dayOfWeek())) {
+                throw new ApplicationException(
+                        ErrorMessage.DOCTOR_SCHEDULE_DUPLICATED_DAY,
+                        scheduleDTO.dayOfWeek()
+                );
+            }
+
+            boolean exists = this.doctorScheduleRepository
+                    .existsByDoctorIdAndDayOfWeek(doctor.getId(), scheduleDTO.dayOfWeek());
+
+            if (exists) {
+                throw new ApplicationException(
+                        ErrorMessage.DOCTOR_SCHEDULE_ALREADY_EXISTS,
+                        scheduleDTO.dayOfWeek()
+                );
+            }
+
+            DoctorScheduleEntity newDoctorSchedule = new DoctorScheduleEntity();
+            newDoctorSchedule.setDoctor(doctor);
+            newDoctorSchedule.setDayOfWeek(scheduleDTO.dayOfWeek());
+            newDoctorSchedule.setStartTime(scheduleDTO.startTime());
+            newDoctorSchedule.setEndTime(scheduleDTO.endTime());
+            newDoctorSchedule.setAvailable(scheduleDTO.available());
+            newDoctorSchedule.setNotes(scheduleDTO.notes());
+
+            schedules.add(newDoctorSchedule);
+        }
+
+        List<DoctorScheduleEntity> savedSchedules = this.doctorScheduleRepository.saveAll(schedules);
+
+        if (returnType == DoctorScheduleEntity.class) {
+            return (List<T>) savedSchedules;
+        } else if (returnType == DoctorScheduleResponseDTO.class) {
+            return (List<T>) savedSchedules.stream()
+                    .map(DoctorScheduleResponseDTO::fromEntity)
+                    .toList();
+        } else {
+            throw new ApplicationException(ErrorMessage.DOCTOR_SCHEDULE_CREATE_UNSUPPORTED_RETURN_TYPE, "");
+        }
+    }
+
+    @Transactional
+    @Override
+    public List<DoctorScheduleEntity> createDoctorSchedulesForDoctor(
+            DoctorEntity doctor,
+            List<CreateDoctorScheduleDTO.DayScheduleDTO> schedules
+    ) {
+        if (schedules == null || schedules.isEmpty()) {
+            return List.of();
+        }
+
+        List<DoctorScheduleEntity> doctorSchedules = new ArrayList<>();
+        Set<DoctorScheduleDay> days = new HashSet<>();
+
+        for (CreateDoctorScheduleDTO.DayScheduleDTO scheduleDTO : schedules) {
+            if (!days.add(scheduleDTO.dayOfWeek())) {
+                throw new ApplicationException(
+                        ErrorMessage.DOCTOR_SCHEDULE_DUPLICATED_DAY,
+                        scheduleDTO.dayOfWeek()
+                );
+            }
+
+            DoctorScheduleEntity newDoctorSchedule = new DoctorScheduleEntity();
+
+            newDoctorSchedule.setDoctor(doctor);
+            newDoctorSchedule.setDayOfWeek(scheduleDTO.dayOfWeek());
+            newDoctorSchedule.setStartTime(scheduleDTO.startTime());
+            newDoctorSchedule.setEndTime(scheduleDTO.endTime());
+            newDoctorSchedule.setAvailable(scheduleDTO.available());
+            newDoctorSchedule.setNotes(scheduleDTO.notes());
+
+            doctorSchedules.add(newDoctorSchedule);
+        }
+
+        return doctorScheduleRepository.saveAll(doctorSchedules);
+    }
+
+    @Transactional
+    public List<DoctorScheduleResponseDTO> updateDoctorSchedulesResponseDTO(
+            UpdateDoctorScheduleDTO updateDoctorScheduleDTO) {
+
+        return updateDoctorSchedules(
+                updateDoctorScheduleDTO,
+                DoctorScheduleResponseDTO.class
+        );
+    }
+
+    @Transactional
+    public List<DoctorScheduleEntity> updateDoctorSchedulesResponseEntities(
+            UpdateDoctorScheduleDTO updateDoctorScheduleDTO) {
+
+        return updateDoctorSchedules(
+                updateDoctorScheduleDTO,
+                DoctorScheduleEntity.class
+        );
+    }
+
+    @Transactional
+    private <T> List<T> updateDoctorSchedules(UpdateDoctorScheduleDTO updateDoctorScheduleDTO, Class<T> returnType) {
+
+        List<DoctorScheduleEntity> schedules = new ArrayList<>();
+        Set<DoctorScheduleDay> days = new HashSet<>();
+
+        for (UpdateDoctorScheduleDTO.DayScheduleDTO scheduleDTO : updateDoctorScheduleDTO.schedules()) {
+
+            if (!days.add(scheduleDTO.dayOfWeek())) {
+                throw new ApplicationException(ErrorMessage.DOCTOR_SCHEDULE_DUPLICATED_DAY, scheduleDTO.dayOfWeek());
+            }
+
+            DoctorScheduleEntity findSchedule = this.findDoctorScheduleEntityById(scheduleDTO.id());
+
+            UUID doctorId = findSchedule.getDoctor().getId();
+
+            if (scheduleDTO.id() != null) {
+                boolean exists = this.doctorScheduleRepository
+                        .existsByDoctorIdAndDayOfWeekAndIdNot(
+                                doctorId,
+                                scheduleDTO.dayOfWeek(),
+                                scheduleDTO.id()
+                        );
+
+                if (exists) {
+                    throw new ApplicationException(ErrorMessage.DOCTOR_SCHEDULE_ALREADY_EXISTS, scheduleDTO.dayOfWeek());
+                }
+            }
+
+            findSchedule.setDayOfWeek(scheduleDTO.dayOfWeek());
+            findSchedule.setStartTime(scheduleDTO.startTime());
+            findSchedule.setEndTime(scheduleDTO.endTime());
+            findSchedule.setAvailable(scheduleDTO.available());
+            findSchedule.setNotes(scheduleDTO.notes());
+
+            schedules.add(findSchedule);
+        }
+
+        List<DoctorScheduleEntity> savedSchedules = this.doctorScheduleRepository.saveAll(schedules);
+
+        if (returnType == DoctorScheduleEntity.class) {
+            return (List<T>) savedSchedules;
+        } else if (returnType == DoctorScheduleResponseDTO.class) {
+            return (List<T>) savedSchedules.stream()
+                    .map(DoctorScheduleResponseDTO::fromEntity)
+                    .toList();
+        } else {
+            throw new ApplicationException(ErrorMessage.DOCTOR_SCHEDULE_UPDATE_UNSUPPORTED_RETURN_TYPE, "");
+        }
+    }
+
+    @Override
+    public PageResponse<DoctorScheduleResponseDTO> findAllDoctorSchedules(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<DoctorScheduleEntity> result = doctorScheduleRepository.findAllDoctorSchedulesPaged(pageable);
+
+        return new PageResponse<>(
+                result.getContent()
+                        .stream()
+                        .map(DoctorScheduleResponseDTO::fromEntity)
+                        .toList(),
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages()
+        );
+    }
+
+    @Override
+    public DoctorScheduleResponseDTO findDoctorScheduleById(UUID id) {
+        DoctorScheduleEntity findDoctorScheduleById = this.doctorScheduleRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(ErrorMessage.DOCTOR_SCHEDULE_NOT_FOUND_ID, "")
+                );
+
+        return DoctorScheduleResponseDTO.fromEntity(findDoctorScheduleById);
+    }
+
+    @Override
+    public DoctorScheduleEntity findDoctorScheduleEntityById(UUID id) {
+        return this.doctorScheduleRepository.findById(id)
+                .orElseThrow(() -> {
+                    return new ApplicationException(ErrorMessage.DOCTOR_SCHEDULE_NOT_FOUND_ID, id);
+                });
+    }
+
+    @Override
+    public DoctorScheduleEntity findDoctorScheduleByDoctorAndDayOfWeek(UUID doctorId,DoctorScheduleDay day){
+        return this.doctorScheduleRepository
+                .findByDoctorIdAndDayOfWeek(doctorId, day)
+                .orElseThrow(() -> new ApplicationException(
+                        ErrorMessage.APPOINTMENT_DOCTOR_NOT_AVAILABLE_THIS_DAY, buildNotAvailableMessage(doctorId)));
+    }
+
+    @Override
+    public List<DoctorScheduleEntity> findByDoctorId(UUID doctorId) {
+        return this.doctorScheduleRepository.findByDoctorId(doctorId);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAllByIds(List<UUID> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return;
+        }
+        this.doctorScheduleRepository.deleteAllByIdIn(ids);
+    }
+
+    @Override
+    public void deleteDoctorSchedule(UUID id) {
+        DoctorScheduleEntity doctorSchedule = this.findDoctorScheduleEntityById(id);
+        doctorScheduleRepository.deleteById(doctorSchedule.getId());
+    }
+
+    private String buildNotAvailableMessage(UUID doctorId) {
+        return "Días disponibles: " + buildAvailableDaysMessage(doctorId);
+    }
+
+    private String buildAvailableDaysMessage(UUID doctorId) {
+        List<DoctorScheduleEntity> schedules = this.findByDoctorId(doctorId);
+
+        String availableDays = schedules.stream()
+                .filter(DoctorScheduleEntity::isAvailable)
+                .sorted(Comparator.comparing(s -> s.getDayOfWeek().ordinal()))
+                .map(s -> formatDay(s.getDayOfWeek())
+                        + " (" + s.getStartTime() + "-" + s.getEndTime() + ")")
+                .collect(Collectors.joining(", "));
+
+        return availableDays.isEmpty() ? "ninguno" : availableDays;
+    }
+
+    private String formatDay(DoctorScheduleDay day) {
+        return switch (day) {
+            case MONDAY    -> "Lunes";
+            case TUESDAY   -> "Martes";
+            case WEDNESDAY -> "Miércoles";
+            case THURSDAY  -> "Jueves";
+            case FRIDAY    -> "Viernes";
+            case SATURDAY  -> "Sábado";
+            case SUNDAY    -> "Domingo";
+        };
+    }
+}

@@ -2,7 +2,7 @@ package com.healthcare.modules.auth.controller;
 
 
 import com.healthcare.modules.auth.dto.*;
-import com.healthcare.modules.user.dto.UserWithDoctorAndSchedulesResponseDTO;
+import com.healthcare.modules.users.dto.UserWithDoctorAndSchedulesResponseDTO;
 import com.healthcare.shared.response.ApiResponse;
 import com.healthcare.shared.response.ResponseHandler;
 import com.healthcare.modules.auth.service.AuthService;

@@ -1,12 +1,11 @@
 package com.healthcare.modules.auth.entity;
 
-import com.healthcare.modules.user.entity.UserEntity;
+import com.healthcare.modules.users.entity.UserEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity

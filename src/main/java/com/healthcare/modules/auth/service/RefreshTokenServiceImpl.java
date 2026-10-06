@@ -4,7 +4,7 @@ import com.healthcare.config.security.JwtGenerator;
 import com.healthcare.modules.auth.dto.RefreshTokenResponseDTO;
 import com.healthcare.modules.auth.entity.RefreshTokenEntity;
 import com.healthcare.modules.auth.repository.RefreshTokenRepository;
-import com.healthcare.modules.user.entity.UserEntity;
+import com.healthcare.modules.users.entity.UserEntity;
 import com.healthcare.shared.exceptions.ApplicationException;
 import com.healthcare.shared.exceptions.ErrorMessage;
 import io.jsonwebtoken.Claims;
