@@ -1,6 +1,9 @@
 
 
 // TODO
+
+// a�adir el el nombre de la citaq a todos los flujos
+// revisr bien los endpoint de appointments y de patienes para ver que es lo que devuelven y no este haciendo lo mismo duplicado
 // a�adir cache al la lista de consultas y de citas
 
 // hacer el search de las consultas
