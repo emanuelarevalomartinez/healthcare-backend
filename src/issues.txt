@@ -2,6 +2,8 @@
 
 // TODO
 
+// al eliminar las consultas hay que hacerlo mediante el rol para que no elimine las que no le corresponden
+
 // hay que filtrar las citas cuando se vayan a crear por un estado de confirmadas para que solo regresen esas
 // a la hora de crear o actualziar una consulta mejorar el error de la fecha selecionada anterior a la de la cita e incluir la fecha y hora minima
 
