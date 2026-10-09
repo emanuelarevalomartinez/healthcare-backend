@@ -10,6 +10,8 @@ public record AppointmentFilterParams(
         int size,
         boolean ascending,
         LocalDate date,
+        String appointmentName,
+        Boolean searchByNameOnly,
         AppointmentStatus appointmentStatus,
         String patientFullName,
         String doctorUserName,

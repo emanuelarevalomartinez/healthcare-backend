@@ -57,6 +57,8 @@ public class AppointmentController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "true") boolean ascending,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) String appointmentName,
+            @RequestParam(required = false, defaultValue = "false") Boolean searchByNameOnly,
             @RequestParam(required = false) AppointmentStatus appointmentStatus,
             @RequestParam(required = false) String patientFullName,
             @RequestParam(required = false) String doctorUserName,
@@ -67,7 +69,7 @@ public class AppointmentController {
             @RequestParam(required = false) String doctorLicenseNumber
     ) {
 
-        AppointmentFilterParams appointmentFilterParams = new AppointmentFilterParams(page, size, ascending, date, appointmentStatus, patientFullName, doctorUserName, patientMedicalRecordNumber, patientDocumentType, patientDocumentNumber, doctorSpecialty, doctorLicenseNumber);
+        AppointmentFilterParams appointmentFilterParams = new AppointmentFilterParams(page, size, ascending, date, appointmentName, searchByNameOnly, appointmentStatus, patientFullName, doctorUserName, patientMedicalRecordNumber, patientDocumentType, patientDocumentNumber, doctorSpecialty, doctorLicenseNumber);
 
         PageResponse<AppointmentResponseDTO> appointments = this.appointmentService.findAppointmentsFiltered(appointmentFilterParams);
 
@@ -111,11 +113,12 @@ public class AppointmentController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "true") boolean ascending,
             @RequestParam(required = true) String searchTerm,
+            @RequestParam(required = false, defaultValue = "false") Boolean searchByNameOnly,
             @RequestParam(required = false) AppointmentStatus appointmentStatus,
             @RequestParam(required = false) DocumentType documentType
     ) {
 
-        AppointmentSearchParams params = new AppointmentSearchParams(page, size, ascending, searchTerm, appointmentStatus, documentType);
+        AppointmentSearchParams params = new AppointmentSearchParams(page, size, ascending, searchTerm, searchByNameOnly, appointmentStatus, documentType);
 
         PageResponse<AppointmentResponseDTO> appointments = appointmentService.searchAppointments(params);
 

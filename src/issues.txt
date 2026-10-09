@@ -2,13 +2,10 @@
 
 // TODO
 
-// a�adir el el nombre de la citaq a todos los flujos
-// revisr bien los endpoint de appointments y de patienes para ver que es lo que devuelven y no este haciendo lo mismo duplicado
+// hay que filtrar las citas cuando se vayan a crear por un estado de confirmadas para que solo regresen esas
+// a la hora de crear o actualziar una consulta mejorar el error de la fecha selecionada anterior a la de la cita e incluir la fecha y hora minima
+
 // a�adir cache al la lista de consultas y de citas
-
-// hacer el search de las consultas
-
-// cuando se va a crear la consulta hay que crear un endpoint que traiga las citas a partir del doctor que esten seleccionado y que el estado de las cita sea confirmed solamente
 
 crear el modulo de historial de consultas
 

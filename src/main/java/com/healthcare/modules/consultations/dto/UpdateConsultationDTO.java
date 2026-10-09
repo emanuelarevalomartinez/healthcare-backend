@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 
 public record UpdateConsultationDTO(
 
+        @Size(max = 150, message = "El nombre de la consulta no puede exceder 150 caracteres")
+        String consultationName,
+
         @Size(max = 1000, message = "Los síntomas no pueden exceder 1000 caracteres")
         String symptoms,
 

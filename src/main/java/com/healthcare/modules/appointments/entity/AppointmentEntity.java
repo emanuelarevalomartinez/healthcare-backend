@@ -61,6 +61,13 @@ public class AppointmentEntity {
     private DoctorEntity doctor;
 
     @Column(
+            name = "appointment_name",
+            nullable = false,
+            length = 150
+    )
+    private String appointmentName;
+
+    @Column(
             name = "appointment_date_time",
             nullable = false
     )
@@ -152,6 +159,14 @@ public class AppointmentEntity {
 
     public void setDoctor(DoctorEntity doctor) {
         this.doctor = doctor;
+    }
+
+    public String getAppointmentName() {
+        return appointmentName;
+    }
+
+    public void setAppointmentName(String appointmentName) {
+        this.appointmentName = appointmentName;
     }
 
     public LocalDateTime getAppointmentDateTime() {

@@ -32,6 +32,9 @@ public class ConsultationEntity {
     )
     private AppointmentEntity appointment;
 
+    @Column(name = "consultation_name", nullable = false, length = 150)
+    private String consultationName;
+
     @Column(name = "symptoms", nullable = false, length = 1000)
     private String symptoms;
 
@@ -80,6 +83,14 @@ public class ConsultationEntity {
 
     public void setAppointment(AppointmentEntity appointment) {
         this.appointment = appointment;
+    }
+
+    public String getConsultationName() {
+        return consultationName;
+    }
+
+    public void setConsultationName(String consultationName) {
+        this.consultationName = consultationName;
     }
 
     public String getSymptoms() {

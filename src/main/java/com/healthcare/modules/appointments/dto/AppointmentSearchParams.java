@@ -8,6 +8,7 @@ public record AppointmentSearchParams(
         int size,
         boolean ascending,
         String searchTerm,
+        Boolean searchByNameOnly,
         AppointmentStatus appointmentStatus,
         DocumentType documentType
 ) {

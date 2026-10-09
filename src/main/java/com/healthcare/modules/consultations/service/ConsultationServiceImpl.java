@@ -71,6 +71,7 @@ public class ConsultationServiceImpl implements ConsultationService {
 
         ConsultationEntity newConsultation = new ConsultationEntity();
         newConsultation.setAppointment(appointmentEntity);
+        newConsultation.setConsultationName(createConsultationDTO.consultationName());
         newConsultation.setSymptoms(createConsultationDTO.symptoms());
         newConsultation.setDiagnosis(createConsultationDTO.diagnosis());
         newConsultation.setTreatment(createConsultationDTO.treatment());
@@ -94,6 +95,10 @@ public class ConsultationServiceImpl implements ConsultationService {
 
         if(findConsultation.getAppointment().getStatus() != AppointmentStatus.ATTENDED) {
             throw new ApplicationException(ErrorMessage.CONSULTATION_APPOINTMENT_NOT_ATTENDED, "");
+        }
+
+        if (updateConsultationDTO.consultationName() != null) {
+            findConsultation.setConsultationName(updateConsultationDTO.consultationName());
         }
 
         if (updateConsultationDTO.symptoms() != null) {

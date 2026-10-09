@@ -11,6 +11,18 @@ import java.time.LocalDateTime;
 
 public class AppointmentSpecifications {
 
+    public static Specification<AppointmentEntity> hasAppointmentName(String appointmentName) {
+        return (root, query, criteriaBuilder) -> {
+            if (appointmentName == null || appointmentName.isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get("appointmentName")),
+                    "%" + appointmentName.toLowerCase() + "%"
+            );
+        };
+    }
+
     public static Specification<AppointmentEntity> hasDate(LocalDate date) {
         return (root, query, criteriaBuilder) -> {
             if (date == null) {

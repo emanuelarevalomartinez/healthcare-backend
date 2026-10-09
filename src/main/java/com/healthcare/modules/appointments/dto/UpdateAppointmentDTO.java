@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 
 public record UpdateAppointmentDTO(
 
+        @Size(max = 150, message = "El nombre de la cita no puede exceder 150 caracteres")
+        String appointmentName,
+
         @Future(message = "La fecha y hora de la cita debe ser futura")
         LocalDateTime appointmentDateTime,
 

@@ -29,17 +29,27 @@ public class DoctorAppointmentExecutor {
     public AppointmentSpecificationQuery findAppointmentsFilteredByDoctor(AppointmentFilterParams params) {
         UUID userId = authService.getCurrentUserId();
         UserEntity user = userService.findUserEntityById(userId);
-        Specification<AppointmentEntity> spec = Specification
-                .where(AppointmentSpecifications.hasDate(params.date()))
-                .and(AppointmentSpecifications.hasPatientFullName(params.patientFullName()))
-                .and(AppointmentSpecifications.hasDoctorUsername(user.getUsername()))
-                .and(AppointmentSpecifications.hasPatientMedicalRecordNumber(params.patientMedicalRecordNumber()))
-                .and(AppointmentSpecifications.hasPatientDocumentNumber(params.patientDocumentNumber()))
-                .and(AppointmentSpecifications.hasDocumentType(params.patientDocumentType()))
-                .and(AppointmentSpecifications.hasDoctorSpecialty(params.doctorSpecialty()))
-                .and(AppointmentSpecifications.hasDoctorLicenseNumber(params.doctorLicenseNumber()))
-                .and(AppointmentSpecifications.hasAppointmentStatus(params.appointmentStatus()));
 
+        Specification<AppointmentEntity> spec;
+
+        if (Boolean.TRUE.equals(params.searchByNameOnly())) {
+            spec = Specification
+                    .where(AppointmentSpecifications.hasDate(params.date()))
+                    .and(AppointmentSpecifications.hasAppointmentName(params.appointmentName()))
+                    .and(AppointmentSpecifications.hasDoctorUsername(user.getUsername()));
+        } else {
+            spec = Specification
+                    .where(AppointmentSpecifications.hasDate(params.date()))
+                    .and(AppointmentSpecifications.hasAppointmentName(params.appointmentName()))
+                    .and(AppointmentSpecifications.hasPatientFullName(params.patientFullName()))
+                    .and(AppointmentSpecifications.hasDoctorUsername(user.getUsername()))
+                    .and(AppointmentSpecifications.hasPatientMedicalRecordNumber(params.patientMedicalRecordNumber()))
+                    .and(AppointmentSpecifications.hasPatientDocumentNumber(params.patientDocumentNumber()))
+                    .and(AppointmentSpecifications.hasDocumentType(params.patientDocumentType()))
+                    .and(AppointmentSpecifications.hasDoctorSpecialty(params.doctorSpecialty()))
+                    .and(AppointmentSpecifications.hasDoctorLicenseNumber(params.doctorLicenseNumber()))
+                    .and(AppointmentSpecifications.hasAppointmentStatus(params.appointmentStatus()));
+        }
 
         Sort sort = Sort.by(
                 params.ascending() ? Sort.Direction.ASC : Sort.Direction.DESC,
@@ -67,13 +77,23 @@ public class DoctorAppointmentExecutor {
 
         if (params.searchTerm() != null && !params.searchTerm().trim().isEmpty()) {
             String term = params.searchTerm().trim();
-            Specification<AppointmentEntity> searchSpec =
-                    Specification.where(AppointmentSpecifications.hasPatientFullName(term))
-                            .or(AppointmentSpecifications.hasPatientMedicalRecordNumber(term))
-                            .and(AppointmentSpecifications.hasDoctorUsername(user.getUsername()));
+
+            Specification<AppointmentEntity> searchSpec;
+
+            if (Boolean.TRUE.equals(params.searchByNameOnly())) {
+                searchSpec = Specification
+                        .where(AppointmentSpecifications.hasAppointmentName(term))
+                        .and(AppointmentSpecifications.hasDoctorUsername(user.getUsername()));
+            } else {
+                searchSpec = Specification.where(AppointmentSpecifications.hasPatientFullName(term))
+                                .or(AppointmentSpecifications.hasAppointmentName(term))
+                                .or(AppointmentSpecifications.hasPatientMedicalRecordNumber(term))
+                                .and(AppointmentSpecifications.hasDoctorUsername(user.getUsername()));
+            }
 
             spec = spec.and(searchSpec);
         }
+
         Sort sort = Sort.by(params.ascending() ? Sort.Direction.ASC : Sort.Direction.DESC,
                 "appointmentDateTime"
         );

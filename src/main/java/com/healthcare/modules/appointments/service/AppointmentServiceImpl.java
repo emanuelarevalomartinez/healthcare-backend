@@ -99,6 +99,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         AppointmentEntity newAppointment = new AppointmentEntity();
         newAppointment.setPatient(patientEntity);
         newAppointment.setDoctor(doctorEntity);
+        newAppointment.setAppointmentName(createAppointmentDTO.appointmentName());
         newAppointment.setAppointmentDateTime(createAppointmentDTO.appointmentDateTime());
         newAppointment.setDurationMinutes(createAppointmentDTO.durationMinutes());
         newAppointment.setConsultationReason(createAppointmentDTO.consultationReason());
@@ -133,6 +134,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         switch (currentStatus) {
 
             case SCHEDULED -> {
+                if (dto.appointmentName() != null) {
+                    appointment.setAppointmentName(dto.appointmentName());
+                }
                 if (dto.appointmentDateTime() != null) {
                     appointment.setAppointmentDateTime(dto.appointmentDateTime());
                 }
@@ -151,6 +155,9 @@ public class AppointmentServiceImpl implements AppointmentService {
             }
 
             case CONFIRMED, ATTENDED -> {
+                if (dto.appointmentName() != null) {
+                    appointment.setAppointmentName(dto.appointmentName());
+                }
                 if (dto.notes() != null) {
                     appointment.setNotes(dto.notes());
                 }
@@ -302,16 +309,25 @@ public class AppointmentServiceImpl implements AppointmentService {
             AppointmentFilterParams params
     ) {
 
-        Specification<AppointmentEntity> spec = Specification
-                .where(AppointmentSpecifications.hasDate(params.date()))
-                .and(AppointmentSpecifications.hasPatientFullName(params.patientFullName()))
-                .and(AppointmentSpecifications.hasDoctorUsername(params.doctorUserName()))
-                .and(AppointmentSpecifications.hasPatientMedicalRecordNumber(params.patientMedicalRecordNumber()))
-                .and(AppointmentSpecifications.hasPatientDocumentNumber(params.patientDocumentNumber()))
-                .and(AppointmentSpecifications.hasDocumentType(params.patientDocumentType()))
-                .and(AppointmentSpecifications.hasDoctorSpecialty(params.doctorSpecialty()))
-                .and(AppointmentSpecifications.hasDoctorLicenseNumber(params.doctorLicenseNumber()))
-                .and(AppointmentSpecifications.hasAppointmentStatus(params.appointmentStatus()));
+        Specification<AppointmentEntity> spec;
+
+        if (Boolean.TRUE.equals(params.searchByNameOnly())) {
+            spec = Specification
+                    .where(AppointmentSpecifications.hasDate(params.date()))
+                    .and(AppointmentSpecifications.hasAppointmentName(params.appointmentName()));
+        } else {
+            spec = Specification
+                    .where(AppointmentSpecifications.hasDate(params.date()))
+                    .and(AppointmentSpecifications.hasAppointmentName(params.appointmentName()))
+                    .and(AppointmentSpecifications.hasPatientFullName(params.patientFullName()))
+                    .and(AppointmentSpecifications.hasDoctorUsername(params.doctorUserName()))
+                    .and(AppointmentSpecifications.hasPatientMedicalRecordNumber(params.patientMedicalRecordNumber()))
+                    .and(AppointmentSpecifications.hasPatientDocumentNumber(params.patientDocumentNumber()))
+                    .and(AppointmentSpecifications.hasDocumentType(params.patientDocumentType()))
+                    .and(AppointmentSpecifications.hasDoctorSpecialty(params.doctorSpecialty()))
+                    .and(AppointmentSpecifications.hasDoctorLicenseNumber(params.doctorLicenseNumber()))
+                    .and(AppointmentSpecifications.hasAppointmentStatus(params.appointmentStatus()));
+        }
 
         Sort sort = Sort.by(params.ascending() ? Sort.Direction.ASC : Sort.Direction.DESC,
                 "appointmentDateTime"
@@ -335,13 +351,20 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         if (params.searchTerm() != null && !params.searchTerm().trim().isEmpty()) {
             String term = params.searchTerm().trim();
-            Specification<AppointmentEntity> searchSpec =
-                    Specification.where(AppointmentSpecifications.hasPatientFullName(term))
-                            .or(AppointmentSpecifications.hasPatientMedicalRecordNumber(term))
-                            .or(AppointmentSpecifications.hasDoctorUsername(term));
 
+            Specification<AppointmentEntity> searchSpec;
+
+            if (Boolean.TRUE.equals(params.searchByNameOnly())) {
+                searchSpec = Specification.where(AppointmentSpecifications.hasAppointmentName(term));
+            } else {
+                searchSpec = Specification.where(AppointmentSpecifications.hasPatientFullName(term))
+                                .or(AppointmentSpecifications.hasAppointmentName(term))
+                                .or(AppointmentSpecifications.hasPatientMedicalRecordNumber(term))
+                                .or(AppointmentSpecifications.hasDoctorUsername(term));
+            }
             spec = spec.and(searchSpec);
         }
+
         Sort sort = Sort.by(params.ascending() ? Sort.Direction.ASC : Sort.Direction.DESC,
                 "appointmentDateTime"
         );

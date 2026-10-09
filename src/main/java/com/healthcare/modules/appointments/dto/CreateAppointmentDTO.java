@@ -13,6 +13,10 @@ public record CreateAppointmentDTO(
         @NotNull(message = "El ID del médico es obligatorio")
         UUID doctorId,
 
+        @NotBlank(message = "El nombre de la cita es obligatorio")
+        @Size(max = 150, message = "El nombre de la cita no puede exceder 150 caracteres")
+        String appointmentName,
+
         @NotNull(message = "La fecha y hora de la cita es obligatoria")
         @Future(message = "La fecha y hora de la cita debe ser futura")
         LocalDateTime appointmentDateTime,

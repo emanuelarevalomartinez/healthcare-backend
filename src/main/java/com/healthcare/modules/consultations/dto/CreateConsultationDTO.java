@@ -13,6 +13,10 @@ public record CreateConsultationDTO(
         @NotNull(message = "El ID del médico que crea es obligatorio")
         UUID createdByDoctor,
 
+        @NotBlank(message = "El nombre de la consulta es obligatorio")
+        @Size(max = 150, message = "El nombre de la consulta no puede exceder 150 caracteres")
+        String consultationName,
+
         @NotBlank(message = "Los síntomas son obligatorios")
         @Size(max = 1000, message = "Los síntomas no pueden exceder 1000 caracteres")
         String symptoms,

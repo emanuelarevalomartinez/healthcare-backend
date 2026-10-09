@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public record AppointmentResponseDTO(
         UUID id,
+        String appointmentName,
         LocalDateTime appointmentDateTime,
         Integer durationMinutes,
         String consultationReason,
@@ -43,6 +44,7 @@ public record AppointmentResponseDTO(
 
         return new AppointmentResponseDTO(
                 appointment.getId(),
+                appointment.getAppointmentName(),
                 appointment.getAppointmentDateTime(),
                 appointment.getDurationMinutes(),
                 appointment.getConsultationReason(),
