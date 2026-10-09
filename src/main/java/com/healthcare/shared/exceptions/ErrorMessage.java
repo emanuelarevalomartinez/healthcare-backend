@@ -41,6 +41,11 @@ public enum ErrorMessage {
     CONSULTATION_APPOINTMENT_NOT_ATTENDED(409, "CONSULTATION_APPOINTMENT_NOT_ATTENDED", "Solo se puede modificar una consulta cuya cita esté en estado ATENDIDA."),
     CONSULTATION_DATE_BEFORE_APPOINTMENT(409, "CONSULTATION_DATE_BEFORE_APPOINTMENT", "La fecha de la consulta no puede ser anterior a la fecha de la cita."),
 
+    CONSULTATION_HISTORY_NOT_FOUND_ID(404, "CONSULTATION_HISTORY_NOT_FOUND_ID", "Historial de consulta con id no encontrado"),
+    CONSULTATION_HISTORY_NOT_FOUND_BY_DATE(404, "CONSULTATION_HISTORY_NOT_FOUND_BY_DATE", "No se encontraron historiales de consulta para la fecha proporcionada"),
+    CONSULTATION_HISTORY_EMPTY(404, "CONSULTATION_HISTORY_EMPTY", "No existen historiales de consulta registrados"),
+    CONSULTATION_HISTORY_INVALID_DATE(400, "CONSULTATION_HISTORY_INVALID_DATE", "La fecha proporcionada es inválida"),
+
     INVALID_CREDENTIALS(401, "INVALID_CREDENTIALS", "Credenciales inválidas"),
     INVALID_CHANGE_PASSWORD(400, "INVALID_CHANGE_PASSWORD", "La contraseña actual no coincide con la que intenta introducir"),
     INVALID_PASSWORD_CHANGE_REQUEST(400, "INVALID_PASSWORD_CHANGE_REQUEST", "La solicitud de cambio de contraseña es inválida"),

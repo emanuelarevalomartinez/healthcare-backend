@@ -82,10 +82,10 @@ public class ConsultationServiceImpl implements ConsultationService {
         newConsultation.setCreatedByDoctor(doctorEntity);
         newConsultation.setRegistrationDate(LocalDateTime.now());
 
-        this.consultationRepository.save(newConsultation);
+        ConsultationEntity savedConsultation = this.consultationRepository.save(newConsultation);
         this.appointmentService.markAsAttended(appointmentEntity.getId());
 
-        return ConsultationResponseDTO.fromEntity(newConsultation);
+        return ConsultationResponseDTO.fromEntity(savedConsultation);
     }
 
     @Override

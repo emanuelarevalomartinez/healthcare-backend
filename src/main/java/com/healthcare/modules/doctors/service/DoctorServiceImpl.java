@@ -367,6 +367,12 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    public DoctorEntity findDoctorEntityByUserId(UUID userId) {
+        return doctorRepository.findByUserId(userId)
+                .orElseThrow(() -> new ApplicationException(ErrorMessage.DOCTOR_NOT_FOUND_USER_ID, userId));
+    }
+
+    @Override
     public PageResponse<DoctorWithUserAndScheduleResponseDTO> findDoctorsFiltered(int page, int size, String search) {
         Specification<DoctorEntity> spec = Specification.where(DoctorSpecifications.search(search));
 
@@ -416,10 +422,5 @@ public class DoctorServiceImpl implements DoctorService {
     public void deleteDoctorAndItScheduleByUserId(UUID userId) {
         DoctorEntity doctor = this.findDoctorEntityByUserId(userId);
         doctorRepository.delete(doctor);
-    }
-
-    private DoctorEntity findDoctorEntityByUserId(UUID userId) {
-        return doctorRepository.findByUserId(userId)
-                .orElseThrow(() -> new ApplicationException(ErrorMessage.DOCTOR_NOT_FOUND_USER_ID, userId));
     }
 }

@@ -13,6 +13,7 @@ public interface DoctorService {
     DoctorWithUserAndScheduleResponseDTO updateDoctorWithUserAndSchedule(UUID userId, UpdateDoctorWithUserAndScheduleDTO updateDoctorWithUserDTO);
     PageResponse<DoctorResponseDTO> findAllDoctors(int page, int size);
     DoctorResponseDTO findDoctorById(UUID id);
+    DoctorEntity findDoctorEntityByUserId(UUID userId);
     PageResponse<DoctorWithUserAndScheduleResponseDTO> findDoctorsFiltered(int page, int size, String search);
     DoctorEntity findDoctorEntityById(UUID id);
     void deleteDoctor(UUID id);
