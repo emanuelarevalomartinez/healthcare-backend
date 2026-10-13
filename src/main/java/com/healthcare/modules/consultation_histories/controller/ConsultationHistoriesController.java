@@ -56,19 +56,6 @@ public class ConsultationHistoriesController {
         );
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteConsultationHistoryById(
-            @PathVariable UUID id) {
-
-        consultationHistoriesService.deleteConsultationHistoryById(id);
-
-        return ResponseHandler.generateResponse(
-                HttpStatus.OK,
-                "Successfully deleted consultation history",
-                null
-        );
-    }
-
     @DeleteMapping("/by-date")
     public ResponseEntity<ApiResponse<Map<String, Object>>> deleteConsultationHistoriesByDate(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -91,6 +78,19 @@ public class ConsultationHistoriesController {
                 HttpStatus.OK,
                 "Successfully deleted all consultation histories",
                 Map.of("deleted", deleted)
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteConsultationHistoryById(
+            @PathVariable UUID id) {
+
+        consultationHistoriesService.deleteConsultationHistoryById(id);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                "Successfully deleted consultation history",
+                null
         );
     }
 

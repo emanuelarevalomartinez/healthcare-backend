@@ -104,15 +104,6 @@ public class ConsultationHistoriesServiceImpl implements ConsultationHistoriesSe
         );
 
         Pageable pageable = PageRequest.of(page, size, sort);
-       /* Specification<ConsultationHistoriesEntity> spec;
-
-        if (authService.getCurrentRole().equals(UserRole.DOCTOR)) {
-            UUID userId = authService.getCurrentUserId();
-            DoctorEntity doctor = doctorService.findDoctorEntityByUserId(userId);
-            spec = ConsultationHistoriesSpecifications.hasDoctorId(doctor.getId());
-        } else {
-            spec = null;
-        }*/
 
         Specification<ConsultationHistoriesEntity> spec = Specification.unrestricted();
 
